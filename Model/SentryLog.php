@@ -1,40 +1,21 @@
 <?php
 
-namespace JustBetter\Sentry\Plugin;
+namespace JustBetter\Sentry\Model;
 
-use JustBetter\Sentry\Model\SentryLog;
+use Magento\Framework\Logger\Monolog;
 use Magento\Customer\Model\Session;
-use Magento\Framework\App\Http;
-use Magento\Framework\App\Bootstrap;
 use JustBetter\Sentry\Helper\Data;
-use Magento\Framework\App\State;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RavenHandler;
 use Monolog\Logger;
 use Raven_Client;
 
-class ExceptionCatcher
+class SentryLog extends Monolog
 {
-    protected $configKeys = [
-        'domain',
-        'enabled',
-        'log_level',
-    ];
-
     /**
      * @var Data
      */
     protected $data;
-
-    /**
-     * @var
-     */
-    protected $config;
-
-    /**
-     * @var Session
-     */
-    protected $catalogSession;
 
     /**
      * @var Session
@@ -42,53 +23,61 @@ class ExceptionCatcher
     protected $customerSession;
 
     /**
-     * @var State
+     * @var array
      */
-    protected $state;
+    protected $config = [];
 
     /**
-     * @var Logger
-     */
-    protected $logger;
-
-    /**
-     * ExceptionCatcher constructor
+     * SentryLog constructor.
      *
-     * @param Data      $data
-     * @param Session   $catalogSession
-     * @param State     $state
-     * @param SentryLog $logger
+     * @param string          $name
+     * @param array           $handlers
+     * @param array           $processors
+     * @param Data|Data\Proxy $data
+     * @param Session\Proxy   $customerSession
      */
     public function __construct(
-        Data $data,
-        Session $catalogSession,
-        State $state,
-        SentryLog $logger
+        $name,
+        array $handlers = [],
+        array $processors = [],
+        Data\Proxy $data,
+        Session\Proxy $customerSession
     )
     {
         $this->data = $data;
-        $this->state = $state;
-        $this->logger = $logger;
-        $this->customerSession = $catalogSession;
+        $this->customerSession = $customerSession;
+        parent::__construct($name, $handlers, $processors);
     }
 
+
     /**
-     * Catch any exceptions and notify an instance of \Sentry\Client
+     * Adds a log record.
      *
-     * @param Http       $subject
-     * @param Bootstrap  $bootstrap
-     * @param \Exception $exception
-     * @return array
+     * @param integer $level   The logging level
+     * @param string  $message The log message
+     * @param array   $context The log context
+     * @return Boolean Whether the record has been processed
      */
-    public function beforeCatchException(
-        Http $subject,
-        Bootstrap $bootstrap,
-        \Exception $exception
-    )
+    public function addRecord($level, $message, array $context = [])
+    {
+        if ($this->data->isProductionMode()) {
+            $this->sendRecordToSentry($message, $level);
+        }
+
+        if ($message instanceof \Exception && ! isset($context['exception'])) {
+            $context['exception'] = $message;
+        }
+
+        $message = $message instanceof \Exception ? $message->getMessage() : $message;
+
+        return parent::addRecord($level, $message, $context);
+    }
+
+    protected function sendRecordToSentry($message, $logLevel)
     {
         $this->config = $this->data->collectModuleConfig();
 
-        if ($this->data->isActive() && $this->data->isProductionMode()) {
+        if ($this->data->isActive() && $logLevel >= (int) $this->config['log_level']) {
 
             $client = (new Raven_Client(
                 $this->config['domain'] ?? null
@@ -103,18 +92,18 @@ class ExceptionCatcher
                 new LineFormatter("%message% %context% %extra%\n")
             );
 
-            $this->logger->pushHandler($handler);
-            $this->captureUserData();
-            $this->customerSession->setSentryEventId($client->captureException($exception));
-        }
+            $this->pushHandler($handler);
+            $sentryId = $client->captureMessage($message);
 
-        return [$bootstrap, $exception];
+            /** when printing this error reference on an error page for a feedback form */
+            $this->customerSession->setSentryEventId($sentryId);
+        }
     }
 
     protected function captureUserData()
     {
         if ($this->customerSession && ! $this->customerSession->getCustomer()->isEmpty()) {
-            $this->logger->pushProcessor(function ($record) {
+            $this->pushProcessor(function ($record) {
                 $customerData = $this->customerSession->getCustomer();
 
                 foreach ($customerData->getData() as $key => $value) {
