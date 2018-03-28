@@ -107,6 +107,6 @@ class Data extends AbstractHelper
      */
     public function isProductionMode()
     {
-        return $this->appState->getMode() == 'production' ? true : false;
+        return $this->appState->getMode() == 'production';
     }
 }
