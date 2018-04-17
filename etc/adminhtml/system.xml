@@ -8,7 +8,7 @@
             <class>separator-top</class>
             <label>Sentry configuration</label>
             <tab>justbetter</tab>
-            <resource>JustBetter_Sentry::set_sentryoptions</resource>
+            <resource>JustBetter_Sentry::configuration</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Sentry general config</label>
                 <field id="enabled" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
@@ -23,6 +23,11 @@
                     <label>Log Level</label>
                     <comment>Minimum log level to send to Sentry</comment>
                     <source_model>JustBetter\Sentry\Model\Config\Source\LogLevel</source_model>
+                </field>
+                <field id="sent" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <button_label>Send sentry test event</button_label>
+                    <button_url>justbetter_sentry/test/sentry</button_url>
+                    <frontend_model>JustBetter\Sentry\Block\Adminhtml\System\Config\Button</frontend_model>
                 </field>
             </group>
         </section>
