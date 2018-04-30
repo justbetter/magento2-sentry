@@ -88,6 +88,10 @@ class SentryLog extends Monolog
                 $this->config['log_level'] ?? Logger::ERROR
             );
 
+            $client->tags_context([
+                'mage_mode' => $this->data->getAppState()
+            ]);
+
             $handler->setFormatter(
                 new LineFormatter("%message% %context% %extra%\n")
             );

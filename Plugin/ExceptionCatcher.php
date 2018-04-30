@@ -88,11 +88,14 @@ class ExceptionCatcher
     {
         $this->config = $this->data->collectModuleConfig();
 
-        if ($this->data->isActive() && $this->data->isProductionMode()) {
-
+        if ($this->data->isActive() && ($this->data->isProductionMode() || $this->data->isOverwriteProductionMode())) {
             $client = (new Raven_Client(
                 $this->config['domain'] ?? null
             ));
+
+            $client->tags_context([
+                'mage_mode' => $this->data->getAppState()
+            ]);
 
             $handler = new RavenHandler(
                 $client,
