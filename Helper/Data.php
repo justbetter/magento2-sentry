@@ -30,6 +30,7 @@ class Data extends AbstractHelper
         'domain',
         'enabled',
         'log_level',
+        'mage_mode_development'
     ];
 
     /**
@@ -107,6 +108,22 @@ class Data extends AbstractHelper
      */
     public function isProductionMode()
     {
-        return $this->appState->getMode() == 'production';
+        return $this->getAppState() == 'production';
+    }
+
+    /**
+     * @return string
+     */
+    public function getAppState()
+    {
+        return $this->appState->getMode();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function isOverwriteProductionMode()
+    {
+        return array_key_exists('mage_mode_development', $this->config) && $this->config['mage_mode_development'];
     }
 }
