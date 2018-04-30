@@ -2,7 +2,7 @@ CHANGELOG
 
 2018-04-30 - 0.2.1
 
-   * downgraded requirement for magento 2.1.x
+   * downgraded requirement monolog for magento 2.1.x
 
 2018-04-30 - 0.2.0
 
