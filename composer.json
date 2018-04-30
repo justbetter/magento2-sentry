@@ -10,7 +10,7 @@
   "require": {
     "php": ">=7.0",
     "sentry/sentry": "^1.8",
-    "monolog/monolog": "^1.17",
+    "monolog/monolog": "^1.16",
     "magento/framework": "*"
   },
   "authors": [
