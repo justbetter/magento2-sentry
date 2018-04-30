@@ -1,5 +1,9 @@
 CHANGELOG
 
+2018-04-30 - 0.2.1
+
+   * downgraded requirement monolog for magento 2.1.x
+
 2018-04-30 - 0.2.0
 
    * Feature request to test sentry in development mode (https://github.com/justbetter/magento2-sentry/issues/4)
