@@ -13,7 +13,6 @@ class LogLevel implements ArrayInterface
     public function toOptionArray()
     {
         return [
-            ['value' => Logger::DEBUG, 'label' => __('Debug (not recommended)')],
             ['value' => Logger::INFO, 'label' => __('Info')],
             ['value' => Logger::NOTICE, 'label' => __('Notice')],
             ['value' => Logger::WARNING, 'label' => __('Warning')],
