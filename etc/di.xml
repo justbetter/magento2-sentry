@@ -4,7 +4,6 @@
         <arguments>
             <argument name="name" xsi:type="string">SentryLog</argument>
             <argument name="handlers" xsi:type="array">
-                <item name="raven" xsi:type="object">Monolog\Handler\RavenHandler</item>
                 <item name="system" xsi:type="object">Magento\Framework\Logger\Handler\System</item>
             </argument>
             <argument name="processors" xsi:type="array" />
