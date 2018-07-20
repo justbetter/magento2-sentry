@@ -67,6 +67,7 @@ class ExceptionCatcher
     )
     {
         $this->data = $data;
+        $state->setAreaCode(\Magento\Framework\App\Area::AREA_GLOBAL);
         $this->state = $state;
         $this->logger = $logger;
         $this->customerSession = $catalogSession;
