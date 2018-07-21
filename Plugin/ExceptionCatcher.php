@@ -8,6 +8,7 @@ use Magento\Framework\App\Http;
 use Magento\Framework\App\Bootstrap;
 use JustBetter\Sentry\Helper\Data;
 use Magento\Framework\App\State;
+use Magento\Framework\App\Area;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RavenHandler;
 use Monolog\Logger;
@@ -67,6 +68,7 @@ class ExceptionCatcher
     )
     {
         $this->data = $data;
+        $state->setAreaCode(Area::AREA_GLOBAL);
         $this->state = $state;
         $this->logger = $logger;
         $this->customerSession = $catalogSession;
