@@ -2,13 +2,13 @@
 
 namespace JustBetter\Sentry\Model;
 
-use Magento\Framework\Logger\Monolog;
-use Magento\Customer\Model\Session;
-use JustBetter\Sentry\Helper\Data;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\RavenHandler;
-use Monolog\Logger;
 use Raven_Client;
+use Monolog\Logger;
+use Monolog\Handler\RavenHandler;
+use JustBetter\Sentry\Helper\Data;
+use Magento\Customer\Model\Session;
+use Monolog\Formatter\LineFormatter;
+use Magento\Framework\Logger\Monolog;
 
 class SentryLog extends Monolog
 {
@@ -42,8 +42,7 @@ class SentryLog extends Monolog
         array $processors = [],
         Data\Proxy $data,
         Session\Proxy $customerSession
-    )
-    {
+    ) {
         $this->data = $data;
         $this->customerSession = $customerSession;
         parent::__construct($name, $handlers, $processors);
@@ -78,7 +77,6 @@ class SentryLog extends Monolog
         $this->config = $this->data->collectModuleConfig();
 
         if ($this->data->isActive() && $logLevel >= (int) $this->config['log_level']) {
-
             $client = (new Raven_Client(
                 $this->config['domain'] ?? null
             ));

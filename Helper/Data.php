@@ -1,21 +1,20 @@
 <?php
 
-namespace JustBetter\Sentry\Helper;
-
-use Magento\Framework\App\Helper\AbstractHelper;
-use Magento\Framework\App\State;
-use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\App\Helper\Context;
-use Magento\Store\Model\ScopeInterface;
-
 /**
  * Class Data
  *
  * @package JustBetter\Sentry\Helper
  */
+
+namespace Helper;
+
+use Magento\Framework\App\State;
+use Magento\Framework\App\Helper\Context;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\App\Helper\AbstractHelper;
+
 class Data extends AbstractHelper
 {
-
     const XML_PATH_SRS = 'sentry/general/';
 
     /**
@@ -54,10 +53,10 @@ class Data extends AbstractHelper
         Context $context,
         StoreManagerInterface $storeManager,
         State $appState
-    )
-    {
+    ) {
         $this->storeManager = $storeManager;
         $this->appState = $appState;
+
         parent::__construct($context);
     }
 
@@ -69,7 +68,9 @@ class Data extends AbstractHelper
     public function getConfigValue($field, $storeId = null)
     {
         return $this->scopeConfig->getValue(
-            $field, ScopeInterface::SCOPE_STORE, $storeId
+            $field,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
         );
     }
 
@@ -100,7 +101,7 @@ class Data extends AbstractHelper
      */
     public function isActive()
     {
-        return ( ! empty($this->config) && array_key_exists('enabled', $this->config) && $this->config['enabled']);
+        return (! empty($this->config) && array_key_exists('enabled', $this->config) && $this->config['enabled']);
     }
 
     /**

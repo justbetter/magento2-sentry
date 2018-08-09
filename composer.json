@@ -6,7 +6,7 @@
   "license": "MIT",
   "require": {
     "php": ">=7.0",
-    "sentry/sentry": "^1.8",
+    "sentry/sentry": "^1.9",
     "monolog/monolog": "*",
     "magento/framework": "*"
   },

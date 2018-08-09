@@ -1,9 +1,9 @@
 define([
 	"jquery",
-	"Magento_Ui/js/modal/alert",
-	"mage/translate",
 	"jquery/ui"
-], function ($, alert, $t, validation) {
+	"mage/translate",
+	"Magento_Ui/js/modal/alert",
+], function ($, validation, $t, alert) {
 	"use strict";
 
 	$.widget('justbetter.testSentry', {

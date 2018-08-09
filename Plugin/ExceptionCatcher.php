@@ -2,16 +2,16 @@
 
 namespace JustBetter\Sentry\Plugin;
 
-use JustBetter\Sentry\Model\SentryLog;
-use Magento\Customer\Model\Session;
-use Magento\Framework\App\Http;
-use Magento\Framework\App\Bootstrap;
-use JustBetter\Sentry\Helper\Data;
-use Magento\Framework\App\State;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\RavenHandler;
-use Monolog\Logger;
 use Raven_Client;
+use Monolog\Logger;
+use Magento\Framework\App\Http;
+use Magento\Framework\App\State;
+use Monolog\Handler\RavenHandler;
+use JustBetter\Sentry\Helper\Data;
+use Magento\Customer\Model\Session;
+use Monolog\Formatter\LineFormatter;
+use Magento\Framework\App\Bootstrap;
+use JustBetter\Sentry\Model\SentryLog;
 
 class ExceptionCatcher
 {
@@ -64,8 +64,7 @@ class ExceptionCatcher
         Session $catalogSession,
         State $state,
         SentryLog $logger
-    )
-    {
+    ) {
         $this->data = $data;
         $this->state = $state;
         $this->logger = $logger;
@@ -84,8 +83,7 @@ class ExceptionCatcher
         Http $subject,
         Bootstrap $bootstrap,
         \Exception $exception
-    )
-    {
+    ) {
         $this->config = $this->data->collectModuleConfig();
 
         if ($this->data->isActive() && ($this->data->isProductionMode() || $this->data->isOverwriteProductionMode())) {
