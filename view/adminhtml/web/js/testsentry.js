@@ -1,8 +1,8 @@
 define([
 	"jquery",
-	"jquery/ui"
+	"jquery/ui",
 	"mage/translate",
-	"Magento_Ui/js/modal/alert",
+	"Magento_Ui/js/modal/alert"
 ], function ($, validation, $t, alert) {
 	"use strict";
 
