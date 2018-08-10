@@ -9,8 +9,10 @@
             <argument name="processors" xsi:type="array" />
         </arguments>
     </type>
-    <type name="Magento\Framework\App\Http">
-        <plugin disabled="false" name="ExceptionCatcher" type="\JustBetter\Sentry\Plugin\ExceptionCatcher" sortOrder="0"/>
+    <type name="Magento\Framework\Logger\Monolog">
+        <plugin disabled="false" name="jb_send_log_entry" type="JustBetter\Sentry\Plugin\MonologPlugin" sortOrder="0"/>
     </type>
-    <preference for="Magento\Framework\Logger\Monolog" type="JustBetter\Sentry\Model\SentryLog"/>
+    <type name="Magento\Framework\App\Http">
+        <plugin disabled="false" name="ExceptionCatcher" type="JustBetter\Sentry\Plugin\ExceptionCatcher" sortOrder="0"/>
+    </type>
 </config>

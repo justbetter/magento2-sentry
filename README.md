@@ -14,7 +14,7 @@ This Magento 2 module integrates the [Sentry sdk](https://github.com/getsentry/s
 - Optional you can configure custom error pages in pub/errors. You can use the sentry feedback form and insert here the sentry log ID. The Sentry Log Id is captured in de customer session and can be retrieved in `processor.php`. Soon I'll integrate this in the module.
 
 ## Compability
-The module is tested on Magento version 2.1.x & 2.2.x with sentry sdk version 1.8.x
+The module is tested on Magento version 2.1.x & 2.2.x with sentry sdk version 1.9.x
 
 ## Ideas, bugs or suggestions?
 Please create a [issue](https://github.com/justbetter/magento2-sentry/issues) or a [pull request](https://github.com/justbetter/magento2-sentry/pulls).

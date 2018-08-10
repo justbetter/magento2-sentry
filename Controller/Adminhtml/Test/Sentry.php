@@ -2,12 +2,12 @@
 
 namespace JustBetter\Sentry\Controller\Adminhtml\Test;
 
-use Magento\Backend\App\Action;
-use Magento\Backend\App\Action\Context;
-use Magento\Framework\Filesystem\DirectoryList;
-use Magento\Framework\Json\Helper\Data;
-use Magento\Framework\View\Result\PageFactory;
 use Psr\Log\LoggerInterface;
+use Magento\Backend\App\Action;
+use Magento\Framework\Json\Helper\Data;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\View\Result\PageFactory;
+use Magento\Framework\Filesystem\DirectoryList;
 
 /**
  * Class Sentry
@@ -58,8 +58,7 @@ class Sentry extends Action
         Data $jsonHelper,
         LoggerInterface $logger,
         DirectoryList $directoryList
-    )
-    {
+    ) {
         $this->resultPageFactory = $resultPageFactory;
         $this->jsonHelper        = $jsonHelper;
         $this->logger            = $logger;

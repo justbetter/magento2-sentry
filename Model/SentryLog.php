@@ -2,13 +2,14 @@
 
 namespace JustBetter\Sentry\Model;
 
-use Magento\Framework\Logger\Monolog;
-use Magento\Customer\Model\Session;
-use JustBetter\Sentry\Helper\Data;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\RavenHandler;
-use Monolog\Logger;
+use Exception;
 use Raven_Client;
+use Monolog\Logger;
+use Monolog\Handler\RavenHandler;
+use JustBetter\Sentry\Helper\Data;
+use Magento\Customer\Model\Session;
+use Monolog\Formatter\LineFormatter;
+use Magento\Framework\Logger\Monolog;
 
 class SentryLog extends Monolog
 {
@@ -38,84 +39,89 @@ class SentryLog extends Monolog
      */
     public function __construct(
         $name,
+        Data $data,
+        Session $customerSession,
         array $handlers = [],
-        array $processors = [],
-        Data\Proxy $data,
-        Session\Proxy $customerSession
-    )
-    {
+        array $processors = []
+    ) {
         $this->data = $data;
         $this->customerSession = $customerSession;
+
         parent::__construct($name, $handlers, $processors);
     }
 
-
     /**
-     * Adds a log record.
+     * Send log rule to Sentry
      *
-     * @param integer $level   The logging level
-     * @param string  $message The log message
-     * @param array   $context The log context
-     * @return Boolean Whether the record has been processed
+     * @param  string   $message    The message send to sentry
+     * @param  int      $logLevel   Number of loglevel
      */
-    public function addRecord($level, $message, array $context = [])
+    public function send($message, $logLevel, Monolog $monolog, $context = [])
     {
-        if ($this->data->isProductionMode()) {
-            $this->sendRecordToSentry($message, $level);
-        }
+        $config = $this->data->collectModuleConfig();
 
-        if ($message instanceof \Exception && ! isset($context['exception'])) {
-            $context['exception'] = $message;
-        }
+        if ($logLevel >= (int) $config['log_level']) {
+            $client = (new Raven_Client($config['domain'] ?? null));
+            $handler = new RavenHandler($client, $config['log_level'] ?? Logger::ERROR);
+            $tags = $this->getTags();
+            $userData = $this->getUserData();
 
-        $message = $message instanceof \Exception ? $message->getMessage() : $message;
-
-        return parent::addRecord($level, $message, $context);
-    }
-
-    protected function sendRecordToSentry($message, $logLevel)
-    {
-        $this->config = $this->data->collectModuleConfig();
-
-        if ($this->data->isActive() && $logLevel >= (int) $this->config['log_level']) {
-
-            $client = (new Raven_Client(
-                $this->config['domain'] ?? null
-            ));
-
-            $handler = new RavenHandler(
-                $client,
-                $this->config['log_level'] ?? Logger::ERROR
-            );
-
-            $client->tags_context([
-                'mage_mode' => $this->data->getAppState()
-            ]);
+            $client->tags_context($tags);
+            $client->user_context($userData);
 
             $handler->setFormatter(
-                new LineFormatter("%message% %context% %extra%\n")
+                new LineFormatter("%level_name%: %message% %context% %extra%\n", null, false, true)
             );
 
-            $this->pushHandler($handler);
-            $sentryId = $client->captureMessage($message);
+            $monolog->pushHandler($handler);
 
-            /** when printing this error reference on an error page for a feedback form */
-            $this->customerSession->setSentryEventId($sentryId);
+            if ($message instanceof Exception) {
+                $client->captureException($message, [
+                    'tags' => $tags,
+                    'user' => $userData
+                ]);
+            }
+
+            /// when using JS SDK you can use this for custom error page printing
+            $this->customerSession->setSentryEventId($client->getLastEventID());
         }
     }
 
-    protected function captureUserData()
+    /**
+     * Get user data if user is loggedin
+     *
+     * @return array
+     */
+    protected function getUserData()
     {
-        if ($this->customerSession && ! $this->customerSession->getCustomer()->isEmpty()) {
-            $this->pushProcessor(function ($record) {
-                $customerData = $this->customerSession->getCustomer();
+        if ($this->customerSession->isLoggedIn()) {
+            $customerData = $this->customerSession->getCustomer();
 
-                foreach ($customerData->getData() as $key => $value) {
-                    $record['content']['user'][ $key ] = $value;
-                }
-
-                return $record;
-            });
+            return [
+                'id' => $customerData->getEntityId(),
+                'email' => $customerData->getEmail(),
+                'website_id' => $customerData->getWebsiteId(),
+                'store_id' => $customerData->getStoreId(),
+            ];
         }
+
+        return [];
+    }
+
+    /**
+     * Get current tags for sentry
+     * @return array of magento 2 data
+     */
+    protected function getTags()
+    {
+        $store = $this->data->getStore();
+
+        return [
+            'mage_mode'     => $this->data->getAppState(),
+            'version'       => $this->data->getMagentoVersion(),
+            'website_id'    => $store ? $store->getWebsiteId() : null,
+            'store_id'      => $store ? $store->getStoreId() : null,
+            'store_code'    => $store ? $store->getCode() : null
+        ];
     }
 }

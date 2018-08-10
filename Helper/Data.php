@@ -2,20 +2,16 @@
 
 namespace JustBetter\Sentry\Helper;
 
-use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
-use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\App\Helper\Context;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\ProductMetadataInterface;
 
-/**
- * Class Data
- *
- * @package JustBetter\Sentry\Helper
- */
 class Data extends AbstractHelper
 {
-
     const XML_PATH_SRS = 'sentry/general/';
 
     /**
@@ -53,11 +49,21 @@ class Data extends AbstractHelper
     public function __construct(
         Context $context,
         StoreManagerInterface $storeManager,
-        State $appState
-    )
-    {
+        State $appState,
+        ProductMetadataInterface $productMetadataInterface
+    ) {
         $this->storeManager = $storeManager;
         $this->appState = $appState;
+        $this->scopeConfig = $context->getScopeConfig();
+        $this->productMetadataInterface = $productMetadataInterface;
+        $this->collectModuleConfig();
+
+        try {
+            $appState->setAreaCode(Area::AREA_GLOBAL);
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            // intentionally left empty
+        }
+
         parent::__construct($context);
     }
 
@@ -69,7 +75,9 @@ class Data extends AbstractHelper
     public function getConfigValue($field, $storeId = null)
     {
         return $this->scopeConfig->getValue(
-            $field, ScopeInterface::SCOPE_STORE, $storeId
+            $field,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
         );
     }
 
@@ -100,7 +108,7 @@ class Data extends AbstractHelper
      */
     public function isActive()
     {
-        return ( ! empty($this->config) && array_key_exists('enabled', $this->config) && $this->config['enabled']);
+        return (! empty($this->config) && array_key_exists('enabled', $this->config) && $this->config['enabled'] && ($this->isProductionMode() || $this->isOverwriteProductionMode()));
     }
 
     /**
@@ -125,5 +133,23 @@ class Data extends AbstractHelper
     public function isOverwriteProductionMode()
     {
         return array_key_exists('mage_mode_development', $this->config) && $this->config['mage_mode_development'];
+    }
+
+    /**
+     *  Get the current magento version
+     *
+     * @return string
+     */
+    public function getMagentoVersion()
+    {
+        return $this->productMetadataInterface->getVersion();
+    }
+
+    /**
+     * Get the current store
+     */
+    public function getStore()
+    {
+        return $this->storeManager ? $this->storeManager->getStore() : null;
     }
 }

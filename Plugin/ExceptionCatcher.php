@@ -2,16 +2,12 @@
 
 namespace JustBetter\Sentry\Plugin;
 
-use JustBetter\Sentry\Model\SentryLog;
-use Magento\Customer\Model\Session;
+use Exception;
 use Magento\Framework\App\Http;
-use Magento\Framework\App\Bootstrap;
 use JustBetter\Sentry\Helper\Data;
-use Magento\Framework\App\State;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\RavenHandler;
-use Monolog\Logger;
-use Raven_Client;
+use Magento\Framework\App\Bootstrap;
+use Magento\Framework\Logger\Monolog;
+use JustBetter\Sentry\Model\SentryLog;
 
 class ExceptionCatcher
 {
@@ -24,32 +20,18 @@ class ExceptionCatcher
     /**
      * @var Data
      */
-    protected $data;
+    protected $sentryHelper;
 
     /**
-     * @var
+     * @var array
      */
     protected $config;
 
     /**
-     * @var Session
+     * @var SentryLog
      */
-    protected $catalogSession;
+    protected $sentryLog;
 
-    /**
-     * @var Session
-     */
-    protected $customerSession;
-
-    /**
-     * @var State
-     */
-    protected $state;
-
-    /**
-     * @var Logger
-     */
-    protected $logger;
 
     /**
      * ExceptionCatcher constructor
@@ -61,15 +43,12 @@ class ExceptionCatcher
      */
     public function __construct(
         Data $data,
-        Session $catalogSession,
-        State $state,
-        SentryLog $logger
-    )
-    {
-        $this->data = $data;
-        $this->state = $state;
-        $this->logger = $logger;
-        $this->customerSession = $catalogSession;
+        Monolog $monolog,
+        SentryLog $sentryLog
+    ) {
+        $this->sentryHelper = $data;
+        $this->monolog = $monolog;
+        $this->sentryLog = $sentryLog;
     }
 
     /**
@@ -77,55 +56,15 @@ class ExceptionCatcher
      *
      * @param Http       $subject
      * @param Bootstrap  $bootstrap
-     * @param \Exception $exception
+     * @param Exception $exception
      * @return array
      */
-    public function beforeCatchException(
-        Http $subject,
-        Bootstrap $bootstrap,
-        \Exception $exception
-    )
+    public function beforeCatchException(Http $subject, Bootstrap $bootstrap, Exception $exception)
     {
-        $this->config = $this->data->collectModuleConfig();
-
-        if ($this->data->isActive() && ($this->data->isProductionMode() || $this->data->isOverwriteProductionMode())) {
-            $client = (new Raven_Client(
-                $this->config['domain'] ?? null
-            ));
-
-            $client->tags_context([
-                'mage_mode' => $this->data->getAppState()
-            ]);
-
-            $handler = new RavenHandler(
-                $client,
-                $this->config['log_level'] ?? Logger::ERROR
-            );
-
-            $handler->setFormatter(
-                new LineFormatter("%message% %context% %extra%\n")
-            );
-
-            $this->logger->pushHandler($handler);
-            $this->captureUserData();
-            $this->customerSession->setSentryEventId($client->captureException($exception));
+        if ($this->sentryHelper->isActive()) {
+            $this->sentryLog->send($exception, 500, $this->monolog);
         }
 
         return [$bootstrap, $exception];
-    }
-
-    protected function captureUserData()
-    {
-        if ($this->customerSession && ! $this->customerSession->getCustomer()->isEmpty()) {
-            $this->logger->pushProcessor(function ($record) {
-                $customerData = $this->customerSession->getCustomer();
-
-                foreach ($customerData->getData() as $key => $value) {
-                    $record['content']['user'][ $key ] = $value;
-                }
-
-                return $record;
-            });
-        }
     }
 }
