@@ -8,7 +8,7 @@ use JustBetter\Sentry\Helper\Data;
 use Magento\Framework\Logger\Monolog;
 use JustBetter\Sentry\Model\SentryLog;
 
-class MonologPlugin
+class MonologPlugin extends Monolog
 {
     /**
      * @var Data
@@ -21,27 +21,30 @@ class MonologPlugin
     protected $sentryLog;
 
     /**
-     * @param Data $data
-     */
-    public function __construct(Data $data, SentryLog $sentryLog)
+    * {@inheritdoc}
+    */
+    public function __construct($name, Data\Proxy $data, SentryLog\Proxy $sentryLog, array $handlers = [], array $processors = [])
     {
         $this->sentryHelper = $data;
         $this->sentryLog = $sentryLog;
+
+        parent::__construct($name, $handlers, $processors);
     }
 
     /**
-     * Before adding monolog record, send it to Sentry
-     * This send all magento system logs
+     * Adds a log record to Sentry
      *
-     * @param  Monolog  $monolog
-     * @param  int      $level
-     * @param  string   $message
-     * @param  array   $context
+     * @param integer $level The logging level
+     * @param string $message The log message
+     * @param array $context The log context
+     * @return Boolean Whether the record has been processed
      */
-    public function beforeAddRecord(Monolog $monolog, $level, $message, array $context = [])
+    public function addRecord($level, $message, array $context = [])
     {
         if ($this->sentryHelper->isActive()) {
-            $this->sentryLog->send($message, $level, $monolog, $context);
+            $this->sentryLog->send($message, $level, $this, $context);
         }
+
+        return parent::addRecord($level, $message, $context);
     }
 }
