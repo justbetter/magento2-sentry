@@ -1,5 +1,10 @@
 CHANGELOG
 
+2018-08-15 - 0.4.1
+
+   * Removed plugin in di.xml to prevent fatal crash on storefrontend
+   * Restored preference in di.xml
+
 2018-08-10 - 0.4.0
 
    * Refactor of overwrite to plugin with monolog
