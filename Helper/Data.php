@@ -58,12 +58,6 @@ class Data extends AbstractHelper
         $this->productMetadataInterface = $productMetadataInterface;
         $this->collectModuleConfig();
 
-        try {
-            $appState->setAreaCode(Area::AREA_GLOBAL);
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            // intentionally left empty
-        }
-
         parent::__construct($context);
     }
 
@@ -108,6 +102,13 @@ class Data extends AbstractHelper
      */
     public function isActive()
     {
+        try {
+            $this->appState->setAreaCode(Area::AREA_GLOBAL);
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            // intentionally left empty
+            // var_dump($e);
+        }
+
         return (! empty($this->config) && array_key_exists('enabled', $this->config) && $this->config['enabled'] && ($this->isProductionMode() || $this->isOverwriteProductionMode()));
     }
 

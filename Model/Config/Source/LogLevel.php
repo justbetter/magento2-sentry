@@ -2,8 +2,8 @@
 
 namespace JustBetter\Sentry\Model\Config\Source;
 
-use Magento\Framework\Option\ArrayInterface;
 use Monolog\Logger;
+use Magento\Framework\Option\ArrayInterface;
 
 class LogLevel implements ArrayInterface
 {
@@ -13,7 +13,6 @@ class LogLevel implements ArrayInterface
     public function toOptionArray()
     {
         return [
-            ['value' => Logger::INFO, 'label' => __('Info')],
             ['value' => Logger::NOTICE, 'label' => __('Notice')],
             ['value' => Logger::WARNING, 'label' => __('Warning')],
             ['value' => Logger::CRITICAL, 'label' => __('Critical')],
