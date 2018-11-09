@@ -8,6 +8,7 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\App\ProductMetadataInterface;
 
 class Data extends AbstractHelper
@@ -102,13 +103,6 @@ class Data extends AbstractHelper
      */
     public function isActive()
     {
-        try {
-            $this->appState->setAreaCode(Area::AREA_GLOBAL);
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            // intentionally left empty
-            // var_dump($e);
-        }
-
         return (! empty($this->config) && array_key_exists('enabled', $this->config) && $this->config['enabled'] && ($this->isProductionMode() || $this->isOverwriteProductionMode()));
     }
 
@@ -117,6 +111,12 @@ class Data extends AbstractHelper
      */
     public function isProductionMode()
     {
+        try {
+            $this->appState->setAreaCode(Area::AREA_GLOBAL);
+        } catch (LocalizedException $e) {
+            //intentionally left empty
+        }
+
         return $this->getAppState() == 'production';
     }
 
