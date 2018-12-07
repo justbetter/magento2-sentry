@@ -40,7 +40,7 @@ class SentryLog extends Monolog
     public function __construct(
         $name,
         Data $data,
-        Session $customerSession,
+        Session\Proxy $customerSession,
         array $handlers = [],
         array $processors = []
     ) {

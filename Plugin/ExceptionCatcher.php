@@ -41,11 +41,7 @@ class ExceptionCatcher
      * @param State     $state
      * @param SentryLog $logger
      */
-    public function __construct(
-        Data $data,
-        Monolog $monolog,
-        SentryLog $sentryLog
-    ) {
+    public function __construct(Data $data, Monolog $monolog, SentryLog $sentryLog) {
         $this->sentryHelper = $data;
         $this->monolog = $monolog;
         $this->sentryLog = $sentryLog;

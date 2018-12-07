@@ -47,11 +47,7 @@ class Data extends AbstractHelper
      * @param StoreManagerInterface $storeManager
      * @param State                 $appState
      */
-    public function __construct(
-        Context $context,
-        StoreManagerInterface $storeManager,
-        State $appState,
-        ProductMetadataInterface $productMetadataInterface
+    public function __construct(Context $context, StoreManagerInterface $storeManager, State $appState, ProductMetadataInterface $productMetadataInterface
     ) {
         $this->storeManager = $storeManager;
         $this->appState = $appState;
@@ -111,13 +107,7 @@ class Data extends AbstractHelper
      */
     public function isProductionMode()
     {
-        try {
-            $this->appState->setAreaCode(Area::AREA_GLOBAL);
-        } catch (LocalizedException $e) {
-            //intentionally left empty
-        }
-
-        return $this->getAppState() == 'production';
+        return $this->appState->emulateAreaCode(Area::AREA_GLOBAL, [$this, 'getAppState']) == 'production';
     }
 
     /**
