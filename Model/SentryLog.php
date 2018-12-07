@@ -61,7 +61,10 @@ class SentryLog extends Monolog
         $config = $this->data->collectModuleConfig();
 
         if ($logLevel >= (int) $config['log_level']) {
-            $client = (new Raven_Client($config['domain'] ?? null));
+            $client = new Raven_Client($config['domain'] ?? null, [
+                'ignore_server_port'    => true,
+                'curl_method'           => 'async'
+            ]);
             $handler = new RavenHandler($client, $config['log_level'] ?? Logger::ERROR);
             $tags = $this->getTags();
             $userData = $this->getUserData();
