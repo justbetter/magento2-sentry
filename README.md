@@ -26,8 +26,8 @@ Please create a [issue](https://github.com/justbetter/magento2-sentry/issues) or
 - Integrate feedback sentry form in error pages
 - Integrate Raven Client options described here: [sentry-php](https://github.com/getsentry/sentry-php/blob/master/docs/config.rst)
 
-## Abous Us
-We're a innovative development agency from The Netherlands building awesome websites, webshops and web applications with Laravel and Magento. Check out our website [justbetter.nl](https://justbetter.nl) and our open source projects at [GitHub](https://github.com/justbetter)
+## About us
+We’re a innovative development agency from The Netherlands building awesome websites, webshops and web applications with Laravel and Magento. Check out our website [justbetter.nl](https://justbetter.nl) and our [open source projects](https://github.com/justbetter).
 
 ## License
 [MIT](LICENSE)
