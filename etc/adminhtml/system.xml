@@ -23,6 +23,10 @@
                     <label>Sentry domain</label>
                     <comment>The domain of sentry</comment>
                 </field>
+                <field id="environment" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Sentry environment</label>
+                    <comment>The environment of sentry</comment>
+                </field>
                 <field id="log_level" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Log Level</label>
                     <comment>Minimum log level to send to Sentry</comment>

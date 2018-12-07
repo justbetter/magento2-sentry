@@ -62,6 +62,11 @@ class SentryLog extends Monolog
 
         if ($logLevel >= (int) $config['log_level']) {
             $client = (new Raven_Client($config['domain'] ?? null));
+
+            if(!is_null($config['environment'])) {
+                $client->setEnvironment($config['environment']);
+            }
+            
             $handler = new RavenHandler($client, $config['log_level'] ?? Logger::ERROR);
             $tags = $this->getTags();
             $userData = $this->getUserData();
