@@ -27,7 +27,8 @@ class Data extends AbstractHelper
         'domain',
         'enabled',
         'log_level',
-        'mage_mode_development'
+        'mage_mode_development',
+        'environment'
     ];
 
     /**
