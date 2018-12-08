@@ -40,7 +40,7 @@ class SentryLog extends Monolog
     public function __construct(
         $name,
         Data $data,
-        Session $customerSession,
+        Session\Proxy $customerSession,
         array $handlers = [],
         array $processors = []
     ) {
@@ -61,12 +61,15 @@ class SentryLog extends Monolog
         $config = $this->data->collectModuleConfig();
 
         if ($logLevel >= (int) $config['log_level']) {
-            $client = (new Raven_Client($config['domain'] ?? null));
+            $client = new Raven_Client($config['domain'] ?? null, [
+                'ignore_server_port'    => true,
+                'curl_method'           => 'async'
+            ]);
 
             if (!is_null($config['environment'])) {
                 $client->setEnvironment($config['environment']);
             }
-            
+
             $handler = new RavenHandler($client, $config['log_level'] ?? Logger::ERROR);
             $tags = $this->getTags();
             $userData = $this->getUserData();
