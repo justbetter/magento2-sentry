@@ -1,5 +1,15 @@
 CHANGELOG
 
+2019-02-13 - 0.5.1
+
+    * Support for setting environment (https://github.com/justbetter/magento2-sentry/pull/12)
+
+2018-12-07 - 0.5.0
+
+    * Send extra parameters to sentry (https://github.com/justbetter/magento2-sentry/issues/11)
+    * Added Magento 2.3.x support & dropped 2.1.x support
+    * Fixed area code not set or already set
+
 2018-10-17 - 0.4.2
 
     * Bugfix with area code already set - removed area code from constructor with causes problems at random cases. (https://github.com/justbetter/magento2-sentry/issues/10)
