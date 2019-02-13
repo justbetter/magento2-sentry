@@ -4,7 +4,11 @@
 /** @var \JustBetter\Sentry\Helper\Data $helper */
 $helper = $this->helper(\JustBetter\Sentry\Helper\Data::class);
 
-if (!$helper->isActive()) {
+if (
+    !$helper->isActive() ||
+    !$helper->useScriptTag() ||
+    !$helper->showScriptTagInThisBlock($block->getNameInLayout())
+) {
     return;
 }
 ?>
