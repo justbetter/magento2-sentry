@@ -65,6 +65,11 @@ class SentryLog extends Monolog
                 'ignore_server_port'    => true,
                 'curl_method'           => 'async'
             ]);
+
+            if (!is_null($config['environment'])) {
+                $client->setEnvironment($config['environment']);
+            }
+
             $handler = new RavenHandler($client, $config['log_level'] ?? Logger::ERROR);
             $tags = $this->getTags();
             $userData = $this->getUserData();
