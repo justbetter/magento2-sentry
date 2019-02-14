@@ -1,5 +1,9 @@
 CHANGELOG
 
+2019-02-14 - 0.6.0
+
+    * Added Sentry script tag to catch javascript errors (https://github.com/justbetter/magento2-sentry/pull/13)
+
 2019-02-13 - 0.5.1
 
     * Support for setting environment (https://github.com/justbetter/magento2-sentry/pull/12)
