@@ -1,0 +1,17 @@
+<?php
+/** @var \Magento\Framework\View\Element\Template $block */
+
+/** @var \JustBetter\Sentry\Helper\Data $helper */
+$helper = $this->helper(\JustBetter\Sentry\Helper\Data::class);
+
+if (
+    !$helper->isActive() ||
+    !$helper->useScriptTag() ||
+    !$helper->showScriptTagInThisBlock($block->getNameInLayout())
+) {
+    return;
+}
+?>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
+<script src="https://browser.sentry-cdn.com/4.5.3/bundle.min.js"></script>
+<script>Sentry.init({ dsn: '<?php echo trim($helper->getGeneralConfig('domain')) ?>' });</script>

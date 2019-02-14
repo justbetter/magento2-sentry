@@ -28,7 +28,9 @@ class Data extends AbstractHelper
         'enabled',
         'log_level',
         'mage_mode_development',
-        'environment'
+        'environment',
+        'enable_script_tag',
+        'script_tag_placement',
     ];
 
     /**
@@ -143,5 +145,28 @@ class Data extends AbstractHelper
     public function getStore()
     {
         return $this->storeManager ? $this->storeManager->getStore() : null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function useScriptTag()
+    {
+        return isset($this->config['enable_script_tag']) && $this->config['enable_script_tag'];
+    }
+
+    /**
+     * @param $blockName
+     * @return bool
+     */
+    public function showScriptTagInThisBlock($blockName)
+    {
+        if (!isset($this->config['script_tag_placement'])) {
+            return false;
+        }
+
+        $name = 'sentry.' . $this->config['script_tag_placement'];
+
+        return $name == $blockName;
     }
 }
