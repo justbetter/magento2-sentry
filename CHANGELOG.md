@@ -1,5 +1,9 @@
 CHANGELOG
 
+2019-02-14 - 0.6.1
+
+    * Added missing files of PR 13 (https://github.com/justbetter/magento2-sentry/pull/16)
+
 2019-02-14 - 0.6.0
 
     * Added Sentry script tag to catch javascript errors (https://github.com/justbetter/magento2-sentry/pull/13)
