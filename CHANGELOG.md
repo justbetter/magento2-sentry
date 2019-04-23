@@ -1,5 +1,13 @@
 CHANGELOG
 
+2019-04-23 - 0.7.0
+
+    * Merged pull request avoiding magento crash (https://github.com/justbetter/magento2-sentry/pull/19)
+
+2019-04-05 - 0.6.2
+
+    * Fixed issues useing referenceBlock when adding scripts (https://github.com/justbetter/magento2-sentry/issues/18)
+
 2019-02-14 - 0.6.1
 
     * Added missing files of PR 13 (https://github.com/justbetter/magento2-sentry/pull/16)
