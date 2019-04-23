@@ -10,6 +10,7 @@ use JustBetter\Sentry\Helper\Data;
 use Magento\Customer\Model\Session;
 use Monolog\Formatter\LineFormatter;
 use Magento\Framework\Logger\Monolog;
+use Magento\Framework\Exception\SessionException;
 
 class SentryLog extends Monolog
 {
@@ -91,7 +92,9 @@ class SentryLog extends Monolog
             }
 
             /// when using JS SDK you can use this for custom error page printing
-            $this->customerSession->setSentryEventId($client->getLastEventID());
+            try {
+                $this->customerSession->setSentryEventId($client->getLastEventID());
+            } catch (SessionException $e) {}
         }
     }
 
@@ -102,16 +105,18 @@ class SentryLog extends Monolog
      */
     protected function getUserData()
     {
-        if ($this->customerSession->isLoggedIn()) {
-            $customerData = $this->customerSession->getCustomer();
+        try {
+            if ($this->customerSession->isLoggedIn()) {
+                $customerData = $this->customerSession->getCustomer();
 
-            return [
-                'id' => $customerData->getEntityId(),
-                'email' => $customerData->getEmail(),
-                'website_id' => $customerData->getWebsiteId(),
-                'store_id' => $customerData->getStoreId(),
-            ];
-        }
+                return [
+                    'id' => $customerData->getEntityId(),
+                    'email' => $customerData->getEmail(),
+                    'website_id' => $customerData->getWebsiteId(),
+                    'store_id' => $customerData->getStoreId(),
+                ];
+            }
+        } catch (SessionException $e) {}
 
         return [];
     }
