@@ -12,6 +12,6 @@ if (
     return;
 }
 ?>
-<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
-<script src="https://browser.sentry-cdn.com/4.5.3/bundle.min.js"></script>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise" async crossorigin></script>
+<script src="https://browser.sentry-cdn.com/4.5.3/bundle.min.js" async crossorigin></script>
 <script>Sentry.init({ dsn: '<?php echo trim($helper->getGeneralConfig('domain')) ?>' });</script>
