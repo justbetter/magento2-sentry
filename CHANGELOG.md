@@ -1,5 +1,9 @@
 CHANGELOG
 
+2019-06-19 - 0.7.1
+
+    * Added async and crossorigin attribute to script tags
+
 2019-04-23 - 0.7.0
 
     * Merged pull request avoiding magento crash (https://github.com/justbetter/magento2-sentry/pull/19)
