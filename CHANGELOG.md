@@ -1,5 +1,9 @@
 CHANGELOG
 
+2019-06-19 - 0.7.2
+
+    * Reverted async attribute
+
 2019-06-19 - 0.7.1
 
     * Added async and crossorigin attribute to script tags
