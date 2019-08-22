@@ -81,7 +81,7 @@ class Sentry extends Action
         if ($sentryDomain && is_dir($composerBin)) {
             try {
                 $result['status']  = true;
-                $result['content'] = nl2br(shell_exec($composerBin.'sentry test '.$sentryDomain.' -v'));
+                $result['content'] = nl2br(shell_exec($composerBin . 'sentry test ' . escapeshellarg($sentryDomain) . ' -v'));
             } catch (\Exception $e) {
                 $result['content'] = $e->getMessage();
                 $this->logger->critical($e);
