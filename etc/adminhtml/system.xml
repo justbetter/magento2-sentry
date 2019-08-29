@@ -25,11 +25,12 @@
                 </field>
                 <field id="domain" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Sentry domain</label>
-                    <comment>The domain of sentry</comment>
+                    <comment><![CDATA[The domain of sentry (Data Source Name). Sentry will provide this value once you create a project. Will be a string like <pre><code>https://7a83f8de8fe04f5194742a7bbd401ed8@sentry.io/1734931</code></pre>]]></comment>
                 </field>
                 <field id="environment" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Sentry environment</label>
-                    <comment>The environment of sentry</comment>
+                    <comment><![CDATA[The environment to send to Sentry (optional). Can be any arbitrary string (e.g., "staging" or "production"). Refer to the <a href="https://docs.sentry.io/enriching-error-data/environments/?platform=php
+" target="_blank">Sentry documentation</a> for details.]]></comment>
                 </field>
                 <field id="script_tag_placement" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Script tag location</label>
