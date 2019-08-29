@@ -2,11 +2,12 @@
 
 namespace JustBetter\Sentry\Plugin;
 
-use Magento\Framework\App\Area;
-use Magento\Framework\App\State;
 use JustBetter\Sentry\Helper\Data;
-use Magento\Framework\Logger\Monolog;
 use JustBetter\Sentry\Model\SentryLog;
+use Magento\Framework\App\Area;
+use Magento\Framework\App\DeploymentConfig;
+use Magento\Framework\App\State;
+use Magento\Framework\Logger\Monolog;
 
 class MonologPlugin extends Monolog
 {
@@ -21,12 +22,24 @@ class MonologPlugin extends Monolog
     protected $sentryLog;
 
     /**
-    * {@inheritdoc}
-    */
-    public function __construct($name, Data\Proxy $data, SentryLog\Proxy $sentryLog, array $handlers = [], array $processors = [])
-    {
+     * @var DeploymentConfig
+     */
+    protected $deploymentConfig;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(
+        $name,
+        Data\Proxy $data,
+        SentryLog\Proxy $sentryLog,
+        DeploymentConfig\Proxy $deploymentConfig,
+        array $handlers = [],
+        array $processors = []
+    ) {
         $this->sentryHelper = $data;
         $this->sentryLog = $sentryLog;
+        $this->deploymentConfig = $deploymentConfig;
 
         parent::__construct($name, $handlers, $processors);
     }
@@ -41,7 +54,7 @@ class MonologPlugin extends Monolog
      */
     public function addRecord($level, $message, array $context = [])
     {
-        if ($this->sentryHelper->isActive()) {
+        if ($this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive()) {
             $this->sentryLog->send($message, $level, $this, $context);
         }
 
