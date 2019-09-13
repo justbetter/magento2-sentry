@@ -10,7 +10,7 @@
     "monolog/monolog": "*",
     "magento/framework": "*",
     "php-http/curl-client": "^2.0",
-    "guzzlehttp/psr7": "^1.6"
+    "nyholm/psr7": "^1.2"
   },
   "authors": [
     {
