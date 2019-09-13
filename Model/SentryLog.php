@@ -2,15 +2,14 @@
 
 namespace JustBetter\Sentry\Model;
 
-use Exception;
-use Raven_Client;
-use Monolog\Logger;
-use Monolog\Handler\RavenHandler;
 use JustBetter\Sentry\Helper\Data;
 use Magento\Customer\Model\Session;
-use Monolog\Formatter\LineFormatter;
-use Magento\Framework\Logger\Monolog;
+use Magento\Framework\App\Area;
+use Magento\Framework\App\State;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\SessionException;
+use Magento\Framework\Logger\Monolog;
+use Sentry\State\Scope as SentryScope;
 
 class SentryLog extends Monolog
 {
@@ -28,6 +27,8 @@ class SentryLog extends Monolog
      * @var array
      */
     protected $config = [];
+    /** @var State */
+    private $appState;
 
     /**
      * SentryLog constructor.
@@ -36,105 +37,88 @@ class SentryLog extends Monolog
      * @param array           $handlers
      * @param array           $processors
      * @param Data|Data\Proxy $data
-     * @param Session\Proxy   $customerSession
+     * @param Session   $customerSession
      */
     public function __construct(
         $name,
         Data $data,
-        Session\Proxy $customerSession,
+        Session $customerSession,
+        State $appState,
         array $handlers = [],
         array $processors = []
     ) {
         $this->data = $data;
         $this->customerSession = $customerSession;
+        $this->appState = $appState;
 
         parent::__construct($name, $handlers, $processors);
     }
 
     /**
-     * Send log rule to Sentry
-     *
-     * @param  string   $message    The message send to sentry
-     * @param  int      $logLevel   Number of loglevel
+     * @param $message
+     * @param $logLevel
+     * @param Monolog $monolog
+     * @param array $context
      */
     public function send($message, $logLevel, Monolog $monolog, $context = [])
     {
         $config = $this->data->collectModuleConfig();
 
-        if ($logLevel >= (int) $config['log_level']) {
-            $client = new Raven_Client($config['domain'] ?? null, [
-                'ignore_server_port'    => true,
-                'curl_method'           => 'async'
+        if ($logLevel < (int) $config['log_level']) {
+            return;
+        }
+
+        \Sentry\configureScope(function(SentryScope $scope): void {
+            $this->setTags($scope);
+            $this->setUser($scope);
+        });
+
+        if ($message instanceof \Throwable) {
+            $lastEventId = \Sentry\captureException($message);
+        } else {
+            $lastEventId = \Sentry\captureMessage($message, \Sentry\Severity::fromError($logLevel));
+        }
+
+        /// when using JS SDK you can use this for custom error page printing
+        try {
+            $this->customerSession->setSentryEventId($lastEventId);
+        } catch (SessionException $e) {}
+    }
+
+    private function setUser(SentryScope $scope): void
+    {
+        try {
+            if (!$this->canGetCustomerData()
+                || !$this->customerSession->isLoggedIn()) {
+                return;
+            }
+
+            $customerData = $this->customerSession->getCustomer();
+            $scope->setUser([
+                'id' => $customerData->getEntityId(),
+                'email' => $customerData->getEmail(),
+                'website_id' => $customerData->getWebsiteId(),
+                'store_id' => $customerData->getStoreId(),
             ]);
+        } catch (SessionException $e) {}
+    }
 
-            if (!is_null($config['environment'])) {
-                $client->setEnvironment($config['environment']);
-            }
-
-            $handler = new RavenHandler($client, $config['log_level'] ?? Logger::ERROR);
-            $tags = $this->getTags();
-            $userData = $this->getUserData();
-
-            $client->tags_context($tags);
-            $client->user_context($userData);
-
-            $handler->setFormatter(
-                new LineFormatter("%level_name%: %message% %context% %extra%\n", null, false, true)
-            );
-
-            $monolog->pushHandler($handler);
-
-            if ($message instanceof Exception) {
-                $client->captureException($message, [
-                    'tags' => $tags,
-                    'user' => $userData
-                ]);
-            }
-
-            /// when using JS SDK you can use this for custom error page printing
-            try {
-                $this->customerSession->setSentryEventId($client->getLastEventID());
-            } catch (SessionException $e) {}
+    private function canGetCustomerData()
+    {
+        try {
+            return $this->appState->getAreaCode() === Area::AREA_FRONTEND;
+        } catch (LocalizedException $ex) {
+            return false;
         }
     }
 
-    /**
-     * Get user data if user is loggedin
-     *
-     * @return array
-     */
-    protected function getUserData()
-    {
-        try {
-            if ($this->customerSession->isLoggedIn()) {
-                $customerData = $this->customerSession->getCustomer();
-
-                return [
-                    'id' => $customerData->getEntityId(),
-                    'email' => $customerData->getEmail(),
-                    'website_id' => $customerData->getWebsiteId(),
-                    'store_id' => $customerData->getStoreId(),
-                ];
-            }
-        } catch (SessionException $e) {}
-
-        return [];
-    }
-
-    /**
-     * Get current tags for sentry
-     * @return array of magento 2 data
-     */
-    protected function getTags()
+    private function setTags(SentryScope $scope): void
     {
         $store = $this->data->getStore();
-
-        return [
-            'mage_mode'     => $this->data->getAppState(),
-            'version'       => $this->data->getMagentoVersion(),
-            'website_id'    => $store ? $store->getWebsiteId() : null,
-            'store_id'      => $store ? $store->getStoreId() : null,
-            'store_code'    => $store ? $store->getCode() : null
-        ];
+        $scope->setTag('mage_mode', $this->data->getAppState());
+        $scope->setTag('version', $this->data->getMagentoVersion());
+        $scope->setTag('website_id', $store ? $store->getWebsiteId() : null);
+        $scope->setTag('store_id', $store ? $store->getStoreId() : null);
+        $scope->setTag('store_code', $store ? $store->getCode() : null);
     }
 }
