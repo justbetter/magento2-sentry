@@ -10,6 +10,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\App\ProductMetadataInterface;
+use Magento\Framework\App\DeploymentConfig;
 
 class Data extends AbstractHelper
 {
@@ -25,12 +26,9 @@ class Data extends AbstractHelper
      */
     protected $configKeys = [
         'domain',
-        'enabled',
         'log_level',
         'mage_mode_development',
         'environment',
-        'enable_script_tag',
-        'script_tag_placement',
     ];
 
     /**
@@ -50,12 +48,18 @@ class Data extends AbstractHelper
      * @param StoreManagerInterface $storeManager
      * @param State                 $appState
      */
-    public function __construct(Context $context, StoreManagerInterface $storeManager, State $appState, ProductMetadataInterface $productMetadataInterface
+    public function __construct(
+        Context $context,
+        StoreManagerInterface $storeManager,
+        State $appState,
+        ProductMetadataInterface $productMetadataInterface,
+        DeploymentConfig $deploymentConfig
     ) {
         $this->storeManager = $storeManager;
         $this->appState = $appState;
         $this->scopeConfig = $context->getScopeConfig();
         $this->productMetadataInterface = $productMetadataInterface;
+        $this->deploymentConfig = $deploymentConfig;
         $this->collectModuleConfig();
 
         parent::__construct($context);
@@ -90,8 +94,10 @@ class Data extends AbstractHelper
      */
     public function collectModuleConfig()
     {
-        foreach ($this->configKeys as $key => $value) {
-            $this->config[ $value ] = $this->getGeneralConfig($value);
+        $this->config['enabled'] = $this->deploymentConfig->get('sentry') !== null;
+
+        foreach ($this->configKeys as $value) {
+            $this->config[$value] = $this->deploymentConfig->get('sentry/' . $value);
         }
 
         return $this->config;
@@ -152,7 +158,7 @@ class Data extends AbstractHelper
      */
     public function useScriptTag()
     {
-        return isset($this->config['enable_script_tag']) && $this->config['enable_script_tag'];
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS . 'enable_script_tag');
     }
 
     /**
@@ -161,11 +167,12 @@ class Data extends AbstractHelper
      */
     public function showScriptTagInThisBlock($blockName)
     {
-        if (!isset($this->config['script_tag_placement'])) {
+        $config = $this->getGeneralConfig('script_tag_placement');
+        if (!$config) {
             return false;
         }
 
-        $name = 'sentry.' . $this->config['script_tag_placement'];
+        $name = 'sentry.' . $config;
 
         return $name == $blockName;
     }
