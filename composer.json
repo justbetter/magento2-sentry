@@ -2,19 +2,27 @@
   "name": "justbetter/magento2-sentry",
   "description": "Magento 2 Logger for Sentry",
   "type": "magento2-module",
-  "version": "0.7.0",
+  "version": "2.0.0",
   "license": "MIT",
   "require": {
     "php": ">=7.0",
-    "sentry/sentry": "^1.10",
+    "sentry/sdk": "^2.0",
     "monolog/monolog": "*",
-    "magento/framework": "*"
+    "magento/framework": "*",
+    "php-http/curl-client": "^2.0",
+    "nyholm/psr7": "^1.2"
   },
   "authors": [
     {
       "name": "Rakhal Imming",
       "email": "rakhal@justbetter.nl",
       "homepage": "https://justbetter.nl",
+      "role": "Developer"
+    },
+    {
+      "name": "Joseph Maxwell",
+      "email": "joseph@swiftotter.com",
+      "homepage": "https://swiftotter.com",
       "role": "Developer"
     }
   ],
