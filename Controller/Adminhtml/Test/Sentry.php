@@ -8,6 +8,7 @@ use Magento\Framework\Json\Helper\Data;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\Filesystem\DirectoryList;
+use Magento\Framework\ShellInterface;
 
 /**
  * Class Sentry
@@ -44,6 +45,11 @@ class Sentry extends Action
     protected $directoryList;
 
     /**
+     * @var ShellInterface
+     */
+    private $shellBackground;
+
+    /**
      * Sentry constructor.
      *
      * @param \Magento\Backend\App\Action\Context        $context
@@ -57,12 +63,14 @@ class Sentry extends Action
         PageFactory $resultPageFactory,
         Data $jsonHelper,
         LoggerInterface $logger,
-        DirectoryList $directoryList
+        DirectoryList $directoryList,
+        ShellInterface $shellBackground
     ) {
         $this->resultPageFactory = $resultPageFactory;
         $this->jsonHelper        = $jsonHelper;
         $this->logger            = $logger;
         $this->directoryList     = $directoryList;
+        $this->shellBackground   = $shellBackground;
 
         parent::__construct($context);
     }
@@ -81,9 +89,13 @@ class Sentry extends Action
         if ($sentryDomain && is_dir($composerBin)) {
             try {
                 $result['status']  = true;
-                $result['content'] = nl2br(shell_exec(
-                    $composerBin . 'sentry test ' . escapeshellarg($sentryDomain) . ' -v'
-                ));
+                $result['content'] = nl2br(
+                    $this->shellBackground->execute(
+                        $composerBin . 'sentry test ' . escapeshellarg($sentryDomain),
+                        ['-v']
+                    )
+                );
+
             } catch (\Exception $e) {
                 $result['content'] = $e->getMessage();
                 $this->logger->critical($e);
@@ -91,7 +103,6 @@ class Sentry extends Action
         } else {
             $result['content'] = __('Sentry Domain not filled or composer bin not found!');
         }
-
 
         return $this->getResponse()->representJson(
             $this->jsonHelper->jsonEncode($result)
