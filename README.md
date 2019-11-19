@@ -10,7 +10,18 @@ This Magento 2 module integrates the [Sentry sdk](https://github.com/getsentry/s
 - `bin/magento setup:static-content:deploy`
 
 ## Configuration
-- Options for the module are defined in the backend under Stores > Configuration > JustBetter > Sentry configuration
+This module uses the [Magento Deployment Configuration](https://devdocs.magento.com/guides/v2.3/config-guide/config/config-php.html) for most it's configuration. This means that you need to add this array to your `app/etc/env.php`:
+
+```
+'sentry' => [
+    'domain' => 'example.com',
+    'environment' => null,
+    'log_level' => \Monolog\Logger::WARNING,
+    'isOverwriteProductionMode' => false,
+]
+```
+
+Next to that there are some configuration options under Stores > Configuration > JustBetter > Sentry.
 
 ## Optional error page configuration
 - Optional you can configure custom error pages in pub/errors. You can use the sentry feedback form and insert here the sentry log ID. The Sentry Log Id is captured in de customer session and can be retrieved in `processor.php`. Soon I'll integrate this in the module.
