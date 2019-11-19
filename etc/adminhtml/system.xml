@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="justbetter" translate="label" sortOrder="10">
+        <tab id="justbetter" translate="label" sortOrder="2000">
             <label>JustBetter</label>
         </tab>
         <section id="sentry" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -11,40 +11,22 @@
             <resource>JustBetter_Sentry::configuration</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Sentry general config</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Sentry enabled</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <field id="deployment_config_info" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Deployment config info</label>
+                    <frontend_model>JustBetter\Sentry\Block\Adminhtml\System\Config\DeploymentConfigInfo</frontend_model>
                 </field>
                 <field id="enable_script_tag" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Enable Sentry script tag</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="mage_mode_development" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Send errors in development mode</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="domain" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Sentry domain</label>
-                    <comment><![CDATA[The domain of sentry (Data Source Name). Sentry will provide this value once you create a project. Will be a string like <pre><code>https://7a83f8de8fe04f5194742a7bbd401ed8@sentry.io/1734931</code></pre>]]></comment>
-                </field>
-                <field id="environment" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Sentry environment</label>
-                    <comment><![CDATA[The environment to send to Sentry (optional). Can be any arbitrary string (e.g., "staging" or "production"). Refer to the <a href="https://docs.sentry.io/enriching-error-data/environments/?platform=php
-" target="_blank">Sentry documentation</a> for details.]]></comment>
-                </field>
-                <field id="script_tag_placement" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="script_tag_placement" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Script tag location</label>
                     <source_model>JustBetter\Sentry\Model\Config\Source\ScriptTagPlacement</source_model>
                     <depends>
                         <field id="enable_script_tag">1</field>
                     </depends>
                 </field>
-                <field id="log_level" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Log Level</label>
-                    <comment>Minimum log level to send to Sentry</comment>
-                    <source_model>JustBetter\Sentry\Model\Config\Source\LogLevel</source_model>
-                </field>
-                <field id="sent" translate="label" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="sent" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <button_label>Send sentry test event</button_label>
                     <button_url>justbetter_sentry/test/sentry</button_url>
                     <frontend_model>JustBetter\Sentry\Block\Adminhtml\System\Config\Button</frontend_model>

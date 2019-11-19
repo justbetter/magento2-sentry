@@ -7,11 +7,12 @@
                 <item name="system" xsi:type="object">Magento\Framework\Logger\Handler\System</item>
             </argument>
             <argument name="processors" xsi:type="array" />
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
         </arguments>
     </type>
      <!-- Cannot use plugin https://github.com/magento/magento2/issues/14950 -->
     <preference for="Magento\Framework\Logger\Monolog" type="JustBetter\Sentry\Plugin\MonologPlugin" />
-    <type name="Magento\Framework\App\Http">
-        <plugin disabled="false" name="ExceptionCatcher" type="JustBetter\Sentry\Plugin\ExceptionCatcher" sortOrder="0"/>
+    <type name="Magento\Framework\AppInterface">
+        <plugin disabled="false" name="GlobalExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher" sortOrder="0"/>
     </type>
 </config>

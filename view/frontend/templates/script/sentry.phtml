@@ -4,8 +4,7 @@
 /** @var \JustBetter\Sentry\Helper\Data $helper */
 $helper = $this->helper(\JustBetter\Sentry\Helper\Data::class);
 
-if (
-    !$helper->isActive() ||
+if (!$helper->isActive() ||
     !$helper->useScriptTag() ||
     !$helper->showScriptTagInThisBlock($block->getNameInLayout())
 ) {
@@ -14,4 +13,4 @@ if (
 ?>
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise" crossorigin></script>
 <script src="https://browser.sentry-cdn.com/4.5.3/bundle.min.js" crossorigin></script>
-<script>Sentry.init({ dsn: '<?php echo trim($helper->getGeneralConfig('domain')) ?>' });</script>
+<script>Sentry.init({ dsn: '<?= trim($helper->getGeneralConfig('domain')) ?>' });</script>
