@@ -50,8 +50,8 @@ class Data extends AbstractHelper
      * @param StoreManagerInterface $storeManager
      * @param State                 $appState
      */
-    public function __construct(Context $context, StoreManagerInterface $storeManager, State $appState, ProductMetadataInterface $productMetadataInterface
-    ) {
+    public function __construct(Context $context, StoreManagerInterface $storeManager, State $appState, ProductMetadataInterface $productMetadataInterface)
+    {
         $this->storeManager = $storeManager;
         $this->appState = $appState;
         $this->scopeConfig = $context->getScopeConfig();
@@ -59,6 +59,22 @@ class Data extends AbstractHelper
         $this->collectModuleConfig();
 
         parent::__construct($context);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDSN()
+    {
+        return $this->getGeneralConfig('domain');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEnvironment()
+    {
+        return $this->getGeneralConfig('environment');
     }
 
     /**
@@ -102,7 +118,11 @@ class Data extends AbstractHelper
      */
     public function isActive()
     {
-        return (! empty($this->config) && array_key_exists('enabled', $this->config) && $this->config['enabled'] && ($this->isProductionMode() || $this->isOverwriteProductionMode()));
+        return !empty($this->config)
+            && array_key_exists('enabled', $this->config)
+            && $this->config['enabled']
+            && $this->getDSN()
+            && ($this->isProductionMode() || $this->isOverwriteProductionMode());
     }
 
     /**
