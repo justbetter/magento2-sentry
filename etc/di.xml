@@ -15,8 +15,4 @@
     <type name="Magento\Framework\AppInterface">
         <plugin disabled="false" name="GlobalExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher" sortOrder="0"/>
     </type>
-    <!-- I don't think this is still necessary -->
-<!--    <type name="Magento\Framework\App\Http">-->
-<!--        <plugin disabled="false" name="HttpExceptionCatcher" type="JustBetter\Sentry\Plugin\HttpExceptionCatcher" sortOrder="0"/>-->
-<!--    </type>-->
 </config>

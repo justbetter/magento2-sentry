@@ -1,11 +1,17 @@
 CHANGELOG
 
+2019-11-19 - 2.0.0
+
+    * Merged PR (https://github.com/justbetter/magento2-sentry/pull/29) thanks to https://github.com/michielgerritsen
+    * Merged PR (https://github.com/justbetter/magento2-sentry/pull/26) thanks to https://github.com/JosephMaxwell
+    * Merged PR (https://github.com/justbetter/magento2-sentry/pull/27) thanks to https://github.com/DominicWatts
+
 2019-08-29 - 0.8.0
 
     * Merged PR (https://github.com/justbetter/magento2-sentry/pull/24) thanks to https://github.com/kyriog
     * Merged PR (https://github.com/justbetter/magento2-sentry/pull/22) thanks to https://github.com/fredden
     * Merged PR (https://github.com/justbetter/magento2-sentry/pull/21) thanks to https://github.com/erikhansen
-    
+
 2019-06-19 - 0.7.2
 
     * Reverted async attribute

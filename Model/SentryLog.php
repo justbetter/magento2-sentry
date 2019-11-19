@@ -27,6 +27,7 @@ class SentryLog extends Monolog
      * @var array
      */
     protected $config = [];
+
     /** @var State */
     private $appState;
 
