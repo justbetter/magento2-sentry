@@ -2,10 +2,11 @@
 
 namespace JustBetter\Sentry\Plugin;
 
-use JustBetter\Sentry\Helper\Data as SenteryHelper;
+use Magento\Framework\App\Http;
+use Magento\Framework\AppInterface;
 use JustBetter\Sentry\Model\ReleaseIdentifier;
 use JustBetter\Sentry\Model\SentryInteraction;
-use Magento\Framework\App\Http;
+use JustBetter\Sentry\Helper\Data as SenteryHelper;
 
 class GlobalExceptionCatcher
 {
@@ -34,7 +35,7 @@ class GlobalExceptionCatcher
         $this->sentryInteraction = $sentryInteraction;
     }
 
-    public function aroundLaunch(\Magento\Framework\AppInterface $subject, callable $proceed)
+    public function aroundLaunch(AppInterface $subject, callable $proceed)
     {
         if (!$this->sentryHelper->isActive()) {
             return $proceed();

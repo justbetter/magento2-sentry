@@ -70,7 +70,7 @@ class Data extends AbstractHelper
      */
     public function getDSN()
     {
-        return $this->getGeneralConfig('domain');
+        return $this->config['domain'];
     }
 
     /**
@@ -78,7 +78,7 @@ class Data extends AbstractHelper
      */
     public function getEnvironment()
     {
-        return $this->getGeneralConfig('environment');
+        return $this->config['environment'];
     }
 
     /**

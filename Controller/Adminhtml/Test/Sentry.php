@@ -81,7 +81,9 @@ class Sentry extends Action
         if ($sentryDomain && is_dir($composerBin)) {
             try {
                 $result['status']  = true;
-                $result['content'] = nl2br(shell_exec($composerBin . 'sentry test ' . escapeshellarg($sentryDomain) . ' -v'));
+                $result['content'] = nl2br(shell_exec(
+                    $composerBin . 'sentry test ' . escapeshellarg($sentryDomain) . ' -v'
+                ));
             } catch (\Exception $e) {
                 $result['content'] = $e->getMessage();
                 $this->logger->critical($e);
@@ -89,6 +91,7 @@ class Sentry extends Action
         } else {
             $result['content'] = __('Sentry Domain not filled or composer bin not found!');
         }
+
 
         return $this->getResponse()->representJson(
             $this->jsonHelper->jsonEncode($result)
