@@ -6,10 +6,9 @@
   "license": "MIT",
   "require": {
     "php": ">=7.0",
-    "sentry/sdk": "^2.0",
+    "sentry/sdk": "^2.2",
     "monolog/monolog": "*",
     "magento/framework": "*",
-    "php-http/curl-client": "^2.0",
     "nyholm/psr7": "^1.2"
   },
   "authors": [
