@@ -1,5 +1,11 @@
 CHANGELOG
 
+2019-11-19 - 2.0.0
+
+    * Merged PR (https://github.com/justbetter/magento2-sentry/pull/29) thanks to https://github.com/michielgerritsen
+    * Merged PR (https://github.com/justbetter/magento2-sentry/pull/26) thanks to https://github.com/JosephMaxwell
+    * Merged PR (https://github.com/justbetter/magento2-sentry/pull/27) thanks to https://github.com/DominicWatts
+
 2019-08-29 - 0.8.0
 
     * Merged PR (https://github.com/justbetter/magento2-sentry/pull/24) thanks to https://github.com/kyriog
