@@ -90,7 +90,6 @@ class Sentry extends Action
             $result['content'] = __('Sentry Domain not filled or composer bin not found!');
         }
 
-
         return $this->getResponse()->representJson(
             $this->jsonHelper->jsonEncode($result)
         );
