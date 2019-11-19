@@ -1,10 +1,10 @@
 <td></td>
 <td>
-    <h2><?php echo __('How to configure Sentry?'); ?></h2>
-    <p><?php echo __('This module uses the <a href="https://devdocs.magento.com/guides/v2.3/config-guide/config/config-php.html" target="_BLANK">Magento Deployment Configuration</a> for most it\'s configuration. This means that you need to add this array to your `app/etc/env.php`:'); ?></p>
+    <h2><?= __('How to configure Sentry?'); ?></h2>
+    <p><?=  __('This module uses the <a href="https://devdocs.magento.com/guides/v2.3/config-guide/config/config-php.html" target="_BLANK">Magento Deployment Configuration</a> for most it\'s configuration. This means that you need to add this array to your `app/etc/env.php`:'); ?></p>
 
     <pre>
-<?php echo htmlentities("
+<?= htmlentities("
 'sentry' => [
     'domain' => 'example.com',
     'environment' => null,
