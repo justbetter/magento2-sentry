@@ -23,10 +23,8 @@ define([
 		},
 
 		_ajaxSubmit: function () {
-			$.ajax({
+			$.get({
 				url: this.options.ajaxUrl,
-				data: {
-				},
 				dataType: 'json',
 				showLoader: true,
 				success: function (result) {
