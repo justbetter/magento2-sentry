@@ -16,11 +16,9 @@ define([
 			var self = this;
 			self.element.addClass('required-entry');
 
-			$(this.options.testSentry).click(function (e) {
+			self.element.click(function (e) {
 				e.preventDefault();
-				if (self.element.val()) {
-					self._ajaxSubmit();
-				}
+				self._ajaxSubmit();
 			});
 		},
 
@@ -28,14 +26,13 @@ define([
 			$.ajax({
 				url: this.options.ajaxUrl,
 				data: {
-					domainSentry: $(this.options.domainSentry).val()
 				},
 				dataType: 'json',
 				showLoader: true,
 				success: function (result) {
 					alert({
 						title: result.status ? $t('Success') : $t('Error'),
-						content: result.content
+						content: result.content ? result.content : result.message
 					});
 				}
 			});
