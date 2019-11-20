@@ -88,7 +88,7 @@ class Sentry extends Action
             try {
                 $this->monologPlugin->addAlert('TEST message from Magento 2', []);
                 $result['status']  = true;
-                $result['content'] = __('Check sentry.io which should hold an error');
+                $result['content'] = __('Check sentry.io which should hold an alert');
             } catch (\Exception $e) {
                 $result['content'] = $e->getMessage();
                 $this->logger->critical($e);
