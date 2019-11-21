@@ -17,7 +17,7 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'domain' => 'example.com',
     'environment' => null,
     'log_level' => \Monolog\Logger::WARNING,
-    'isOverwriteProductionMode' => false,
+    'mage_mode_development' => false,
 ]
 ```
 

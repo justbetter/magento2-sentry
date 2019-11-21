@@ -2,13 +2,14 @@
 
 namespace JustBetter\Sentry\Controller\Adminhtml\Test;
 
+use JustBetter\Sentry\Helper\Data;
+use JustBetter\Sentry\Model\SentryLog;
+use JustBetter\Sentry\Plugin\MonologPlugin;
+use Magento\Framework\Serialize\Serializer\Json;
 use Psr\Log\LoggerInterface;
 use Magento\Backend\App\Action;
-use Magento\Framework\Json\Helper\Data;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
-use Magento\Framework\Filesystem\DirectoryList;
-use Magento\Framework\ShellInterface;
 
 /**
  * Class Sentry
@@ -25,24 +26,27 @@ class Sentry extends Action
     const ADMIN_RESOURCE = 'JustBetter_Sentry::sentry';
 
     /**
-     * @var \Magento\Framework\View\Result\PageFactory
+     * @var PageFactory
      */
     protected $resultPageFactory;
 
     /**
-     * @var \Magento\Framework\Json\Helper\Data
-     */
-    protected $jsonHelper;
-
-    /**
-     * @var \Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
     /**
-     * @var DirectoryList
+     * @var Json
      */
-    protected $directoryList;
+    private $jsonSerializer;
+    /**
+     * @var Data
+     */
+    private $helperSentry;
+    /**
+     * @var JustBetter\Sentry\Model\SentryLog|SentryLog
+     */
+    private $monologPlugin;
 
     /**
      * @var ShellInterface
@@ -52,25 +56,26 @@ class Sentry extends Action
     /**
      * Sentry constructor.
      *
-     * @param \Magento\Backend\App\Action\Context        $context
-     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
-     * @param \Magento\Framework\Json\Helper\Data        $jsonHelper
-     * @param \Psr\Log\LoggerInterface                   $logger
-     * @param DirectoryList                              $directoryList
+     * @param Context $context
+     * @param PageFactory $resultPageFactory
+     * @param Json $jsonSerializer
+     * @param LoggerInterface $logger
+     * @param Data $helperSentry
+     * @param MonologPlugin $monologPlugin
      */
     public function __construct(
         Context $context,
         PageFactory $resultPageFactory,
-        Data $jsonHelper,
+        Json $jsonSerializer,
         LoggerInterface $logger,
-        DirectoryList $directoryList,
-        ShellInterface $shellBackground
+        Data $helperSentry,
+        MonologPlugin $monologPlugin
     ) {
         $this->resultPageFactory = $resultPageFactory;
-        $this->jsonHelper        = $jsonHelper;
+        $this->jsonSerializer    = $jsonSerializer;
         $this->logger            = $logger;
-        $this->directoryList     = $directoryList;
-        $this->shellBackground   = $shellBackground;
+        $this->helperSentry      = $helperSentry;
+        $this->monologPlugin     = $monologPlugin;
 
         parent::__construct($context);
     }
@@ -83,29 +88,22 @@ class Sentry extends Action
     public function execute()
     {
         $result = ['status' => false];
-        $sentryDomain = $this->getRequest()->getParam('domainSentry');
-        $composerBin = $this->directoryList->getRoot() .'/vendor/bin/';
 
-        if ($sentryDomain && is_dir($composerBin)) {
+        if ($this->helperSentry->isActive()) {
             try {
+                $this->monologPlugin->addAlert('TEST message from Magento 2', []);
                 $result['status']  = true;
-                $result['content'] = nl2br(
-                    $this->shellBackground->execute(
-                        $composerBin . 'sentry test ' . escapeshellarg($sentryDomain),
-                        ['-v']
-                    )
-                );
-
+                $result['content'] = __('Check sentry.io which should hold an alert');
             } catch (\Exception $e) {
                 $result['content'] = $e->getMessage();
                 $this->logger->critical($e);
             }
         } else {
-            $result['content'] = __('Sentry Domain not filled or composer bin not found!');
+            $result['content'] = __('Sentry Domain not filled!');
         }
 
         return $this->getResponse()->representJson(
-            $this->jsonHelper->jsonEncode($result)
+            $this->jsonSerializer->serialize($result)
         );
     }
 }

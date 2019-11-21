@@ -10,7 +10,7 @@
 </div>
 <script type="text/x-magento-init">
     {
-        "#sentry_general_domain": {
+        "#<?php echo $block->getHtmlId() ?>": {
             "validation": {},
             "justbetter/testsentry": {
                 "ajaxUrl": "<?= /* @noEscape */ $block->getButtonUrl() ?>"
