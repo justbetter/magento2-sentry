@@ -1,5 +1,13 @@
 CHANGELOG
 
+2019-11-22 - 2.1.0
+
+    * Merged PR (https://github.com/justbetter/magento2-sentry/pull/33) thanks to https://github.com/DominicWatts
+    * Merged PR (https://github.com/justbetter/magento2-sentry/pull/35) thanks to https://github.com/peterjaap
+    * Merged PR (https://github.com/justbetter/magento2-sentry/pull/36) thanks to https://github.com/peterjaap
+    * Refactor of proxy classes in di.xml
+    * Fixed all PHPcs warnings and errors
+
 2019-11-19 - 2.0.0
 
     * Merged PR (https://github.com/justbetter/magento2-sentry/pull/29) thanks to https://github.com/michielgerritsen
