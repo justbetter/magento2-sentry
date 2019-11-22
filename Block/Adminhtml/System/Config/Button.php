@@ -8,7 +8,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 /**
  * Class Button
  *
- * @package JustBetter\Sentry\Block\Adminhtml\System\Config
+ * Class JustBetter\Sentry\Block\Adminhtml\System\Config
  */
 class Button extends Field
 {

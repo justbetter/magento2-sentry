@@ -14,7 +14,7 @@ use Magento\Framework\View\Result\PageFactory;
 /**
  * Class Sentry
  *
- * @package JustBetter\Sentry\Controller\Adminhtml\Test
+ * Class JustBetter\Sentry\Controller\Adminhtml\Test
  */
 class Sentry extends Action
 {
