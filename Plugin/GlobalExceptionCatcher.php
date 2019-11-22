@@ -2,6 +2,8 @@
 
 namespace JustBetter\Sentry\Plugin;
 
+// phpcs:disable Magento2.CodeAnalysis.EmptyBlock
+
 use Magento\Framework\App\Http;
 use Magento\Framework\AppInterface;
 use JustBetter\Sentry\Model\ReleaseIdentifier;

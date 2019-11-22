@@ -31,9 +31,9 @@ class MonologPlugin extends Monolog
      */
     public function __construct(
         $name,
-        Data\Proxy $data,
-        SentryLog\Proxy $sentryLog,
-        DeploymentConfig\Proxy $deploymentConfig,
+        Data $data,
+        SentryLog $sentryLog,
+        DeploymentConfig $deploymentConfig,
         array $handlers = [],
         array $processors = []
     ) {

@@ -2,16 +2,18 @@
 /** @var \JustBetter\Sentry\Block\Adminhtml\System\Config\Button $block */
 ?>
 <div class="actions actions-test-sentry">
-    <button class="actions-test-sentry" type="button" id="<?php echo $block->getHtmlId() ?>">
-        <span><?php echo $block->escapeHtml($block->getButtonLabel()) ?></span>
+    <button class="actions-test-sentry" 
+            type="button" 
+            id="<?= $block->escapeHtmlAttr($block->getHtmlId()) ?>">
+        <span><?= $block->escapeHtml($block->getButtonLabel()) ?></span>
     </button>
 </div>
 <script type="text/x-magento-init">
     {
-        "#sentry_general_domain": {
+        "#<?= $block->getHtmlId() ?>": {
             "validation": {},
             "justbetter/testsentry": {
-                "ajaxUrl": "<?php /* @escapeNotVerified */ echo $block->getButtonUrl() ?>"
+                "ajaxUrl": "<?= /* @noEscape */ $block->getButtonUrl() ?>"
             }
         }
     }

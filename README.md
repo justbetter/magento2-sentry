@@ -14,10 +14,10 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
 
 ```
 'sentry' => [
-    'domain' => 'example.com',
+    'domain' => 'example.com', // place your DSN here (i.e. https://<hash>@sentry.io/<projectid>)
     'environment' => null,
     'log_level' => \Monolog\Logger::WARNING,
-    'isOverwriteProductionMode' => false,
+    'mage_mode_development' => false,
 ]
 ```
 

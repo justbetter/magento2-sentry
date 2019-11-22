@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace JustBetter\Sentry\Model;
 
+// phpcs:disable Magento2.Functions.DiscouragedFunction
+
 use function Sentry\captureException;
 use function Sentry\init;
 
