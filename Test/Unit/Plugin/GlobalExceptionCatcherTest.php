@@ -34,9 +34,12 @@ class GlobalExceptionCatcherTest extends TestCase
         );
 
         $called = false;
-        $plugin->aroundLaunch($this->getAppInterfaceMock(), function() use (&$called) {
-            $called = true;
-        });
+        $plugin->aroundLaunch(
+            $this->getAppInterfaceMock(),
+            function () use (&$called) {
+                $called = true;
+            }
+        );
 
         $this->assertTrue($called);
     }
@@ -61,9 +64,12 @@ class GlobalExceptionCatcherTest extends TestCase
         );
 
         $called = false;
-        $plugin->aroundLaunch($this->getAppInterfaceMock(), function() use (&$called) {
-            $called = true;
-        });
+        $plugin->aroundLaunch(
+            $this->getAppInterfaceMock(),
+            function () use (&$called) {
+                $called = true;
+            }
+        );
 
         $this->assertTrue($called);
     }
@@ -86,10 +92,13 @@ class GlobalExceptionCatcherTest extends TestCase
         $exceptionMessage = 'Big problem';
         $this->expectExceptionMessage($exceptionMessage);
 
-        $plugin->aroundLaunch($this->getAppInterfaceMock(), function() use (&$called, $exceptionMessage) {
-            $called = true;
-            throw new \Exception($exceptionMessage);
-        });
+        $plugin->aroundLaunch(
+            $this->getAppInterfaceMock(),
+            function () use (&$called, $exceptionMessage) {
+                $called = true;
+                throw new \Exception($exceptionMessage);
+            }
+        );
 
         $this->assertTrue($called);
     }
