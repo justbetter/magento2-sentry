@@ -11,11 +11,6 @@ use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 
-/**
- * Class Sentry
- *
- * Class JustBetter\Sentry\Controller\Adminhtml\Test
- */
 class Sentry extends Action
 {
     /**
