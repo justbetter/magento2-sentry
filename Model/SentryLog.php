@@ -69,7 +69,7 @@ class SentryLog extends Monolog
             return;
         }
 
-        \Sentry\configureScope(function(SentryScope $scope): void {
+        \Sentry\configureScope(function (SentryScope $scope): void {
             $this->setTags($scope);
             $this->setUser($scope);
         });
@@ -83,7 +83,9 @@ class SentryLog extends Monolog
         /// when using JS SDK you can use this for custom error page printing
         try {
             $this->customerSession->setSentryEventId($lastEventId);
-        } catch (SessionException $e) {}
+        } catch (SessionException $e) {
+            return;
+        }
     }
 
     private function setUser(SentryScope $scope): void
@@ -101,7 +103,9 @@ class SentryLog extends Monolog
                 'website_id' => $customerData->getWebsiteId(),
                 'store_id' => $customerData->getStoreId(),
             ]);
-        } catch (SessionException $e) {}
+        } catch (SessionException $e) {
+            return;
+        }
     }
 
     private function canGetCustomerData()
