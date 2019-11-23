@@ -27,8 +27,8 @@ class DeploymentConfigInfo extends Field
      */
     public function __construct(
         Context $context,
-        array $data = [],
-        Version $version
+        Version $version,
+        array $data = []
     ) {
         $this->version = $version;
         parent::__construct($context, $data);
@@ -48,4 +48,3 @@ class DeploymentConfigInfo extends Field
         return $this->version->getValue();
     }
 }
-
