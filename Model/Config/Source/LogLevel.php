@@ -2,8 +2,8 @@
 
 namespace JustBetter\Sentry\Model\Config\Source;
 
-use Monolog\Logger;
 use Magento\Framework\Option\ArrayInterface;
+use Monolog\Logger;
 
 class LogLevel implements ArrayInterface
 {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @by SwiftOtter, Inc., 2019/09/13
@@ -27,9 +28,9 @@ class GlobalExceptionCatcherTest extends TestCase
         $plugin = (new ObjectManager($this))->getObject(
             GlobalExceptionCatcher::class,
             [
-                'sentryHelper' => $helper,
+                'sentryHelper'      => $helper,
                 'releaseIdentifier' => $this->getReleaseIdentifierMock(),
-                'sentryInteraction' => $this->getSentryInteractionMock(false, false)
+                'sentryInteraction' => $this->getSentryInteractionMock(false, false),
             ]
         );
 
@@ -57,9 +58,9 @@ class GlobalExceptionCatcherTest extends TestCase
         $plugin = (new ObjectManager($this))->getObject(
             GlobalExceptionCatcher::class,
             [
-                'sentryHelper' => $helper,
+                'sentryHelper'      => $helper,
                 'releaseIdentifier' => $this->getReleaseIdentifierMock(),
-                'sentryInteraction' => $this->getSentryInteractionMock(true, false)
+                'sentryInteraction' => $this->getSentryInteractionMock(true, false),
             ]
         );
 
@@ -82,9 +83,9 @@ class GlobalExceptionCatcherTest extends TestCase
         $plugin = (new ObjectManager($this))->getObject(
             GlobalExceptionCatcher::class,
             [
-                'sentryHelper' => $helper,
+                'sentryHelper'      => $helper,
                 'releaseIdentifier' => $this->getReleaseIdentifierMock(),
-                'sentryInteraction' => $this->getSentryInteractionMock(true, true)
+                'sentryInteraction' => $this->getSentryInteractionMock(true, true),
             ]
         );
 
@@ -96,6 +97,7 @@ class GlobalExceptionCatcherTest extends TestCase
             $this->getAppInterfaceMock(),
             function () use (&$called, $exceptionMessage) {
                 $called = true;
+
                 throw new \Exception($exceptionMessage);
             }
         );
@@ -113,8 +115,8 @@ class GlobalExceptionCatcherTest extends TestCase
         $mock = $this->createConfiguredMock(
             SentryInteraction::class,
             [
-                'initialize' => '',
-                'captureException' => ''
+                'initialize'       => '',
+                'captureException' => '',
             ]
         );
 
@@ -132,7 +134,7 @@ class GlobalExceptionCatcherTest extends TestCase
         $mock = $this->createConfiguredMock(
             ReleaseIdentifier::class,
             [
-                'getReleaseId' => 1
+                'getReleaseId' => 1,
             ]
         );
 
@@ -142,9 +144,9 @@ class GlobalExceptionCatcherTest extends TestCase
     private function getSentryHelperMock(bool $isActive = true, $environment = null)
     {
         $mock = $this->createConfiguredMock(Data::class, [
-            'isActive' => $isActive,
-            'getDSN' => 'dsn',
-            'getEnvironment' => $environment
+            'isActive'       => $isActive,
+            'getDSN'         => 'dsn',
+            'getEnvironment' => $environment,
         ]);
 
         $mock->expects($this->once())

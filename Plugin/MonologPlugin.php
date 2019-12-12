@@ -4,9 +4,7 @@ namespace JustBetter\Sentry\Plugin;
 
 use JustBetter\Sentry\Helper\Data;
 use JustBetter\Sentry\Model\SentryLog;
-use Magento\Framework\App\Area;
 use Magento\Framework\App\DeploymentConfig;
-use Magento\Framework\App\State;
 use Magento\Framework\Logger\Monolog;
 
 class MonologPlugin extends Monolog
@@ -45,12 +43,13 @@ class MonologPlugin extends Monolog
     }
 
     /**
-     * Adds a log record to Sentry
+     * Adds a log record to Sentry.
      *
-     * @param integer $level The logging level
+     * @param int    $level   The logging level
      * @param string $message The log message
-     * @param array $context The log context
-     * @return Boolean Whether the record has been processed
+     * @param array  $context The log context
+     *
+     * @return bool Whether the record has been processed
      */
     public function addRecord($level, $message, array $context = [])
     {

@@ -2,10 +2,10 @@
 
 namespace JustBetter\Sentry\Block\Adminhtml\System\Config;
 
-use Magento\Config\Block\System\Config\Form\Field;
-use Magento\Framework\Data\Form\Element\AbstractElement;
 use JustBetter\Sentry\Helper\Version;
 use Magento\Backend\Block\Template\Context;
+use Magento\Config\Block\System\Config\Form\Field;
+use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class DeploymentConfigInfo extends Field
 {
@@ -21,8 +21,9 @@ class DeploymentConfigInfo extends Field
 
     /**
      * DeploymentConfigInfo constructor.
+     *
      * @param Context $context
-     * @param array $data
+     * @param array   $data
      * @param Version $version
      */
     public function __construct(
@@ -40,7 +41,8 @@ class DeploymentConfigInfo extends Field
     }
 
     /**
-     * Get static version
+     * Get static version.
+     *
      * @return string
      */
     public function getVersion()

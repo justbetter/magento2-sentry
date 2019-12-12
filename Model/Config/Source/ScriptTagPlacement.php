@@ -2,7 +2,7 @@
 
 namespace JustBetter\Sentry\Model\Config\Source;
 
-use \Magento\Framework\Option\ArrayInterface;
+use Magento\Framework\Option\ArrayInterface;
 
 class ScriptTagPlacement implements ArrayInterface
 {

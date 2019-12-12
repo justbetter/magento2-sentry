@@ -4,11 +4,10 @@ namespace JustBetter\Sentry\Plugin;
 
 // phpcs:disable Magento2.CodeAnalysis.EmptyBlock
 
-use Magento\Framework\App\Http;
-use Magento\Framework\AppInterface;
+use JustBetter\Sentry\Helper\Data as SenteryHelper;
 use JustBetter\Sentry\Model\ReleaseIdentifier;
 use JustBetter\Sentry\Model\SentryInteraction;
-use JustBetter\Sentry\Helper\Data as SenteryHelper;
+use Magento\Framework\AppInterface;
 
 class GlobalExceptionCatcher
 {
@@ -23,7 +22,8 @@ class GlobalExceptionCatcher
 
     /**
      * ExceptionCatcher constructor.
-     * @param SenteryHelper $sentryHelper
+     *
+     * @param SenteryHelper     $sentryHelper
      * @param ReleaseIdentifier $releaseIdentifier
      * @param SentryInteraction $sentryInteraction
      */
