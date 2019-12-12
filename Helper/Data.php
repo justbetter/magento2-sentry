@@ -25,7 +25,7 @@ class Data extends AbstractHelper
      * @var array
      */
     protected $configKeys = [
-        'domain',
+        'dsn',
         'log_level',
         'mage_mode_development',
         'environment',
@@ -70,7 +70,7 @@ class Data extends AbstractHelper
      */
     public function getDSN()
     {
-        return $this->config['domain'];
+        return $this->config['dsn'];
     }
 
     /**
