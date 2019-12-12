@@ -1,6 +1,10 @@
 CHANGELOG
 
-2019-11-22 - 2.2.0
+2019-12-12 - 2.2.1
+
+    * Merged PR - fix for requirements sdk (https://github.com/justbetter/magento2-sentry/pull/42) thanks to https://github.com/jupiterhs
+
+2019-12-12 - 2.2.0
 
     * Merged PR (https://github.com/justbetter/magento2-sentry/pull/37) thanks to https://github.com/DominicWatts
     * Merged PR (https://github.com/justbetter/magento2-sentry/pull/38) thanks to https://github.com/matthiashamacher
