@@ -9,9 +9,10 @@ class SentryScript extends Template
 {
     /**
      * SentryScript constructor.
-     * @param DataHelper $dataHelper
+     *
+     * @param DataHelper       $dataHelper
      * @param Template\Context $context
-     * @param array $data
+     * @param array            $data
      */
     public function __construct(
         DataHelper $dataHelper,
@@ -27,6 +28,7 @@ class SentryScript extends Template
      * Show script tag depending on blockName.
      *
      * @param string $blockName
+     *
      * @return bool
      */
     public function canUseScriptTag($blockName)

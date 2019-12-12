@@ -3,14 +3,13 @@
 namespace JustBetter\Sentry\Helper;
 
 use Magento\Framework\App\Area;
+use Magento\Framework\App\DeploymentConfig;
+use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
+use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\State;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\App\Helper\AbstractHelper;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\App\ProductMetadataInterface;
-use Magento\Framework\App\DeploymentConfig;
 
 class Data extends AbstractHelper
 {
@@ -84,6 +83,7 @@ class Data extends AbstractHelper
     /**
      * @param      $field
      * @param null $storeId
+     *
      * @return mixed
      */
     public function getConfigValue($field, $storeId = null)
@@ -98,11 +98,12 @@ class Data extends AbstractHelper
     /**
      * @param      $code
      * @param null $storeId
+     *
      * @return mixed
      */
     public function getGeneralConfig($code, $storeId = null)
     {
-        return $this->getConfigValue(self::XML_PATH_SRS . $code, $storeId);
+        return $this->getConfigValue(self::XML_PATH_SRS.$code, $storeId);
     }
 
     /**
@@ -113,7 +114,7 @@ class Data extends AbstractHelper
         $this->config['enabled'] = $this->deploymentConfig->get('sentry') !== null;
 
         foreach ($this->configKeys as $value) {
-            $this->config[$value] = $this->deploymentConfig->get('sentry/' . $value);
+            $this->config[$value] = $this->deploymentConfig->get('sentry/'.$value);
         }
 
         return $this->config;
@@ -156,7 +157,7 @@ class Data extends AbstractHelper
     }
 
     /**
-     *  Get the current magento version
+     *  Get the current magento version.
      *
      * @return string
      */
@@ -166,7 +167,7 @@ class Data extends AbstractHelper
     }
 
     /**
-     * Get the current store
+     * Get the current store.
      */
     public function getStore()
     {
@@ -178,11 +179,12 @@ class Data extends AbstractHelper
      */
     public function useScriptTag()
     {
-        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS . 'enable_script_tag');
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag');
     }
 
     /**
      * @param $blockName
+     *
      * @return bool
      */
     public function showScriptTagInThisBlock($blockName)
@@ -192,7 +194,7 @@ class Data extends AbstractHelper
             return false;
         }
 
-        $name = 'sentry.' . $config;
+        $name = 'sentry.'.$config;
 
         return $name == $blockName;
     }

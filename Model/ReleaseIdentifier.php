@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JustBetter\Sentry\Model;
@@ -14,6 +15,7 @@ class ReleaseIdentifier
 
     /**
      * ReleaseIdentifier constructor.
+     *
      * @param Version $version
      */
     public function __construct(
@@ -23,7 +25,8 @@ class ReleaseIdentifier
     }
 
     /**
-     * Get release ID from magento internal release number
+     * Get release ID from magento internal release number.
+     *
      * @return string
      */
     public function getReleaseId()

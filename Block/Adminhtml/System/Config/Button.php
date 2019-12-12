@@ -13,9 +13,10 @@ class Button extends Field
     protected $_template = 'system/config/button.phtml';
 
     /**
-     * Unset scope
+     * Unset scope.
      *
      * @param AbstractElement $element
+     *
      * @return string
      */
     public function render(AbstractElement $element)
@@ -26,9 +27,10 @@ class Button extends Field
     }
 
     /**
-     * Get the button and scripts contents
+     * Get the button and scripts contents.
      *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     *
      * @return string
      */
     protected function _getElementHtml(AbstractElement $element)

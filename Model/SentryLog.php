@@ -38,7 +38,7 @@ class SentryLog extends Monolog
      * @param array           $handlers
      * @param array           $processors
      * @param Data|Data\Proxy $data
-     * @param Session   $customerSession
+     * @param Session         $customerSession
      */
     public function __construct(
         $name,
@@ -59,7 +59,7 @@ class SentryLog extends Monolog
      * @param $message
      * @param $logLevel
      * @param Monolog $monolog
-     * @param array $context
+     * @param array   $context
      */
     public function send($message, $logLevel, Monolog $monolog, $context = [])
     {
@@ -98,10 +98,10 @@ class SentryLog extends Monolog
 
             $customerData = $this->customerSession->getCustomer();
             $scope->setUser([
-                'id' => $customerData->getEntityId(),
-                'email' => $customerData->getEmail(),
+                'id'         => $customerData->getEntityId(),
+                'email'      => $customerData->getEmail(),
                 'website_id' => $customerData->getWebsiteId(),
-                'store_id' => $customerData->getStoreId(),
+                'store_id'   => $customerData->getStoreId(),
             ]);
         } catch (SessionException $e) {
             return;
