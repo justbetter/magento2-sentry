@@ -33,9 +33,9 @@ class SentryScript extends Template
      */
     public function canUseScriptTag($blockName)
     {
-        return  !$this->dataHelper->isActive() ||
-                !$this->dataHelper->useScriptTag() ||
-                !$this->dataHelper->showScriptTagInThisBlock($blockName);
+        return $this->dataHelper->isActive() &&
+               $this->dataHelper->useScriptTag() &&
+               $this->dataHelper->showScriptTagInThisBlock($blockName);
     }
 
     /**
