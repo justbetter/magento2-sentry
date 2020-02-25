@@ -1,4 +1,7 @@
 # Changelog
+## [2.2.3] - 2020-02-25
+### Fixed
+    * Merged PR - Release version should be string (https://github.com/justbetter/magento2-sentry/pull/49) thanks to https://github.com/DominicWatts
 
 ## [2.2.2] - 2020-02-11
 ### Changed
