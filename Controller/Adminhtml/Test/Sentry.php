@@ -84,7 +84,9 @@ class Sentry extends Action
     {
         $result = ['status' => false];
 
-        if ($this->helperSentry->isActive()) {
+        $inactiveReason = '';
+
+        if ($this->helperSentry->isActiveWithReason($inactiveReason)) {
             try {
                 $this->monologPlugin->addAlert('TEST message from Magento 2', []);
                 $result['status'] = true;
@@ -94,7 +96,7 @@ class Sentry extends Action
                 $this->logger->critical($e);
             }
         } else {
-            $result['content'] = __('Sentry Domain not filled!');
+            $result['content'] = $inactiveReason;
         }
 
         return $this->getResponse()->representJson(

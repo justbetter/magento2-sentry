@@ -26,8 +26,24 @@
                         <field id="enable_script_tag">1</field>
                     </depends>
                 </field>
-                <field id="sent" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <button_label>Send sentry test event</button_label>
+                <field id="use_logrocket" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Use LogRocket</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enable_script_tag">1</field>
+                    </depends>
+                </field>
+                <field id="logrocket_identify" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>LogRocket include user data</label>
+                    <tooltip>Include user ID, name and email to identify logged in users in LogRocket</tooltip>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enable_script_tag">1</field>
+                        <field id="use_logrocket">1</field>
+                    </depends>
+                </field>
+                <field id="sent_sentry" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <button_label>Send Sentry test event</button_label>
                     <button_url>justbetter_sentry/test/sentry</button_url>
                     <frontend_model>JustBetter\Sentry\Block\Adminhtml\System\Config\Button</frontend_model>
                 </field>

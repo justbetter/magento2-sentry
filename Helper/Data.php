@@ -25,6 +25,7 @@ class Data extends AbstractHelper
      */
     protected $configKeys = [
         'dsn',
+        'logrocket_key',
         'log_level',
         'mage_mode_development',
         'environment',
@@ -43,9 +44,9 @@ class Data extends AbstractHelper
     /**
      * Data constructor.
      *
-     * @param Context               $context
+     * @param Context $context
      * @param StoreManagerInterface $storeManager
-     * @param State                 $appState
+     * @param State $appState
      */
     public function __construct(
         Context $context,
@@ -103,7 +104,7 @@ class Data extends AbstractHelper
      */
     public function getGeneralConfig($code, $storeId = null)
     {
-        return $this->getConfigValue(self::XML_PATH_SRS.$code, $storeId);
+        return $this->getConfigValue(self::XML_PATH_SRS . $code, $storeId);
     }
 
     /**
@@ -114,7 +115,7 @@ class Data extends AbstractHelper
         $this->config['enabled'] = $this->deploymentConfig->get('sentry') !== null;
 
         foreach ($this->configKeys as $value) {
-            $this->config[$value] = $this->deploymentConfig->get('sentry/'.$value);
+            $this->config[$value] = $this->deploymentConfig->get('sentry/' . $value);
         }
 
         return $this->config;
@@ -125,11 +126,35 @@ class Data extends AbstractHelper
      */
     public function isActive()
     {
-        return !empty($this->config)
-            && array_key_exists('enabled', $this->config)
-            && $this->config['enabled']
-            && $this->getDSN()
-            && ($this->isProductionMode() || $this->isOverwriteProductionMode());
+        $dummyStr = '';
+        return $this->isActiveWithReason($dummyStr);
+    }
+
+    /**
+     * @param string $reason : Reason to tell the user why it's not active (Github issue #53)
+     * @return bool
+     */
+    public function isActiveWithReason(&$reason)
+    {
+        $emptyConfig = empty($this->config);
+        $configEnabled = array_key_exists('enabled', $this->config) && $this->config['enabled'];
+        $dsnNotEmpty = $this->getDSN();
+        $productionMode = ($this->isProductionMode() || $this->isOverwriteProductionMode());
+
+        if ($emptyConfig) {
+            $reason .= __('Config is empty. ');
+        }
+        if (!$configEnabled) {
+            $reason .= __('Module is not enabled in config. ');
+        }
+        if (!$dsnNotEmpty) {
+            $reason .= __('DSN is empty. ');
+        }
+        if (!$productionMode) {
+            $reason .= __('Not in production and development mode is false.');
+        }
+
+        return !$emptyConfig && $configEnabled && $dsnNotEmpty && $productionMode;
     }
 
     /**
@@ -179,7 +204,7 @@ class Data extends AbstractHelper
      */
     public function useScriptTag()
     {
-        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag');
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS . 'enable_script_tag');
     }
 
     /**
@@ -194,8 +219,34 @@ class Data extends AbstractHelper
             return false;
         }
 
-        $name = 'sentry.'.$config;
+        $name = 'sentry.' . $config;
 
         return $name == $blockName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLogrocketKey()
+    {
+        return $this->config['logrocket_key'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function useLogrocket()
+    {
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS . 'use_logrocket') &&
+            array_key_exists('logrocket_key', $this->config) &&
+            $this->config['logrocket_key'] != null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function useLogrocketIdentify()
+    {
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS . 'logrocket_identify');
     }
 }

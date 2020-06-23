@@ -2,11 +2,11 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="head.additional">
-            <block class="JustBetter\Sentry\Block\SentryScript" before="-" template="JustBetter_Sentry::script/sentry.phtml" name="sentry.head.additional" />
+            <block class="JustBetter\Sentry\Block\SentryScript" before="-" template="JustBetter_Sentry::script/sentry.phtml" name="sentry.head.additional" cacheable="false"  />
         </referenceBlock>
 
         <referenceContainer name="before.body.end">
-            <block class="JustBetter\Sentry\Block\SentryScript" before="-" template="JustBetter_Sentry::script/sentry.phtml" name="sentry.before.body.end" />
+            <block class="JustBetter\Sentry\Block\SentryScript" before="-" template="JustBetter_Sentry::script/sentry.phtml" name="sentry.before.body.end" cacheable="false"  />
         </referenceContainer>
     </body>
 </page>

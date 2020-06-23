@@ -15,6 +15,7 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
 ```
 'sentry' => [
     'dsn' => 'example.com',
+    'logrocket_key' => 'example/example',
     'environment' => null,
     'log_level' => \Monolog\Logger::WARNING,
     'mage_mode_development' => false,
@@ -37,10 +38,6 @@ The module is tested on Magento version 2.2.x & 2.3.x with sentry sdk version 2.
 
 ## Ideas, bugs or suggestions?
 Please create a [issue](https://github.com/justbetter/magento2-sentry/issues) or a [pull request](https://github.com/justbetter/magento2-sentry/pulls).
-
-## Todo
-- Integrate custom error pages in composer package - 2020-Q1
-- Integrate feedback sentry form in error pages - 2020-Q1
 
 ## About us
 We’re a innovative development agency from The Netherlands building awesome websites, webshops and web applications with Laravel and Magento. Check out our website [justbetter.nl](https://justbetter.nl) and our [open source projects](https://github.com/justbetter).
