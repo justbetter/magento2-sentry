@@ -44,9 +44,9 @@ class Data extends AbstractHelper
     /**
      * Data constructor.
      *
-     * @param Context $context
+     * @param Context               $context
      * @param StoreManagerInterface $storeManager
-     * @param State $appState
+     * @param State                 $appState
      */
     public function __construct(
         Context $context,
@@ -104,7 +104,7 @@ class Data extends AbstractHelper
      */
     public function getGeneralConfig($code, $storeId = null)
     {
-        return $this->getConfigValue(self::XML_PATH_SRS . $code, $storeId);
+        return $this->getConfigValue(self::XML_PATH_SRS.$code, $storeId);
     }
 
     /**
@@ -115,7 +115,7 @@ class Data extends AbstractHelper
         $this->config['enabled'] = $this->deploymentConfig->get('sentry') !== null;
 
         foreach ($this->configKeys as $value) {
-            $this->config[$value] = $this->deploymentConfig->get('sentry/' . $value);
+            $this->config[$value] = $this->deploymentConfig->get('sentry/'.$value);
         }
 
         return $this->config;
@@ -127,11 +127,13 @@ class Data extends AbstractHelper
     public function isActive()
     {
         $dummyStr = '';
+
         return $this->isActiveWithReason($dummyStr);
     }
 
     /**
      * @param string $reason : Reason to tell the user why it's not active (Github issue #53)
+     *
      * @return bool
      */
     public function isActiveWithReason(&$reason)
@@ -204,7 +206,7 @@ class Data extends AbstractHelper
      */
     public function useScriptTag()
     {
-        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS . 'enable_script_tag');
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag');
     }
 
     /**
@@ -219,7 +221,7 @@ class Data extends AbstractHelper
             return false;
         }
 
-        $name = 'sentry.' . $config;
+        $name = 'sentry.'.$config;
 
         return $name == $blockName;
     }
@@ -237,7 +239,7 @@ class Data extends AbstractHelper
      */
     public function useLogrocket()
     {
-        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS . 'use_logrocket') &&
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'use_logrocket') &&
             array_key_exists('logrocket_key', $this->config) &&
             $this->config['logrocket_key'] != null;
     }
@@ -247,6 +249,6 @@ class Data extends AbstractHelper
      */
     public function useLogrocketIdentify()
     {
-        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS . 'logrocket_identify');
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'logrocket_identify');
     }
 }

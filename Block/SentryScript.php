@@ -11,10 +11,10 @@ class SentryScript extends Template
     /**
      * SentryScript constructor.
      *
-     * @param DataHelper $dataHelper
-     * @param Session $customerSession
+     * @param DataHelper       $dataHelper
+     * @param Session          $customerSession
      * @param Template\Context $context
-     * @param array $data
+     * @param array            $data
      */
     public function __construct(
         DataHelper $dataHelper,
@@ -53,7 +53,7 @@ class SentryScript extends Template
     }
 
     /**
-     * If LogRocket should be used
+     * If LogRocket should be used.
      *
      * @return bool
      */
@@ -63,7 +63,7 @@ class SentryScript extends Template
     }
 
     /**
-     * If LogRocket identify should be used
+     * If LogRocket identify should be used.
      *
      * @return bool
      */
@@ -73,7 +73,7 @@ class SentryScript extends Template
     }
 
     /**
-     * Gets the LogRocket key
+     * Gets the LogRocket key.
      *
      * @return string
      */
@@ -91,22 +91,24 @@ class SentryScript extends Template
     }
 
     /**
-     * @return string
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
+     *
+     * @return string
      */
     public function getCustomerName()
     {
         $firstName = $this->customerSession->getCustomerData()->getFirstname();
         $lastName = $this->customerSession->getCustomerData()->getLastname();
 
-        return $firstName . ' ' . $lastName;
+        return $firstName.' '.$lastName;
     }
 
     /**
-     * @return string
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
+     *
+     * @return string
      */
     public function getCustomerEmail()
     {
