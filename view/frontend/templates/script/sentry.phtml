@@ -8,7 +8,7 @@ if (!$block->canUseScriptTag($block->getNameInLayout())) {
 ?>
 
 <script src="https://browser.sentry-cdn.com/<?= \JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION;?>/bundle.min.js"
-        integrity="sha384-lowBFC6YTkvMIWPORr7+TERnCkZdo5ab00oH5NkFLeQUAmBTLGwJpFjF6djuxJ/5" crossorigin="anonymous">
+        crossorigin="anonymous">
 </script>
 <script>
     Sentry.init({
