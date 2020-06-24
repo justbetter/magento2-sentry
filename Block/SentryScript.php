@@ -3,7 +3,6 @@
 namespace JustBetter\Sentry\Block;
 
 use JustBetter\Sentry\Helper\Data as DataHelper;
-use Magento\Customer\Model\Session;
 use Magento\Framework\View\Element\Template;
 
 class SentryScript extends Template
@@ -12,18 +11,15 @@ class SentryScript extends Template
      * SentryScript constructor.
      *
      * @param DataHelper       $dataHelper
-     * @param Session          $customerSession
      * @param Template\Context $context
      * @param array            $data
      */
     public function __construct(
         DataHelper $dataHelper,
-        Session $customerSession,
         Template\Context $context,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
-        $this->customerSession = $customerSession;
 
         parent::__construct($context, $data);
     }
@@ -69,7 +65,7 @@ class SentryScript extends Template
      */
     public function useLogRocketIdentify()
     {
-        return $this->dataHelper->useLogrocketIdentify() && $this->customerSession->isLoggedIn();
+        return $this->dataHelper->useLogrocketIdentify();
     }
 
     /**
@@ -82,36 +78,4 @@ class SentryScript extends Template
         return $this->dataHelper->getLogrocketKey();
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCustomerId()
-    {
-        return $this->customerSession->getCustomerId();
-    }
-
-    /**
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     *
-     * @return string
-     */
-    public function getCustomerName()
-    {
-        $firstName = $this->customerSession->getCustomerData()->getFirstname();
-        $lastName = $this->customerSession->getCustomerData()->getLastname();
-
-        return $firstName.' '.$lastName;
-    }
-
-    /**
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     *
-     * @return string
-     */
-    public function getCustomerEmail()
-    {
-        return $this->customerSession->getCustomerData()->getEmail();
-    }
 }
