@@ -143,19 +143,19 @@ class Data extends AbstractHelper
         $productionMode = ($this->isProductionMode() || $this->isOverwriteProductionMode());
 
         if ($emptyConfig) {
-            $reasons[] = __('Config is empty. ');
+            $reasons[] = __('Config is empty.');
         }
         if (!$configEnabled) {
-            $reasons[] = __('Module is not enabled in config. ');
+            $reasons[] = __('Module is not enabled in config.');
         }
         if (!$dsnNotEmpty) {
-            $reasons[] = __('DSN is empty. ');
+            $reasons[] = __('DSN is empty.');
         }
         if (!$productionMode) {
             $reasons[] = __('Not in production and development mode is false.');
         }
 
-        return strlen($reason) ? ['active' => 'false', 'reasons' => $reason] : ['active' => true];
+        return count($reasons) > 0 ? ['active' => false, 'reasons' => $reasons] : ['active' => true];
     }
 
     /**

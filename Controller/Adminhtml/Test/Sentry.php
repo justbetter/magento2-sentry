@@ -85,6 +85,7 @@ class Sentry extends Action
         $result = ['status' => false];
 
         $activeWithReason = $this->helperSentry->isActiveWithReason();
+
         if ($activeWithReason['active']) {
             try {
                 $this->monologPlugin->addAlert('TEST message from Magento 2', []);
@@ -95,7 +96,7 @@ class Sentry extends Action
                 $this->logger->critical($e);
             }
         } else {
-            $result['content'] = implode(PHP_EOL, $activeWithReason['reason']);
+            $result['content'] = implode(PHP_EOL, $activeWithReason['reasons']);
         }
 
         return $this->getResponse()->representJson(
