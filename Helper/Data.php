@@ -126,9 +126,7 @@ class Data extends AbstractHelper
      */
     public function isActive()
     {
-        $dummyStr = '';
-
-        return $this->isActiveWithReason($dummyStr);
+        return $this->isActiveWithReason()['active'];
     }
 
     /**
@@ -136,27 +134,28 @@ class Data extends AbstractHelper
      *
      * @return bool
      */
-    public function isActiveWithReason(&$reason)
+    public function isActiveWithReason()
     {
+        $reasons = [];
         $emptyConfig = empty($this->config);
         $configEnabled = array_key_exists('enabled', $this->config) && $this->config['enabled'];
         $dsnNotEmpty = $this->getDSN();
         $productionMode = ($this->isProductionMode() || $this->isOverwriteProductionMode());
 
         if ($emptyConfig) {
-            $reason .= __('Config is empty. ');
+            $reasons[] = __('Config is empty. ');
         }
         if (!$configEnabled) {
-            $reason .= __('Module is not enabled in config. ');
+            $reasons[] = __('Module is not enabled in config. ');
         }
         if (!$dsnNotEmpty) {
-            $reason .= __('DSN is empty. ');
+            $reasons[] = __('DSN is empty. ');
         }
         if (!$productionMode) {
-            $reason .= __('Not in production and development mode is false.');
+            $reasons[] = __('Not in production and development mode is false.');
         }
 
-        return !$emptyConfig && $configEnabled && $dsnNotEmpty && $productionMode;
+        return strlen($reason) ? ['active' => 'false', 'reasons' => $reason] : ['active' => true];
     }
 
     /**
