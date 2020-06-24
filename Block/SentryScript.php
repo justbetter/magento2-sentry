@@ -77,5 +77,4 @@ class SentryScript extends Template
     {
         return $this->dataHelper->getLogrocketKey();
     }
-
 }

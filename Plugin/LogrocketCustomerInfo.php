@@ -25,7 +25,7 @@ class LogrocketCustomerInfo
             $customer = $this->currentCustomer->getCustomer();
 
             $result['email'] = $customer->getEmail();
-            $result['fullname'] = $customer->getFirstname() . ' ' . $customer->getLastname();
+            $result['fullname'] = $customer->getFirstname().' '.$customer->getLastname();
         }
 
         return $result;
