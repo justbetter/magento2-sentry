@@ -1,4 +1,11 @@
 # Changelog
+## [2.3.0] - 2020-06-29
+### Added
+    * Merged PR - Added version tagging to JavaScript (https://github.com/justbetter/magento2-sentry/pull/54) thanks to https://github.com/JKetelaar
+    * Added LogRocket support
+### Changed
+    * Better feedback if configuration prevents the module from running
+
 ## [2.2.3] - 2020-02-25
 ### Fixed
     * Merged PR - Release version should be string (https://github.com/justbetter/magento2-sentry/pull/49) thanks to https://github.com/DominicWatts

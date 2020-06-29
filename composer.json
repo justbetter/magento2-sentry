@@ -2,7 +2,7 @@
   "name": "justbetter/magento2-sentry",
   "description": "Magento 2 Logger for Sentry",
   "type": "magento2-module",
-  "version": "2.2.3",
+  "version": "2.3.0",
   "license": "MIT",
   "require": {
     "php": ">=7.0",
