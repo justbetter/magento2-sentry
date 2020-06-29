@@ -25,6 +25,7 @@ class Data extends AbstractHelper
      */
     protected $configKeys = [
         'dsn',
+        'logrocket_key',
         'log_level',
         'mage_mode_development',
         'environment',
@@ -125,11 +126,36 @@ class Data extends AbstractHelper
      */
     public function isActive()
     {
-        return !empty($this->config)
-            && array_key_exists('enabled', $this->config)
-            && $this->config['enabled']
-            && $this->getDSN()
-            && ($this->isProductionMode() || $this->isOverwriteProductionMode());
+        return $this->isActiveWithReason()['active'];
+    }
+
+    /**
+     * @param string $reason : Reason to tell the user why it's not active (Github issue #53)
+     *
+     * @return bool
+     */
+    public function isActiveWithReason()
+    {
+        $reasons = [];
+        $emptyConfig = empty($this->config);
+        $configEnabled = array_key_exists('enabled', $this->config) && $this->config['enabled'];
+        $dsnNotEmpty = $this->getDSN();
+        $productionMode = ($this->isProductionMode() || $this->isOverwriteProductionMode());
+
+        if ($emptyConfig) {
+            $reasons[] = __('Config is empty.');
+        }
+        if (!$configEnabled) {
+            $reasons[] = __('Module is not enabled in config.');
+        }
+        if (!$dsnNotEmpty) {
+            $reasons[] = __('DSN is empty.');
+        }
+        if (!$productionMode) {
+            $reasons[] = __('Not in production and development mode is false.');
+        }
+
+        return count($reasons) > 0 ? ['active' => false, 'reasons' => $reasons] : ['active' => true];
     }
 
     /**
@@ -197,5 +223,31 @@ class Data extends AbstractHelper
         $name = 'sentry.'.$config;
 
         return $name == $blockName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLogrocketKey()
+    {
+        return $this->config['logrocket_key'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function useLogrocket()
+    {
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'use_logrocket') &&
+            array_key_exists('logrocket_key', $this->config) &&
+            $this->config['logrocket_key'] != null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function useLogrocketIdentify()
+    {
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'logrocket_identify');
     }
 }

@@ -72,4 +72,34 @@ class SentryScript extends Template
     {
         return $this->version->getValue();
     }
+  
+    /**
+     * If LogRocket should be used.
+     *
+     * @return bool
+     */
+    public function useLogRocket()
+    {
+        return $this->dataHelper->useLogrocket();
+    }
+
+    /**
+     * If LogRocket identify should be used.
+     *
+     * @return bool
+     */
+    public function useLogRocketIdentify()
+    {
+        return $this->dataHelper->useLogrocketIdentify();
+    }
+
+    /**
+     * Gets the LogRocket key.
+     *
+     * @return string
+     */
+    public function getLogrocketKey()
+    {
+        return $this->dataHelper->getLogrocketKey();
+    }
 }
