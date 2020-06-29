@@ -20,7 +20,9 @@ if (!$block->canUseScriptTag($block->getNameInLayout())) {
 
 <?php if ($block->useLogRocket()): ?>
     <script src="https://cdn.lr-ingest.io/LogRocket.min.js" crossorigin="anonymous"></script>
-    <script>window.LogRocket && window.LogRocket.init('<?= /* @noEscape */ trim($block->getLogrocketKey()) ?>');</script>
+    <script>
+        window.LogRocket && window.LogRocket.init('<?= /* @noEscape */ trim($block->getLogrocketKey()) ?>');
+    </script>
     <script>
         LogRocket.getSessionURL(sessionURL => {
             Sentry.configureScope(scope => {
