@@ -45,7 +45,7 @@ class GlobalExceptionCatcher
 
         $config = ['dsn' => $this->sentryHelper->getDSN()];
         if ($release = $this->releaseIdentifier->getReleaseId()) {
-            $config['release'] = $release;
+            $config['release'] = (string) $release;
         }
 
         if ($environment = $this->sentryHelper->getEnvironment()) {
