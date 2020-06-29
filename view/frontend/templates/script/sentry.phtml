@@ -2,11 +2,81 @@
 // phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
 /** @var \JustBetter\Sentry\Block\SentryScript $block */
 
-if (! $block->canUseScriptTag($block->getNameInLayout())) {
+if (!$block->canUseScriptTag($block->getNameInLayout())) {
     return;
 }
 ?>
 
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise" crossorigin></script>
 <script src="https://browser.sentry-cdn.com/4.5.3/bundle.min.js" crossorigin></script>
-<script>Sentry.init({ dsn: '<?= $block->escapeUrl(trim($block->getDSN())) ?>' });</script>
+<script>Sentry.init({dsn: '<?= $block->escapeUrl(trim($block->getDSN())) ?>'});</script>
+
+<?php if ($block->useLogRocket()) : ?>
+    <script src="https://cdn.lr-ingest.io/LogRocket.min.js" crossorigin="anonymous"></script>
+    <script>window.LogRocket && window.LogRocket.init('<?= trim($block->getLogrocketKey()) ?>');</script>
+    <script>
+        LogRocket.getSessionURL(sessionURL => {
+            Sentry.configureScope(scope => {
+                scope.setExtra("sessionURL", sessionURL);
+            });
+        });
+
+        <?php if ($block->useLogRocketIdentify()) : ?>
+
+        define('customerData',
+            ['jquery', 'Magento_Customer/js/customer-data'],
+            function ($, customerData) {
+                'use strict';
+
+                var getCustomerInfo = function () {
+                    var customer = customerData.get('customer');
+
+                    return customer();
+                };
+
+                var isLoggedIn = function (customerInfo) {
+                    return customerInfo && customerInfo.firstname;
+                };
+
+                return function () {
+                    var deferred = $.Deferred();
+                    var customerInfo = getCustomerInfo();
+
+                    if (customerInfo && customerInfo.data_id) {
+                        deferred.resolve(isLoggedIn(customerInfo), customerInfo);
+                    } else {
+                        customerData.reload(['customer'], false)
+                            .done(function () {
+                                customerInfo = getCustomerInfo()
+                                deferred.resolve(isLoggedIn(customerInfo), customerInfo);
+                            })
+                            .fail(function () {
+                                deferred.reject();
+                            });
+                    }
+
+                    return deferred;
+                };
+
+            }
+        );
+
+        require(["customerData"], function (customerData) {
+
+            customerData().then(function (loggedIn, data) {
+                if (!loggedIn) {
+                    return;
+                }
+
+                LogRocket.identify(data.websiteId, {
+                    name: data.fullname,
+                    email: data.email
+                });
+
+            });
+        });
+
+
+        <?php endif; ?>
+    </script>
+<?php endif; ?>

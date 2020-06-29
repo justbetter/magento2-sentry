@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <type name="JustBetter\Sentry\Model\SentryLog">
         <arguments>
             <argument name="name" xsi:type="string">SentryLog</argument>
             <argument name="handlers" xsi:type="array">
                 <item name="system" xsi:type="object">Magento\Framework\Logger\Handler\System</item>
             </argument>
-            <argument name="processors" xsi:type="array" />
+            <argument name="processors" xsi:type="array"/>
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
         </arguments>
     </type>
@@ -22,9 +23,15 @@
         </arguments>
     </type>
 
-     <!-- Cannot use plugin https://github.com/magento/magento2/issues/14950 -->
-    <preference for="Magento\Framework\Logger\Monolog" type="JustBetter\Sentry\Plugin\MonologPlugin" />
+    <!-- Cannot use plugin https://github.com/magento/magento2/issues/14950 -->
+    <preference for="Magento\Framework\Logger\Monolog" type="JustBetter\Sentry\Plugin\MonologPlugin"/>
     <type name="Magento\Framework\AppInterface">
-        <plugin disabled="false" name="GlobalExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher" sortOrder="0"/>
+        <plugin disabled="false" name="GlobalExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher"
+                sortOrder="0"/>
+    </type>
+
+    <type name="Magento\Customer\CustomerData\Customer">
+        <plugin name="LogrocketCustomerInfo" type="JustBetter\Sentry\Plugin\LogrocketCustomerInfo"
+                sortOrder="10" disabled="false"/>
     </type>
 </config>

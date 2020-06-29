@@ -34,8 +34,8 @@ class SentryScript extends Template
     public function canUseScriptTag($blockName)
     {
         return $this->dataHelper->isActive() &&
-               $this->dataHelper->useScriptTag() &&
-               $this->dataHelper->showScriptTagInThisBlock($blockName);
+            $this->dataHelper->useScriptTag() &&
+            $this->dataHelper->showScriptTagInThisBlock($blockName);
     }
 
     /**
@@ -46,5 +46,35 @@ class SentryScript extends Template
     public function getDSN()
     {
         return $this->dataHelper->getDSN();
+    }
+
+    /**
+     * If LogRocket should be used.
+     *
+     * @return bool
+     */
+    public function useLogRocket()
+    {
+        return $this->dataHelper->useLogrocket();
+    }
+
+    /**
+     * If LogRocket identify should be used.
+     *
+     * @return bool
+     */
+    public function useLogRocketIdentify()
+    {
+        return $this->dataHelper->useLogrocketIdentify();
+    }
+
+    /**
+     * Gets the LogRocket key.
+     *
+     * @return string
+     */
+    public function getLogrocketKey()
+    {
+        return $this->dataHelper->getLogrocketKey();
     }
 }
