@@ -72,7 +72,7 @@ class SentryScript extends Template
     {
         return $this->version->getValue();
     }
-  
+
     /**
      * If LogRocket should be used.
      *
