@@ -203,6 +203,14 @@ class Data extends AbstractHelper
     /**
      * @return bool
      */
+    public function isPhpTrackingEnabled()
+    {
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_php_tracking');
+    }
+
+    /**
+     * @return bool
+     */
     public function useScriptTag()
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag');

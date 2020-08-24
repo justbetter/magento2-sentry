@@ -39,7 +39,7 @@ class GlobalExceptionCatcher
 
     public function aroundLaunch(AppInterface $subject, callable $proceed)
     {
-        if (!$this->sentryHelper->isActive()) {
+        if ((!$this->sentryHelper->isActive()) || (!$this->sentryHelper->isPhpTrackingEnabled())) {
             return $proceed();
         }
 
