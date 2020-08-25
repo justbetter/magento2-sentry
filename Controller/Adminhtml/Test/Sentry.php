@@ -88,9 +88,13 @@ class Sentry extends Action
 
         if ($activeWithReason['active']) {
             try {
-                $this->monologPlugin->addAlert('TEST message from Magento 2', []);
-                $result['status'] = true;
-                $result['content'] = __('Check sentry.io which should hold an alert');
+                if ($this->helperSentry->isPhpTrackingEnabled()) {
+                    $this->monologPlugin->addAlert('TEST message from Magento 2', []);
+                    $result['status'] = true;
+                    $result['content'] = __('Check sentry.io which should hold an alert');
+                } else {
+                    $result['content'] = __('Php error tracking must be enabled for testing');
+                }
             } catch (\Exception $e) {
                 $result['content'] = $e->getMessage();
                 $this->logger->critical($e);
