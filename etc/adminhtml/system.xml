@@ -15,8 +15,12 @@
                     <label>Deployment config info</label>
                     <frontend_model>JustBetter\Sentry\Block\Adminhtml\System\Config\DeploymentConfigInfo</frontend_model>
                 </field>
+                <field id="enable_php_tracking" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Php Tracking</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="enable_script_tag" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Enable Sentry script tag</label>
+                    <label>Enable Javascript Tracking</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="script_tag_placement" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">

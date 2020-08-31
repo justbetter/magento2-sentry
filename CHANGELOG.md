@@ -1,4 +1,7 @@
 # Changelog
+## [2.3.1] - 2020-07-31
+### Added
+    * Merged PR - Add option to enable or disable Php error tracking (https://github.com/justbetter/magento2-sentry/pull/59) thanks to https://github.com/t9toqwerty
 ## [2.3.0] - 2020-06-29
 ### Added
     * Merged PR - Added version tagging to JavaScript (https://github.com/justbetter/magento2-sentry/pull/54) thanks to https://github.com/JKetelaar
