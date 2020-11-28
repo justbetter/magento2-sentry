@@ -13,8 +13,9 @@ if (!$block->canUseScriptTag($block->getNameInLayout())) {
 </script>
 <script>
     Sentry.init({
-        dsn: '<?= $block->escapeUrl(trim($block->getDSN())); ?>',
-        release: '<?= $block->escapeHtml(trim($block->getVersion())); ?>'
+        dsn: '<?= $block->escapeUrl(trim($block->getDSN())) ?>',
+        release: '<?= $block->escapeHtml(trim($block->getVersion())) ?>',
+        environment: '<?= $block->escapeHtml(trim($block->getEnvironment())) ?>',
     });
 </script>
 
