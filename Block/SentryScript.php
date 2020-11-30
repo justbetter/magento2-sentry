@@ -74,6 +74,16 @@ class SentryScript extends Template
     }
 
     /**
+     * Get the current environment of Sentry.
+     *
+     * @return mixed
+     */
+    public function getEnvironment()
+    {
+        return $this->dataHelper->getEnvironment();
+    }
+
+    /**
      * If LogRocket should be used.
      *
      * @return bool

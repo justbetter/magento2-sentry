@@ -1,4 +1,7 @@
 # Changelog
+## [2.3.2] - 2020-11-30
+### Added
+    * Merged PR - Adding environment to js integration (https://github.com/justbetter/magento2-sentry/pull/62) thanks to https://github.com/matthiashamacher
 ## [2.3.1] - 2020-07-31
 ### Added
     * Merged PR - Add option to enable or disable Php error tracking (https://github.com/justbetter/magento2-sentry/pull/59) thanks to https://github.com/t9toqwerty
