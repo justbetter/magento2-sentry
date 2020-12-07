@@ -1,4 +1,9 @@
 # Changelog
+## [2.4.0] - 2020-12-07
+### Added
+    * Merged PR - Add csp_whitelist.xml (https://github.com/justbetter/magento2-sentry/pull/65) thanks to https://github.com/matthiashamacher
+### Changed
+    * Merged PR - Update Sentry version (https://github.com/justbetter/magento2-sentry/pull/64) thanks to https://github.com/matthiashamacher
 ## [2.3.2] - 2020-11-30
 ### Added
     * Merged PR - Adding environment to js integration (https://github.com/justbetter/magento2-sentry/pull/62) thanks to https://github.com/matthiashamacher
