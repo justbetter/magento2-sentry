@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
+    <policies>
+        <policy id="script-src">
+            <values>
+                <value id="polyfill" type="host">https://cdn.polyfill.io</value>
+                <value id="sentry-cdn" type="host">https://browser.sentry-cdn.com</value>
+            </values>
+        </policy>
+        <policy id="connect-src">
+            <values>
+                <value id="sentry" type="host">https://*.ingest.sentry.io</value>
+            </values>
+        </policy>
+    </policies>
+</csp_whitelist>
