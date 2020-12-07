@@ -8,7 +8,7 @@ use Magento\Framework\View\Element\Template;
 
 class SentryScript extends Template
 {
-    const CURRENT_VERSION = '5.17.0';
+    const CURRENT_VERSION = '5.28.0';
 
     /**
      * @var DataHelper
