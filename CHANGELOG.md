@@ -1,4 +1,8 @@
 # Changelog
+## [2.5.0] - 2021-01-15
+### Changed
+    * Merged PR - Remove monolog class in function, add custom tag functionality (https://github.com/justbetter/magento2-sentry/pull/66) thanks to https://github.com/matthiashamacher
+    This is a breaking change on SentryLog::send(), the function required monolog before, this has been removed
 ## [2.4.0] - 2020-12-07
 ### Added
     * Merged PR - Add csp_whitelist.xml (https://github.com/justbetter/magento2-sentry/pull/65) thanks to https://github.com/matthiashamacher
