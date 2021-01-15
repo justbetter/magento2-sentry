@@ -58,21 +58,28 @@ class SentryLog extends Monolog
     /**
      * @param $message
      * @param $logLevel
-     * @param Monolog $monolog
-     * @param array   $context
+     * @param array $context
      */
-    public function send($message, $logLevel, Monolog $monolog, $context = [])
+    public function send($message, $logLevel, $context = [])
     {
         $config = $this->data->collectModuleConfig();
+        $customTags = [];
 
         if ($logLevel < (int) $config['log_level']) {
             return;
         }
 
-        \Sentry\configureScope(function (SentryScope $scope): void {
-            $this->setTags($scope);
-            $this->setUser($scope);
-        });
+        if (true === \array_key_exists('custom_tags', $context)) {
+            $customTags = $context['custom_tags'];
+            unset($context['custom_tags']);
+        }
+
+        \Sentry\configureScope(
+            function (SentryScope $scope) use ($customTags): void {
+                $this->setTags($scope, $customTags);
+                $this->setUser($scope);
+            }
+        );
 
         if ($message instanceof \Throwable) {
             $lastEventId = \Sentry\captureException($message);
@@ -117,13 +124,24 @@ class SentryLog extends Monolog
         }
     }
 
-    private function setTags(SentryScope $scope): void
+    /**
+     * @param SentryScope $scope
+     * @param array       $customTags
+     */
+    private function setTags(SentryScope $scope, $customTags): void
     {
         $store = $this->data->getStore();
+
         $scope->setTag('mage_mode', $this->data->getAppState());
         $scope->setTag('version', $this->data->getMagentoVersion());
         $scope->setTag('website_id', $store ? $store->getWebsiteId() : null);
         $scope->setTag('store_id', $store ? $store->getStoreId() : null);
         $scope->setTag('store_code', $store ? $store->getCode() : null);
+
+        if (false === empty($customTags)) {
+            foreach ($customTags as $tag => $value) {
+                $scope->setTag($tag, $value);
+            }
+        }
     }
 }
