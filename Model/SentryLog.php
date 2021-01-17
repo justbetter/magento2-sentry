@@ -69,7 +69,7 @@ class SentryLog extends Monolog
             return;
         }
 
-        if (true === \array_key_exists('custom_tags', $context)) {
+        if (true === isset($context['custom_tags']) && false === empty($context['custom_tags'])) {
             $customTags = $context['custom_tags'];
             unset($context['custom_tags']);
         }
