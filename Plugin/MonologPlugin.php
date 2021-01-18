@@ -54,7 +54,7 @@ class MonologPlugin extends Monolog
     public function addRecord($level, $message, array $context = [])
     {
         if ($this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive()) {
-            $this->sentryLog->send($message, $level, $this, $context);
+            $this->sentryLog->send($message, $level, $context);
         }
 
         return parent::addRecord($level, $message, $context);
