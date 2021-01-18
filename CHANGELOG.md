@@ -1,4 +1,7 @@
 # Changelog
+## [2.5.1] - 2021-01-18
+### Fixed
+    * Merged PR - Use isset to check for custom_tags in context (https://github.com/justbetter/magento2-sentry/pull/71) thanks to https://github.com/matthiashamacher
 ## [2.5.0] - 2021-01-15
 ### Changed
     * Merged PR - Remove monolog class in function, add custom tag functionality (https://github.com/justbetter/magento2-sentry/pull/66) thanks to https://github.com/matthiashamacher
