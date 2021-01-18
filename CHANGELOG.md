@@ -1,4 +1,7 @@
 # Changelog
+## [2.5.2] - 2021-01-18
+### Fixed
+    * Fix monolog plugin still adding monolog as argument
 ## [2.5.1] - 2021-01-18
 ### Fixed
     * Merged PR - Use isset to check for custom_tags in context (https://github.com/justbetter/magento2-sentry/pull/71) thanks to https://github.com/matthiashamacher
