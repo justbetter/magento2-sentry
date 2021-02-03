@@ -14,6 +14,7 @@ use Magento\Store\Model\StoreManagerInterface;
 class Data extends AbstractHelper
 {
     const XML_PATH_SRS = 'sentry/general/';
+    const XML_PATH_SRS_ISSUE_GROUPING = 'sentry/issue_grouping/';
 
     /**
      * @var StoreManagerInterface
@@ -257,5 +258,21 @@ class Data extends AbstractHelper
     public function useLogrocketIdentify()
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'logrocket_identify');
+    }
+
+    /**
+     * @return bool
+     */
+    public function stripStaticContentVersion()
+    {
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS_ISSUE_GROUPING.'strip_static_content_version');
+    }
+
+    /**
+     * @return bool
+     */
+    public function stripStoreCode()
+    {
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS_ISSUE_GROUPING.'strip_store_code');
     }
 }
