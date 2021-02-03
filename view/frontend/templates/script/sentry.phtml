@@ -32,7 +32,7 @@ if (!$block->canUseScriptTag($block->getNameInLayout())) {
 
                 <?php if ($block->stripStoreCode()): ?>
                 value.stacktrace.frames.map(function (frame) {
-                    frame.filename = frame.filename.replace('/<?php echo $block->getStoreCode(); ?>/', '/');
+                    frame.filename = frame.filename.replace('/<?= $block->escapeHtml($block->getStoreCode()); ?>/', '/');
                     return frame;
                 });
                 <?php endif; ?>
