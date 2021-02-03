@@ -1,4 +1,7 @@
 # Changelog
+## [2.5.3] - 2021-02-03
+### Added
+    * Add option to strip static content version and store code from urls that get sent to Sentry (https://github.com/justbetter/magento2-sentry/pull/73) thanks to https://github.com/peterjaap
 ## [2.5.2] - 2021-01-18
 ### Fixed
     * Fix monolog plugin still adding monolog as argument
