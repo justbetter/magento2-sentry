@@ -112,4 +112,29 @@ class SentryScript extends Template
     {
         return $this->dataHelper->getLogrocketKey();
     }
+
+    /**
+     * Whether we should strip the static content version from the URL.
+     *
+     * @return bool
+     */
+    public function stripStaticContentVersion()
+    {
+        return $this->datahelper->stripStaticContentVersion();
+    }
+
+    /**
+     * Whether we should strip the store code from the URL.
+     *
+     * @return bool
+     */
+    public function stripStoreCode()
+    {
+        return $this->datahelper->stripStoreCode();
+    }
+
+    public function getStoreCode()
+    {
+        return $this->_storeManager->getStore()->getCode();
+    }
 }

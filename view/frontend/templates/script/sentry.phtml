@@ -16,6 +16,32 @@ if (!$block->canUseScriptTag($block->getNameInLayout())) {
         dsn: '<?= $block->escapeUrl(trim($block->getDSN())) ?>',
         release: '<?= $block->escapeHtml(trim($block->getVersion())) ?>',
         environment: '<?= $block->escapeHtml(trim($block->getEnvironment())) ?>',
+        <?php if ($block->stripStaticContentVersion() || $block->stripStoreCode()): ?>
+        beforeSend: function(event) {
+            event.exception.values.map(function (value) {
+                if (value.stacktrace === undefined || ! value.stacktrace) {
+                    return value;
+                }
+
+                <?php if ($block->stripStaticContentVersion()): ?>
+                value.stacktrace.frames.map(function (frame) {
+                    frame.filename = frame.filename.replace(/version[0-9]{10}\//, '');
+                    return frame;
+                });
+                <?php endif; ?>
+
+                <?php if ($block->stripStoreCode()): ?>
+                value.stacktrace.frames.map(function (frame) {
+                    frame.filename = frame.filename.replace('/<?php echo $block->getStoreCode(); ?>/', '/');
+                    return frame;
+                });
+                <?php endif; ?>
+
+                return value;
+            });
+            return event;
+        }
+    <?php endif; ?>
     });
 </script>
 
