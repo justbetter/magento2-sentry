@@ -120,7 +120,7 @@ class SentryScript extends Template
      */
     public function stripStaticContentVersion()
     {
-        return $this->datahelper->stripStaticContentVersion();
+        return $this->dataHelper->stripStaticContentVersion();
     }
 
     /**
