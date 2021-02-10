@@ -120,7 +120,7 @@ class SentryScript extends Template
      */
     public function stripStaticContentVersion()
     {
-        return $this->datahelper->stripStaticContentVersion();
+        return $this->dataHelper->stripStaticContentVersion();
     }
 
     /**
@@ -130,7 +130,7 @@ class SentryScript extends Template
      */
     public function stripStoreCode()
     {
-        return $this->datahelper->stripStoreCode();
+        return $this->dataHelper->stripStoreCode();
     }
 
     public function getStoreCode()
