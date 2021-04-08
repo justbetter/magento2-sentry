@@ -1,4 +1,8 @@
 # Changelog
+## [2.6.0] - 2021-04-08
+### Added
+    * Add option to filter the severity of ErrorExceptions being sent to Sentry
+    * Add option to ignore specific Exception classes
 ## [2.5.4] - 2021-02-10
 ### Fixed
     * Fixed capital in dataHelper (https://github.com/justbetter/magento2-sentry/pull/74) thanks to https://github.com/peterjaap

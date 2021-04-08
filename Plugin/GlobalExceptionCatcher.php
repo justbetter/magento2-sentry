@@ -58,7 +58,9 @@ class GlobalExceptionCatcher
             return $proceed();
         } catch (\Throwable $ex) {
             try {
-                $this->sentryInteraction->captureException($ex);
+                if ($this->sentryHelper->shouldCaptureException($ex)) {
+                    $this->sentryInteraction->captureException($ex);
+                }
             } catch (\Throwable $bigProblem) {
                 // do nothing if sentry fails
             }
