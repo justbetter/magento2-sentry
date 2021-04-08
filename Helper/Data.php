@@ -28,6 +28,8 @@ class Data extends AbstractHelper
         'dsn',
         'logrocket_key',
         'log_level',
+        'errorexception_reporting',
+        'ignore_exceptions',
         'mage_mode_development',
         'environment',
     ];
@@ -274,5 +276,38 @@ class Data extends AbstractHelper
     public function stripStoreCode()
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS_ISSUE_GROUPING.'strip_store_code');
+    }
+
+    /**
+     * @return int
+     */
+    public function getErrorExceptionReporting()
+    {
+        return $this->config['errorexception_reporting'] ?? E_ALL;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIgnoreExceptions()
+    {
+        return (array)($this->config['ignore_exceptions'] ?? []);
+    }
+
+    /**
+     * @param \Throwable $ex
+     * @return bool
+     */
+    public function shouldCaptureException(\Throwable $ex)
+    {
+        if ($ex instanceof \ErrorException && !($ex->getSeverity() & $this->getErrorExceptionReporting())) {
+            return false;
+        }
+
+        if (in_array(get_class($ex), $this->getIgnoreExceptions())) {
+            return false;
+        }
+
+        return true;
     }
 }
