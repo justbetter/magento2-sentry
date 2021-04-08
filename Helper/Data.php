@@ -291,11 +291,12 @@ class Data extends AbstractHelper
      */
     public function getIgnoreExceptions()
     {
-        return (array)($this->config['ignore_exceptions'] ?? []);
+        return (array) ($this->config['ignore_exceptions'] ?? []);
     }
 
     /**
      * @param \Throwable $ex
+     *
      * @return bool
      */
     public function shouldCaptureException(\Throwable $ex)
