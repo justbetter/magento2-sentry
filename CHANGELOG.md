@@ -1,4 +1,7 @@
 # Changelog
+## [2.6.1] - 2022-03-18
+### Added
+    * Fix problems with loggout during product edit in admin panel
 ## [2.6.0] - 2021-04-08
 ### Added
     * Add option to filter the severity of ErrorExceptions being sent to Sentry
