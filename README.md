@@ -38,7 +38,7 @@ Next to that there are some configuration options under Stores > Configuration >
 - Optional you can configure custom error pages in pub/errors. You can use the sentry feedback form and insert here the sentry log ID. The Sentry Log Id is captured in de customer session and can be retrieved in `processor.php`.
 
 ## Compatibility
-The module is tested on Magento version 2.3.x & 2.4.x with sentry sdk version 2.x. Magento 2.1.x is not supported by us anymore, feel free to fork this project or make a pull request.
+The module is tested on Magento version 2.4.x with sentry sdk version 3.x. Magento 2.1.x is not supported by us anymore, feel free to fork this project or make a pull request.
 
 ## Ideas, bugs or suggestions?
 Please create a [issue](https://github.com/justbetter/magento2-sentry/issues) or a [pull request](https://github.com/justbetter/magento2-sentry/pulls).

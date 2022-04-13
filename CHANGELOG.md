@@ -1,4 +1,8 @@
 # Changelog
+## [3.0.0] - 2022-04-13
+Breaking: New version (2.0.0+) for Monolog will be required.
+### Fixed
+    * Fixed PHP 8.1 support with monolog 2.0.0+ (https://github.com/justbetter/magento2-sentry/pull/85) thanks to https://github.com/peterjaap
 ## [2.6.1] - 2022-04-13
 ### Changed
     * Updated constraints for monolog versions lower than 2.0.0
