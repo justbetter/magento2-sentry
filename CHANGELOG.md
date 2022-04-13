@@ -1,4 +1,7 @@
 # Changelog
+## [2.6.1] - 2022-04-13
+### Changed
+    * Updated constraints for monolog versions lower than 2.0.0
 ## [2.6.0] - 2021-04-08
 ### Added
     * Add option to filter the severity of ErrorExceptions being sent to Sentry
