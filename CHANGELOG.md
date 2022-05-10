@@ -1,4 +1,7 @@
 # Changelog
+## [3.0.1] - 2022-05-10
+### Fixed
+    * Fix problems with logout during product edit in admin panel when Chrome DevTools is open (https://github.com/justbetter/magento2-sentry/pull/86) thanks to https://github.com/trungpq2711
 ## [3.0.0] - 2022-04-13
 Breaking: New version (2.0.0+) for Monolog will be required.
 ### Fixed
