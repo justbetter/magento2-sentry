@@ -89,7 +89,9 @@ class SentryLog extends Monolog
 
         /// when using JS SDK you can use this for custom error page printing
         try {
-            $this->customerSession->setSentryEventId($lastEventId);
+            if (true === $this->canGetCustomerData()) {
+                $this->customerSession->setSentryEventId($lastEventId);
+            }
         } catch (SessionException $e) {
             return;
         }
