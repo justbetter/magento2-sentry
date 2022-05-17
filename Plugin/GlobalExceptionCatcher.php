@@ -8,6 +8,8 @@ use JustBetter\Sentry\Helper\Data as SenteryHelper;
 use JustBetter\Sentry\Model\ReleaseIdentifier;
 use JustBetter\Sentry\Model\SentryInteraction;
 use Magento\Framework\AppInterface;
+use Magento\Framework\DataObjectFactory;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 
 class GlobalExceptionCatcher
 {
@@ -20,21 +22,33 @@ class GlobalExceptionCatcher
     /** @var SentryInteraction */
     private $sentryInteraction;
 
+    /** @var EventManagerInterface */
+    private $eventManager;
+
+    /** @var DataObjectFactory */
+    private $dataObjectFactory;
+
     /**
      * ExceptionCatcher constructor.
      *
-     * @param SenteryHelper     $sentryHelper
-     * @param ReleaseIdentifier $releaseIdentifier
-     * @param SentryInteraction $sentryInteraction
+     * @param SenteryHelper         $sentryHelper
+     * @param ReleaseIdentifier     $releaseIdentifier
+     * @param SentryInteraction     $sentryInteraction
+     * @param EventManagerInterface $eventManager
+     * @param DataObjectFactory     $dataObjectFactory
      */
     public function __construct(
         SenteryHelper $sentryHelper,
         ReleaseIdentifier $releaseIdentifier,
-        SentryInteraction $sentryInteraction
+        SentryInteraction $sentryInteraction,
+        EventManagerInterface $eventManager,
+        DataObjectFactory $dataObjectFactory
     ) {
         $this->sentryHelper = $sentryHelper;
         $this->releaseIdentifier = $releaseIdentifier;
         $this->sentryInteraction = $sentryInteraction;
+        $this->eventManager = $eventManager;
+        $this->dataObjectFactory = $dataObjectFactory;
     }
 
     public function aroundLaunch(AppInterface $subject, callable $proceed)
@@ -43,16 +57,22 @@ class GlobalExceptionCatcher
             return $proceed();
         }
 
-        $config = ['dsn' => $this->sentryHelper->getDSN()];
+        $config = $this->dataObjectFactory->create();
+
+        $config->setDsn($this->sentryHelper->getDSN());
         if ($release = $this->releaseIdentifier->getReleaseId()) {
-            $config['release'] = (string) $release;
+            $config->setRelease((string) $release);
         }
 
         if ($environment = $this->sentryHelper->getEnvironment()) {
-            $config['environment'] = $environment;
+            $config->setEnvironment($environment);
         }
 
-        $this->sentryInteraction->initialize($config);
+        $this->eventManager->dispatch('sentry_before_init', [
+            'config' => $config,
+        ]);
+
+        $this->sentryInteraction->initialize($config->getData());
 
         try {
             return $proceed();
