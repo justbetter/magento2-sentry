@@ -6,6 +6,7 @@ use JustBetter\Sentry\Helper\Data;
 use JustBetter\Sentry\Model\SentryLog;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Logger\Monolog;
+use Monolog\DateTimeImmutable;
 
 class MonologPlugin extends Monolog
 {
@@ -51,12 +52,16 @@ class MonologPlugin extends Monolog
      *
      * @return bool Whether the record has been processed
      */
-    public function addRecord(int $level, string $message, array $context = []): bool
-    {
+    public function addRecord(
+        int $level,
+        string $message,
+        array $context = [],
+        DateTimeImmutable $datetime = null
+    ): bool {
         if ($this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive()) {
             $this->sentryLog->send($message, $level, $context);
         }
 
-        return parent::addRecord($level, $message, $context);
+        return parent::addRecord($level, $message, $context, $datetime);
     }
 }
