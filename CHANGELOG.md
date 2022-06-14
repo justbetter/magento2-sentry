@@ -1,4 +1,10 @@
 # Changelog
+## [3.1.0] - 2022-06-14
+### Fixed
+    * Update addRecord function for Monolog 2.7+ (https://github.com/justbetter/magento2-sentry/pull/92) thanks to https://github.com/torhoehn
+## [3.0.2] - 2022-06-14
+### Added
+    * Added sentry_before_init event to GlobalExceptionCatcher (https://github.com/justbetter/magento2-sentry/pull/90) thanks to https://github.com/peterjaap
 ## [3.0.1] - 2022-05-10
 ### Fixed
     * Fix problems with logout during product edit in admin panel when Chrome DevTools is open (https://github.com/justbetter/magento2-sentry/pull/86) thanks to https://github.com/trungpq2711
