@@ -1,4 +1,10 @@
 # Changelog
+## [3.2.0] - 2022-07-07
+### Fixed
+    * Changed addAlert to addRecord for Test error (https://github.com/justbetter/magento2-sentry/pull/98) thanks to https://github.com/peterjaap
+
+### Added
+    * Send context data top Sentry as Custom Data (https://github.com/justbetter/magento2-sentry/pull/97) thanks to https://github.com/oneserv-heuser
 ## [3.1.0] - 2022-06-14
 ### Fixed
     * Update addRecord function for Monolog 2.7+ (https://github.com/justbetter/magento2-sentry/pull/92) thanks to https://github.com/torhoehn
