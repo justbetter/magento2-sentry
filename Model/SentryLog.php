@@ -75,9 +75,12 @@ class SentryLog extends Monolog
         }
 
         \Sentry\configureScope(
-            function (SentryScope $scope) use ($customTags): void {
+            function (SentryScope $scope) use ($context, $customTags): void {
                 $this->setTags($scope, $customTags);
                 $this->setUser($scope);
+                if (!empty($context)) {
+                    $scope->setContext('Custom context', $context);
+                }
             }
         );
 

@@ -37,6 +37,9 @@ Next to that there are some configuration options under Stores > Configuration >
 ## Optional error page configuration
 - Optional you can configure custom error pages in pub/errors. You can use the sentry feedback form and insert here the sentry log ID. The Sentry Log Id is captured in de customer session and can be retrieved in `processor.php`.
 
+## Sending additonal data to Sentry when logging errors
+- When calling any function from the [Psr\Log\LoggerInterface](https://github.com/php-fig/log/blob/master/src/LoggerInterface.php) you can pass any data to the parameter $context and it will be send to Sentry as 'Custom context'.
+
 ## Compatibility
 The module is tested on Magento version 2.4.x with sentry sdk version 3.x. Magento 2.1.x is not supported by us anymore, feel free to fork this project or make a pull request.
 
