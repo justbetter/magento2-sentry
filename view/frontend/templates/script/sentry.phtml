@@ -8,7 +8,7 @@ if (!$block->canUseScriptTag($block->getNameInLayout())) {
 ?>
 
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise" crossorigin></script>
-<script src="https://browser.sentry-cdn.com/<?= \JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION;?>/bundle.min.js"
+<script src="https://browser.sentry-cdn.com/<?= $block->escapeHtmlAttr($block->getJsSdkVersion()) ?>/bundle.min.js"
         crossorigin="anonymous">
 </script>
 <script>

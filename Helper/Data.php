@@ -2,6 +2,7 @@
 
 namespace JustBetter\Sentry\Helper;
 
+use JustBetter\Sentry\Block\SentryScript;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\Helper\AbstractHelper;
@@ -32,6 +33,7 @@ class Data extends AbstractHelper
         'ignore_exceptions',
         'mage_mode_development',
         'environment',
+        'js_sdk_version'
     ];
 
     /**
@@ -74,6 +76,14 @@ class Data extends AbstractHelper
     public function getDSN()
     {
         return $this->config['dsn'];
+    }
+
+    /**
+     * @return string the version of the js sdk of Sentry
+     */
+    public function getJsSdkVersion()
+    {
+        return $this->config['js_sdk_version'] ?: SentryScript::CURRENT_VERSION;
     }
 
     /**

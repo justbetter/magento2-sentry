@@ -64,6 +64,16 @@ class SentryScript extends Template
     }
 
     /**
+     * Get the version of the JS-SDK of Sentry.
+     *
+     * @return string
+     */
+    public function getJsSdkVersion()
+    {
+        return $this->dataHelper->getJsSdkVersion();
+    }
+
+    /**
      * Get the current version of the Magento application.
      *
      * @return int|string

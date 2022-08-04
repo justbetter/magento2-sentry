@@ -21,6 +21,7 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'errorexception_reporting' => E_ALL,
     'ignore_exceptions' => [],
     'mage_mode_development' => false,
+    'js_sdk_version' => \JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION
 ]
 ```
 
@@ -33,11 +34,12 @@ Next to that there are some configuration options under Stores > Configuration >
 * `errorexception_reporting`: If the Exception being thrown is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php) send the error to sentry if it matches the error reporting. This uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php) eg. `E_ERROR | E_WARNING` to only log Errors and Warnings.
 * `ignore_exceptions`: If the class being thrown matches any in this list do not send it to Sentry e.g. `[\Magento\Framework\Exception\NoSuchEntityException::class]`
 * `mage_mode_development`: If this option is set to true you will receive issues in Sentry even if you're Magento is running in develop mode.
+* `js_sdk_version`: if this option is set, it will load the explicit version of the javascript SDK of Sentry. 
 
 ## Optional error page configuration
 - Optional you can configure custom error pages in pub/errors. You can use the sentry feedback form and insert here the sentry log ID. The Sentry Log Id is captured in de customer session and can be retrieved in `processor.php`.
 
-## Sending additonal data to Sentry when logging errors
+## Sending additional data to Sentry when logging errors
 - When calling any function from the [Psr\Log\LoggerInterface](https://github.com/php-fig/log/blob/master/src/LoggerInterface.php) you can pass any data to the parameter $context and it will be send to Sentry as 'Custom context'.
 
 ## Compatibility
