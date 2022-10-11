@@ -11,7 +11,7 @@ if ($block->isTracingEnabled()) {
     $bundleFile = 'bundle.tracing.min.js';
 }
 
-$remoteFile = sprintf('https://browser.sentry-cdn.com/%s/%s', \JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION, $bundleFile);
+$remoteFile = sprintf('https://browser.sentry-cdn.com/%s/%s', $block->escapeHtmlAttr($block->getJsSdkVersion()), $bundleFile);
 ?>
 
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise" crossorigin></script>
