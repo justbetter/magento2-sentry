@@ -21,6 +21,8 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'errorexception_reporting' => E_ALL,
     'ignore_exceptions' => [],
     'mage_mode_development' => false,
+    'tracing_enabled' => true, 
+    'tracing_sample_rate' => 0.5
 ]
 ```
 
@@ -33,6 +35,8 @@ Next to that there are some configuration options under Stores > Configuration >
 * `errorexception_reporting`: If the Exception being thrown is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php) send the error to sentry if it matches the error reporting. This uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php) eg. `E_ERROR | E_WARNING` to only log Errors and Warnings.
 * `ignore_exceptions`: If the class being thrown matches any in this list do not send it to Sentry e.g. `[\Magento\Framework\Exception\NoSuchEntityException::class]`
 * `mage_mode_development`: If this option is set to true you will receive issues in Sentry even if you're Magento is running in develop mode.
+* `tracing_enabled` if this option is set to true, tracing got enabled (bundle file got loaded automatically). Default: `false`
+* `tracing_sample_rate` if tracing is enabled, you should also set the sample rate. Default: `0.2`
 
 ## Optional error page configuration
 - Optional you can configure custom error pages in pub/errors. You can use the sentry feedback form and insert here the sentry log ID. The Sentry Log Id is captured in de customer session and can be retrieved in `processor.php`.
