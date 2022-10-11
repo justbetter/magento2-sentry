@@ -33,7 +33,9 @@ class Data extends AbstractHelper
         'ignore_exceptions',
         'mage_mode_development',
         'environment',
-        'js_sdk_version'
+        'js_sdk_version',
+        'tracing_enabled',
+        'tracing_sample_rate',
     ];
 
     /**
@@ -76,6 +78,16 @@ class Data extends AbstractHelper
     public function getDSN()
     {
         return $this->config['dsn'];
+    }
+
+    public function isTracingEnabled(): bool
+    {
+        return $this->config['tracing_enabled'] ?? false;
+    }
+
+    public function getTracingSampleRate(): float
+    {
+        return (float) $this->config['tracing_sample_rate'] ?? 0.2;
     }
 
     /**

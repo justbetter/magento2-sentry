@@ -147,4 +147,14 @@ class SentryScript extends Template
     {
         return $this->_storeManager->getStore()->getCode();
     }
+
+    public function isTracingEnabled(): bool
+    {
+        return $this->dataHelper->isTracingEnabled();
+    }
+
+    public function getTracingSampleRate(): float
+    {
+        return $this->dataHelper->getTracingSampleRate();
+    }
 }
