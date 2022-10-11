@@ -33,7 +33,7 @@ class Data extends AbstractHelper
         'mage_mode_development',
         'environment',
         'tracing_enabled',
-        'tracing_sample_rate'
+        'tracing_sample_rate',
     ];
 
     /**
@@ -85,7 +85,7 @@ class Data extends AbstractHelper
 
     public function getTracingSampleRate(): float
     {
-        return (float)$this->config['tracing_sample_rate'] ?? 0.2;
+        return (float) $this->config['tracing_sample_rate'] ?? 0.2;
     }
 
     /**
