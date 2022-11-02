@@ -76,6 +76,10 @@ class GlobalExceptionCatcher
             static fn (IntegrationInterface $integration) => !in_array(get_class($integration), $disabledDefaultIntegrations)
         ));
 
+        if ($this->sentryHelper->isTracingEnabled()) {
+            $config->setTracesSampleRate($this->sentryHelper->getTracingSampleRate());
+        }
+
         $this->eventManager->dispatch('sentry_before_init', [
             'config' => $config,
         ]);
