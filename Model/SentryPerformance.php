@@ -25,7 +25,7 @@ class SentryPerformance
         );
 
         $requestPath = '/' . ltrim($request->getRequestUri(), '/');
-        
+
         $context->setOp('http.server');
         $context->setName($requestPath);
         $context->setSource(TransactionSource::url());

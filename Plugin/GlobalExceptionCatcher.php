@@ -76,7 +76,7 @@ class GlobalExceptionCatcher
             static fn (IntegrationInterface $integration) => !in_array(get_class($integration), $disabledDefaultIntegrations)
         ));
 
-        if ($this->sentryHelper->isTracingEnabled()) {
+        if ($this->sentryHelper->isTracingEnabled() && $this->sentryHelper->isPerformanceTrackingEnabled()) {
             $config->setTracesSampleRate($this->sentryHelper->getTracingSampleRate());
         }
 

@@ -330,12 +330,17 @@ class Data extends AbstractHelper
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_php_tracking', ScopeInterface::SCOPE_STORE);
     }
 
+    public function isPerformanceTrackingEnabled(): bool
+    {
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_performance_tracking');
+    }
+
     /**
      * Is the script tag enabled?
      *
      * @return bool
      */
-    public function useScriptTag(): bool
+    public function useScriptTag()
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag', ScopeInterface::SCOPE_STORE);
     }
