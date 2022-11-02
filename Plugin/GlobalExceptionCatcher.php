@@ -68,6 +68,10 @@ class GlobalExceptionCatcher
             $config->setEnvironment($environment);
         }
 
+        if ($this->sentryHelper->isTracingEnabled()) {
+            $config->setTracesSampleRate($this->sentryHelper->getTracingSampleRate());
+        }
+
         $this->eventManager->dispatch('sentry_before_init', [
             'config' => $config,
         ]);
