@@ -3,7 +3,4 @@
     <event name="controller_action_predispatch">
         <observer name="SentryPredispatch" instance="JustBetter\Sentry\Observer\ControllerActionPredispatchObserver" />
     </event>
-    <event name="controller_action_postdispatch">
-        <observer name="SentryPostdispatch" instance="JustBetter\Sentry\Observer\ControllerActionPostdispatchObserver" />
-    </event>
 </config>
