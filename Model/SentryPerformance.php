@@ -7,9 +7,8 @@ namespace JustBetter\Sentry\Model;
 // phpcs:disable Magento2.Functions.DiscouragedFunction
 
 use Magento\Framework\App\Request\Http as HttpRequest;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\Response\Http as HttpResponse;
+use Magento\Framework\App\ResponseInterface;
 use Sentry\SentrySdk;
 use Sentry\Tracing\SpanContext;
 use Sentry\Tracing\Transaction;
@@ -21,7 +20,7 @@ class SentryPerformance
     /** @var Transaction|null */
     private $transaction;
 
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
 
     public function __construct(\Magento\Framework\App\ResourceConnection $resourceConnection)
@@ -38,7 +37,7 @@ class SentryPerformance
             $request->getHeader('baggage') ?: ''
         );
 
-        $requestPath = '/' . ltrim($request->getRequestUri(), '/');
+        $requestPath = '/'.ltrim($request->getRequestUri(), '/');
 
         $context->setOp('http.server');
         $context->setName($requestPath);
@@ -46,7 +45,7 @@ class SentryPerformance
         $context->setStartTimestamp($requestStartTime);
 
         $context->setData([
-            'url' => $requestPath,
+            'url'    => $requestPath,
             'method' => strtoupper($request->getMethod()),
         ]);
 
@@ -70,7 +69,6 @@ class SentryPerformance
     public function finishTransaction(ResponseInterface $response)
     {
         if ($this->transaction) {
-
             if ($response instanceof HttpResponse) {
                 $this->transaction->setHttpStatus($response->getStatusCode());
             }
