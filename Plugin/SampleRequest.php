@@ -5,11 +5,9 @@ namespace JustBetter\Sentry\Plugin;
 use JustBetter\Sentry\Model\SentryPerformance;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\ResponseInterface;
-use MagentoHackathon\Toolbar\Toolbar;
 
 /**
- * Plugin to add Toolbar to the Response add the
- * end of the body.
+ * Plugin to sample request and send them to Sentry
  */
 class SampleRequest
 {

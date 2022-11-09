@@ -73,8 +73,6 @@ class SentryPerformance
                 $this->transaction->setHttpStatus($response->getStatusCode());
             }
 
-            $this->addSqlQueries();
-
             // Finish the transaction, this submits the transaction and it's span to Sentry
             $this->transaction->finish();
 
@@ -82,33 +80,19 @@ class SentryPerformance
         }
     }
 
-    private function addSqlQueries()
+    public function addSqlQuery($sql, $startTime, $endTime = null)
     {
         $parentSpan = SentrySdk::getCurrentHub()->getSpan();
         if (!$parentSpan) {
             return;
         }
 
-        /** @var \Zend_Db_Profiler $profiler */
-        $profiler = $this->resourceConnection->getConnection('read')->getProfiler();
-        if (!$profiler) {
-            return;
-        }
+        $context = new SpanContext();
+        $context->setOp('db.sql.query');
+        $context->setDescription($sql);
+        $context->setStartTimestamp($startTime);
+        $context->setEndTimestamp($endTime ?: microtime(true));
 
-        /** @var \Zend_Db_Profiler_Query[]|false $profiles */
-        $profiles = $profiler->getQueryProfiles();
-        if (!$profiles) {
-            return;
-        }
-
-        foreach ($profiles as $profile) {
-            $context = new SpanContext();
-            $context->setOp('db.sql.query');
-            $context->setDescription($profile->getQuery());
-            $context->setStartTimestamp($profile->getStartedMicrotime());
-            $context->setEndTimestamp(($profile->getStartedMicrotime() + $profile->getElapsedSecs()));
-
-            $parentSpan->startChild($context);
-        }
+        $parentSpan->startChild($context);
     }
 }
