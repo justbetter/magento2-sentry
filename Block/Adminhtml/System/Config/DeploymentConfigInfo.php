@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\Sentry\Block\Adminhtml\System\Config;
 
 use JustBetter\Sentry\Helper\Version;
@@ -10,32 +12,27 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 class DeploymentConfigInfo extends Field
 {
     /**
-     * @var Version
-     */
-    private $version;
-
-    /**
-     * @var string
-     */
-    protected $_template = 'system/config/deployment-config-info.phtml';
-
-    /**
      * DeploymentConfigInfo constructor.
      *
      * @param Context $context
-     * @param array   $data
      * @param Version $version
+     * @param string $_template
+     * @param array $data
      */
     public function __construct(
-        Context $context,
-        Version $version,
-        array $data = []
+        protected Context $context,
+        private readonly Version $version,
+        protected string $_template = 'system/config/deployment-config-info.phtml',
+        protected array $data = []
     ) {
-        $this->version = $version;
         parent::__construct($context, $data);
     }
 
-    public function render(AbstractElement $element)
+    /**
+     * @param AbstractElement $element
+     * @return mixed
+     */
+    public function render(AbstractElement $element): mixed
     {
         return $this->_toHtml();
     }
@@ -45,7 +42,7 @@ class DeploymentConfigInfo extends Field
      *
      * @return string
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->version->getValue();
     }

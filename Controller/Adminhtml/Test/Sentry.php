@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\Sentry\Controller\Adminhtml\Test;
 
+use Exception;
 use JustBetter\Sentry\Helper\Data;
-use JustBetter\Sentry\Model\SentryLog;
 use JustBetter\Sentry\Plugin\MonologPlugin;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Result\PageFactory;
+use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 
 class Sentry extends Action
@@ -21,34 +25,6 @@ class Sentry extends Action
     const ADMIN_RESOURCE = 'JustBetter_Sentry::sentry';
 
     /**
-     * @var PageFactory
-     */
-    protected $resultPageFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var Json
-     */
-    private $jsonSerializer;
-    /**
-     * @var Data
-     */
-    private $helperSentry;
-    /**
-     * @var JustBetter\Sentry\Model\SentryLog|SentryLog
-     */
-    private $monologPlugin;
-
-    /**
-     * @var ShellInterface
-     */
-    private $shellBackground;
-
-    /**
      * Sentry constructor.
      *
      * @param Context         $context
@@ -59,28 +35,22 @@ class Sentry extends Action
      * @param MonologPlugin   $monologPlugin
      */
     public function __construct(
-        Context $context,
-        PageFactory $resultPageFactory,
-        Json $jsonSerializer,
-        LoggerInterface $logger,
-        Data $helperSentry,
-        MonologPlugin $monologPlugin
+        protected Context $context,
+        protected PageFactory $resultPageFactory,
+        private readonly Json $jsonSerializer,
+        protected LoggerInterface $logger,
+        private readonly Data $helperSentry,
+        private readonly MonologPlugin $monologPlugin,
     ) {
-        $this->resultPageFactory = $resultPageFactory;
-        $this->jsonSerializer = $jsonSerializer;
-        $this->logger = $logger;
-        $this->helperSentry = $helperSentry;
-        $this->monologPlugin = $monologPlugin;
-
         parent::__construct($context);
     }
 
     /**
      * Execute view action.
      *
-     * @return \Magento\Framework\Controller\ResultInterface
+     * @return ResultInterface
      */
-    public function execute()
+    public function execute(): ResultInterface
     {
         $result = ['status' => false];
 
@@ -89,13 +59,13 @@ class Sentry extends Action
         if ($activeWithReason['active']) {
             try {
                 if ($this->helperSentry->isPhpTrackingEnabled()) {
-                    $this->monologPlugin->addRecord(\Monolog\Logger::ALERT, 'TEST message from Magento 2', []);
+                    $this->monologPlugin->addRecord(Logger::ALERT, 'TEST message from Magento 2', []);
                     $result['status'] = true;
                     $result['content'] = __('Check sentry.io which should hold an alert');
                 } else {
                     $result['content'] = __('Php error tracking must be enabled for testing');
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $result['content'] = $e->getMessage();
                 $this->logger->critical($e);
             }

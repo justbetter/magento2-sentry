@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\Sentry\Plugin;
 
 use JustBetter\Sentry\Helper\Data;
@@ -11,35 +13,23 @@ use Monolog\DateTimeImmutable;
 class MonologPlugin extends Monolog
 {
     /**
-     * @var Data
-     */
-    protected $sentryHelper;
-
-    /**
-     * @var SentryLog
-     */
-    protected $sentryLog;
-
-    /**
-     * @var DeploymentConfig
-     */
-    protected $deploymentConfig;
-
-    /**
      * {@inheritdoc}
+     *
+     * @param string $name
+     * @param Data $sentryHelper
+     * @param SentryLog $sentryLog
+     * @param DeploymentConfig $deploymentConfig
+     * @param array $handlers
+     * @param array $processors
      */
     public function __construct(
-        $name,
-        Data $data,
-        SentryLog $sentryLog,
-        DeploymentConfig $deploymentConfig,
+        public string $name,
+        protected Data $sentryHelper,
+        protected SentryLog $sentryLog,
+        protected DeploymentConfig $deploymentConfig,
         array $handlers = [],
         array $processors = []
     ) {
-        $this->sentryHelper = $data;
-        $this->sentryLog = $sentryLog;
-        $this->deploymentConfig = $deploymentConfig;
-
         parent::__construct($name, $handlers, $processors);
     }
 
@@ -57,7 +47,8 @@ class MonologPlugin extends Monolog
         string $message,
         array $context = [],
         DateTimeImmutable $datetime = null
-    ): bool {
+    ): bool
+    {
         if ($this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive()) {
             $this->sentryLog->send($message, $level, $context);
         }

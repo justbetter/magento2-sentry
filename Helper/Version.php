@@ -1,12 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\Sentry\Helper;
 
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\State;
+use Magento\Framework\App\View\Deployment\Version\StorageInterface;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 use Psr\Log\LoggerInterface;
+use UnexpectedValueException;
 
 /**
  * Deployment version of static files.
@@ -14,42 +19,19 @@ use Psr\Log\LoggerInterface;
 class Version extends AbstractHelper
 {
     /**
-     * @var \Magento\Framework\App\State
-     */
-    private $appState;
-
-    /**
-     * @var \Magento\Framework\App\View\Deployment\Version\StorageInterface
-     */
-    private $versionStorage;
-
-    /**
-     * @var string
-     */
-    private $cachedValue;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var DeploymentConfig
-     */
-    private $deploymentConfig;
-
-    /**
-     * @param \Magento\Framework\App\State $appState
-     * @param Version\StorageInterface     $versionStorage
-     * @param DeploymentConfig|null        $deploymentConfig
+     * @param State $appState
+     * @param StorageInterface $versionStorage
+     * @param string $cachedValue
+     * @param LoggerInterface $logger
+     * @param DeploymentConfig|null $deploymentConfig
      */
     public function __construct(
-        \Magento\Framework\App\State $appState,
-        \Magento\Framework\App\View\Deployment\Version\StorageInterface $versionStorage,
-        DeploymentConfig $deploymentConfig = null
+        private readonly State $appState,
+        private readonly StorageInterface $versionStorage,
+        private string $cachedValue,
+        private LoggerInterface $logger,
+        private ?DeploymentConfig $deploymentConfig = null
     ) {
-        $this->appState = $appState;
-        $this->versionStorage = $versionStorage;
         $this->deploymentConfig = $deploymentConfig ?: ObjectManager::getInstance()->get(DeploymentConfig::class);
     }
 
@@ -58,7 +40,7 @@ class Version extends AbstractHelper
      *
      * @return string
      */
-    public function getValue()
+    public function getValue(): string
     {
         if (!$this->cachedValue) {
             $this->cachedValue = $this->readValue($this->appState->getMode());
@@ -74,18 +56,18 @@ class Version extends AbstractHelper
      *
      * @return string
      */
-    protected function readValue($appMode)
+    protected function readValue(string $appMode): string
     {
         $result = $this->versionStorage->load();
         if (!$result) {
-            if ($appMode == \Magento\Framework\App\State::MODE_PRODUCTION
+            if ($appMode == State::MODE_PRODUCTION
                 && !$this->deploymentConfig->getConfigData(
                     ConfigOptionsListConstants::CONFIG_PATH_SCD_ON_DEMAND_IN_PRODUCTION
                 )
             ) {
                 $this->getLogger()->critical('Can not load static content version.');
 
-                throw new \UnexpectedValueException(
+                throw new UnexpectedValueException(
                     'Unable to retrieve deployment version of static files from the file system.'
                 );
             }
@@ -93,7 +75,7 @@ class Version extends AbstractHelper
             $this->versionStorage->save($result);
         }
 
-        return $result;
+        return (string)$result;
     }
 
     /**
@@ -101,7 +83,7 @@ class Version extends AbstractHelper
      *
      * @return int
      */
-    private function generateVersion()
+    private function generateVersion(): int
     {
         return time();
     }
@@ -111,7 +93,7 @@ class Version extends AbstractHelper
      *
      * @return LoggerInterface
      */
-    private function getLogger()
+    private function getLogger(): LoggerInterface
     {
         if ($this->logger == null) {
             $this->logger = \Magento\Framework\App\ObjectManager::getInstance()

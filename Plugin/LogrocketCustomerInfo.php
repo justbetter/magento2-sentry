@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\Sentry\Plugin;
 
 use Magento\Customer\CustomerData\Customer;
@@ -8,18 +10,22 @@ use Magento\Customer\Model\Session;
 
 class LogrocketCustomerInfo
 {
-    protected $currentCustomer;
-    protected $customerSession;
-
+    /**
+     * @param CurrentCustomer $currentCustomer
+     * @param Session $customerSession
+     */
     public function __construct(
-        CurrentCustomer $currentCustomer,
-        Session $session
+        protected CurrentCustomer $currentCustomer,
+        protected Session $customerSession
     ) {
-        $this->currentCustomer = $currentCustomer;
-        $this->customerSession = $session;
     }
 
-    public function afterGetSectionData(Customer $subject, $result)
+    /**
+     * @param Customer $subject
+     * @param $result
+     * @return mixed
+     */
+    public function afterGetSectionData(Customer $subject, $result): mixed
     {
         if ($this->customerSession->isLoggedIn()) {
             $customer = $this->currentCustomer->getCustomer();

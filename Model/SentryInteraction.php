@@ -6,17 +6,26 @@ namespace JustBetter\Sentry\Model;
 
 // phpcs:disable Magento2.Functions.DiscouragedFunction
 
+use Throwable;
 use function Sentry\captureException;
 use function Sentry\init;
 
 class SentryInteraction
 {
-    public function initialize($config)
+    /**
+     * @param $config
+     * @return void
+     */
+    public function initialize($config): void
     {
         init($config);
     }
 
-    public function captureException(\Throwable $ex)
+    /**
+     * @param Throwable $ex
+     * @return void
+     */
+    public function captureException(Throwable $ex): void
     {
         ob_start();
         captureException($ex);

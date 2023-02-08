@@ -2,10 +2,10 @@
   "name": "justbetter/magento2-sentry",
   "description": "Magento 2 Logger for Sentry",
   "type": "magento2-module",
-  "version": "3.2.0",
+  "version": "101.0.0",
   "license": "MIT",
   "require": {
-    "php": ">=7.0",
+    "php": ">=8.1",
     "sentry/sdk": "^3.0",
     "monolog/monolog": ">=2.7.0",
     "magento/framework": "*",
@@ -22,6 +22,11 @@
       "name": "Joseph Maxwell",
       "email": "joseph@swiftotter.com",
       "homepage": "https://swiftotter.com",
+      "role": "Developer"
+    },
+    {
+      "name": "Brice BOUDY",
+      "email": "briceboudy@gmail.com",
       "role": "Developer"
     }
   ],

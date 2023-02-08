@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\Sentry\Block\Adminhtml\System\Config;
 
 use Magento\Config\Block\System\Config\Form\Field;
@@ -7,10 +9,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class Button extends Field
 {
-    /**
-     * @var string
-     */
-    protected $_template = 'system/config/button.phtml';
+    protected string $_template = 'system/config/button.phtml';
 
     /**
      * Unset scope.
@@ -19,7 +18,7 @@ class Button extends Field
      *
      * @return string
      */
-    public function render(AbstractElement $element)
+    public function render(AbstractElement $element): string
     {
         $element->unsScope();
 
@@ -29,11 +28,11 @@ class Button extends Field
     /**
      * Get the button and scripts contents.
      *
-     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     * @param AbstractElement $element
      *
      * @return string
      */
-    protected function _getElementHtml(AbstractElement $element)
+    protected function _getElementHtml(AbstractElement $element): string
     {
         $originalData = $element->getOriginalData();
         $this->addData(

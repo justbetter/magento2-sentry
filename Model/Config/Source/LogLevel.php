@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\Sentry\Model\Config\Source;
 
 use Magento\Framework\Option\ArrayInterface;
@@ -10,7 +12,7 @@ class LogLevel implements ArrayInterface
     /**
      * @return array
      */
-    public function toOptionArray()
+    public function toOptionArray(): array
     {
         return [
             ['value' => Logger::NOTICE, 'label' => __('Notice')],

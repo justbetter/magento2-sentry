@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\Sentry\Model;
 
 use JustBetter\Sentry\Helper\Data;
@@ -14,53 +16,34 @@ use Sentry\State\Scope as SentryScope;
 class SentryLog extends Monolog
 {
     /**
-     * @var Data
-     */
-    protected $data;
-
-    /**
-     * @var Session
-     */
-    protected $customerSession;
-
-    /**
-     * @var array
-     */
-    protected $config = [];
-
-    /** @var State */
-    private $appState;
-
-    /**
      * SentryLog constructor.
      *
-     * @param string          $name
-     * @param array           $handlers
-     * @param array           $processors
-     * @param Data|Data\Proxy $data
-     * @param Session         $customerSession
+     * @param string $name
+     * @param Data $data
+     * @param Session $customerSession
+     * @param State $appState
+     * @param array $handlers
+     * @param array $processors
+     * @param array $config
      */
     public function __construct(
-        $name,
-        Data $data,
-        Session $customerSession,
-        State $appState,
-        array $handlers = [],
-        array $processors = []
+        public string          $name,
+        protected Data         $data,
+        protected Session      $customerSession,
+        private readonly State $appState,
+        protected array        $handlers = [],
+        protected array        $processors = [],
+        protected array        $config = []
     ) {
-        $this->data = $data;
-        $this->customerSession = $customerSession;
-        $this->appState = $appState;
-
         parent::__construct($name, $handlers, $processors);
     }
 
     /**
      * @param $message
-     * @param $logLevel
+     * @param int $logLevel
      * @param array $context
      */
-    public function send($message, $logLevel, $context = [])
+    public function send($message, int $logLevel, array $context = [])
     {
         $config = $this->data->collectModuleConfig();
         $customTags = [];
@@ -100,6 +83,10 @@ class SentryLog extends Monolog
         }
     }
 
+    /**
+     * @param SentryScope $scope
+     * @return void
+     */
     private function setUser(SentryScope $scope): void
     {
         try {
@@ -120,7 +107,10 @@ class SentryLog extends Monolog
         }
     }
 
-    private function canGetCustomerData()
+    /**
+     * @return bool
+     */
+    private function canGetCustomerData(): bool
     {
         try {
             return $this->appState->getAreaCode() === Area::AREA_FRONTEND;
@@ -133,7 +123,7 @@ class SentryLog extends Monolog
      * @param SentryScope $scope
      * @param array       $customTags
      */
-    private function setTags(SentryScope $scope, $customTags): void
+    private function setTags(SentryScope $scope, array $customTags): void
     {
         $store = $this->data->getStore();
 

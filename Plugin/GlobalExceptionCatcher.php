@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\Sentry\Plugin;
 
 // phpcs:disable Magento2.CodeAnalysis.EmptyBlock
@@ -10,24 +12,10 @@ use JustBetter\Sentry\Model\SentryInteraction;
 use Magento\Framework\AppInterface;
 use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
+use Throwable;
 
 class GlobalExceptionCatcher
 {
-    /** @var SenteryHelper */
-    protected $sentryHelper;
-
-    /** @var ReleaseIdentifier */
-    private $releaseIdentifier;
-
-    /** @var SentryInteraction */
-    private $sentryInteraction;
-
-    /** @var EventManagerInterface */
-    private $eventManager;
-
-    /** @var DataObjectFactory */
-    private $dataObjectFactory;
-
     /**
      * ExceptionCatcher constructor.
      *
@@ -38,20 +26,21 @@ class GlobalExceptionCatcher
      * @param DataObjectFactory     $dataObjectFactory
      */
     public function __construct(
-        SenteryHelper $sentryHelper,
-        ReleaseIdentifier $releaseIdentifier,
-        SentryInteraction $sentryInteraction,
-        EventManagerInterface $eventManager,
-        DataObjectFactory $dataObjectFactory
+        protected SenteryHelper            $sentryHelper,
+        private readonly ReleaseIdentifier $releaseIdentifier,
+        private readonly SentryInteraction          $sentryInteraction,
+        private readonly EventManagerInterface      $eventManager,
+        private readonly DataObjectFactory          $dataObjectFactory
     ) {
-        $this->sentryHelper = $sentryHelper;
-        $this->releaseIdentifier = $releaseIdentifier;
-        $this->sentryInteraction = $sentryInteraction;
-        $this->eventManager = $eventManager;
-        $this->dataObjectFactory = $dataObjectFactory;
     }
 
-    public function aroundLaunch(AppInterface $subject, callable $proceed)
+    /**
+     * @param AppInterface $subject
+     * @param callable $proceed
+     * @return mixed
+     * @throws Throwable
+     */
+    public function aroundLaunch(AppInterface $subject, callable $proceed): mixed
     {
         if ((!$this->sentryHelper->isActive()) || (!$this->sentryHelper->isPhpTrackingEnabled())) {
             return $proceed();
@@ -61,7 +50,7 @@ class GlobalExceptionCatcher
 
         $config->setDsn($this->sentryHelper->getDSN());
         if ($release = $this->releaseIdentifier->getReleaseId()) {
-            $config->setRelease((string) $release);
+            $config->setRelease($release);
         }
 
         if ($environment = $this->sentryHelper->getEnvironment()) {
@@ -76,12 +65,12 @@ class GlobalExceptionCatcher
 
         try {
             return $proceed();
-        } catch (\Throwable $ex) {
+        } catch (Throwable $ex) {
             try {
                 if ($this->sentryHelper->shouldCaptureException($ex)) {
                     $this->sentryInteraction->captureException($ex);
                 }
-            } catch (\Throwable $bigProblem) {
+            } catch (Throwable $bigProblem) {
                 // do nothing if sentry fails
             }
 

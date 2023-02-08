@@ -1,12 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\Sentry\Model\Config\Source;
 
 use Magento\Framework\Option\ArrayInterface;
 
 class ScriptTagPlacement implements ArrayInterface
 {
-    public function toOptionArray()
+    /**
+     * @return array[]
+     */
+    public function toOptionArray(): array
     {
         return [
             ['value' => 'head.additional', 'label' => __('head.additional')],

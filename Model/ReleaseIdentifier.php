@@ -9,19 +9,13 @@ use JustBetter\Sentry\Helper\Version;
 class ReleaseIdentifier
 {
     /**
-     * @var Version
-     */
-    private $version;
-
-    /**
      * ReleaseIdentifier constructor.
      *
      * @param Version $version
      */
     public function __construct(
-        Version $version
+        private readonly Version $version
     ) {
-        $this->version = $version;
     }
 
     /**
@@ -29,7 +23,7 @@ class ReleaseIdentifier
      *
      * @return string
      */
-    public function getReleaseId()
+    public function getReleaseId(): string
     {
         return $this->version->getValue();
     }

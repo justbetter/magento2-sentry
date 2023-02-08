@@ -1,41 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\Sentry\Block;
 
 use JustBetter\Sentry\Helper\Data as DataHelper;
 use JustBetter\Sentry\Helper\Version;
 use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Element\Template\Context;
 
 class SentryScript extends Template
 {
     const CURRENT_VERSION = '5.28.0';
 
     /**
-     * @var DataHelper
-     */
-    private $dataHelper;
-
-    /**
-     * @var Version
-     */
-    private $version;
-
-    /**
      * SentryScript constructor.
      *
-     * @param DataHelper       $dataHelper
-     * @param Template\Context $context
-     * @param array            $data
+     * @param DataHelper $dataHelper
+     * @param Version $version
+     * @param Context $context
+     * @param array $data
      */
     public function __construct(
-        DataHelper $dataHelper,
-        Version $version,
-        Template\Context $context,
-        array $data = []
+        private readonly DataHelper $dataHelper,
+        private readonly Version $version,
+        protected Context $context,
+        protected array $data = []
     ) {
-        $this->dataHelper = $dataHelper;
-        $this->version = $version;
-
         parent::__construct($context, $data);
     }
 
@@ -46,7 +37,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function canUseScriptTag($blockName)
+    public function canUseScriptTag(string $blockName): bool
     {
         return $this->dataHelper->isActive() &&
             $this->dataHelper->useScriptTag() &&
@@ -58,7 +49,7 @@ class SentryScript extends Template
      *
      * @return string
      */
-    public function getDSN()
+    public function getDSN(): string
     {
         return $this->dataHelper->getDSN();
     }
@@ -68,7 +59,7 @@ class SentryScript extends Template
      *
      * @return string
      */
-    public function getJsSdkVersion()
+    public function getJsSdkVersion(): string
     {
         return $this->dataHelper->getJsSdkVersion();
     }
@@ -76,9 +67,9 @@ class SentryScript extends Template
     /**
      * Get the current version of the Magento application.
      *
-     * @return int|string
+     * @return string
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->version->getValue();
     }
@@ -88,7 +79,7 @@ class SentryScript extends Template
      *
      * @return mixed
      */
-    public function getEnvironment()
+    public function getEnvironment(): mixed
     {
         return $this->dataHelper->getEnvironment();
     }
@@ -98,7 +89,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function useLogRocket()
+    public function useLogRocket(): bool
     {
         return $this->dataHelper->useLogrocket();
     }
@@ -108,7 +99,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function useLogRocketIdentify()
+    public function useLogRocketIdentify(): bool
     {
         return $this->dataHelper->useLogrocketIdentify();
     }
@@ -118,7 +109,7 @@ class SentryScript extends Template
      *
      * @return string
      */
-    public function getLogrocketKey()
+    public function getLogrocketKey(): string
     {
         return $this->dataHelper->getLogrocketKey();
     }
@@ -128,7 +119,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function stripStaticContentVersion()
+    public function stripStaticContentVersion(): bool
     {
         return $this->dataHelper->stripStaticContentVersion();
     }
@@ -138,21 +129,30 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function stripStoreCode()
+    public function stripStoreCode(): bool
     {
         return $this->dataHelper->stripStoreCode();
     }
 
-    public function getStoreCode()
+    /**
+     * @return mixed
+     */
+    public function getStoreCode(): mixed
     {
         return $this->_storeManager->getStore()->getCode();
     }
 
+    /**
+     * @return bool
+     */
     public function isTracingEnabled(): bool
     {
         return $this->dataHelper->isTracingEnabled();
     }
 
+    /**
+     * @return float
+     */
     public function getTracingSampleRate(): float
     {
         return $this->dataHelper->getTracingSampleRate();
