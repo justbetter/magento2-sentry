@@ -8,7 +8,7 @@ use Magento\Framework\View\Element\Template;
 
 class SentryScript extends Template
 {
-    const CURRENT_VERSION = '5.28.0';
+    const CURRENT_VERSION = '7.39.0';
 
     /**
      * @var DataHelper
@@ -22,10 +22,9 @@ class SentryScript extends Template
 
     /**
      * SentryScript constructor.
-     *
-     * @param DataHelper       $dataHelper
-     * @param Template\Context $context
-     * @param array            $data
+     * @param  DataHelper  $dataHelper
+     * @param  Template\Context  $context
+     * @param  array  $data
      */
     public function __construct(
         DataHelper $dataHelper,
@@ -41,21 +40,17 @@ class SentryScript extends Template
 
     /**
      * Show script tag depending on blockName.
-     *
-     * @param string $blockName
-     *
+     * @param  string  $blockName
      * @return bool
      */
     public function canUseScriptTag($blockName)
     {
         return $this->dataHelper->isActive() &&
-            $this->dataHelper->useScriptTag() &&
-            $this->dataHelper->showScriptTagInThisBlock($blockName);
+            (($this->dataHelper->useScriptTag() && $this->dataHelper->showScriptTagInThisBlock($blockName)) || $this->dataHelper->useSessionReplay());
     }
 
     /**
      * Get the DSN of Sentry.
-     *
      * @return string
      */
     public function getDSN()
@@ -65,7 +60,6 @@ class SentryScript extends Template
 
     /**
      * Get the version of the JS-SDK of Sentry.
-     *
      * @return string
      */
     public function getJsSdkVersion()
@@ -75,7 +69,6 @@ class SentryScript extends Template
 
     /**
      * Get the current version of the Magento application.
-     *
      * @return int|string
      */
     public function getVersion()
@@ -85,7 +78,6 @@ class SentryScript extends Template
 
     /**
      * Get the current environment of Sentry.
-     *
      * @return mixed
      */
     public function getEnvironment()
@@ -93,9 +85,33 @@ class SentryScript extends Template
         return $this->dataHelper->getEnvironment();
     }
 
+    public function useSessionReplay(): bool
+    {
+        return $this->dataHelper->useSessionReplay();
+    }
+
+    public function getReplaySessionSampleRate(): float
+    {
+        return $this->dataHelper->getReplaySessionSampleRate();
+    }
+
+    public function getReplayErrorSampleRate(): float
+    {
+        return $this->dataHelper->getReplayErrorSampleRate();
+    }
+
+    public function getReplayBlockMedia(): bool
+    {
+        return $this->dataHelper->getReplayBlockMedia();
+    }
+
+    public function getReplayMaskText(): bool
+    {
+        return $this->dataHelper->getReplayMaskText();
+    }
+
     /**
      * If LogRocket should be used.
-     *
      * @return bool
      */
     public function useLogRocket()
@@ -105,7 +121,6 @@ class SentryScript extends Template
 
     /**
      * If LogRocket identify should be used.
-     *
      * @return bool
      */
     public function useLogRocketIdentify()
@@ -115,7 +130,6 @@ class SentryScript extends Template
 
     /**
      * Gets the LogRocket key.
-     *
      * @return string
      */
     public function getLogrocketKey()
@@ -125,7 +139,6 @@ class SentryScript extends Template
 
     /**
      * Whether we should strip the static content version from the URL.
-     *
      * @return bool
      */
     public function stripStaticContentVersion()
@@ -135,7 +148,6 @@ class SentryScript extends Template
 
     /**
      * Whether we should strip the store code from the URL.
-     *
      * @return bool
      */
     public function stripStoreCode()

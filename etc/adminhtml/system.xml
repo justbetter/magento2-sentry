@@ -30,6 +30,36 @@
                         <field id="enable_script_tag">1</field>
                     </depends>
                 </field>
+                <field id="enable_session_replay" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Session Replay</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="replay_session_sample_rate" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Session Sample Rate</label>
+                    <depends>
+                        <field id="enable_session_replay">1</field>
+                    </depends>
+                </field>
+                <field id="replay_error_sample_rate" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Error Sample Rate</label>
+                    <depends>
+                        <field id="enable_session_replay">1</field>
+                    </depends>
+                </field>
+                <field id="replay_block_media" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Block Media</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enable_session_replay">1</field>
+                    </depends>
+                </field>
+                <field id="replay_mask_text" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Mask text</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enable_session_replay">1</field>
+                    </depends>
+                </field>
                 <field id="use_logrocket" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Use LogRocket</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

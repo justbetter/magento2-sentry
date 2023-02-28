@@ -241,6 +241,31 @@ class Data extends AbstractHelper
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag');
     }
 
+    public function useSessionReplay(): bool
+    {
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_session_replay');
+    }
+
+    public function getReplaySessionSampleRate(): float
+    {
+        return $this->getConfigValue(static::XML_PATH_SRS.'replay_session_sample_rate') ?? 0.1;
+    }
+
+    public function getReplayErrorSampleRate(): float
+    {
+        return $this->getConfigValue(static::XML_PATH_SRS.'replay_error_sample_rate') ?? 1;
+    }
+
+    public function getReplayBlockMedia(): bool
+    {
+        return $this->getConfigValue(static::XML_PATH_SRS.'replay_block_media') ?? true;
+    }
+
+    public function getReplayMaskText(): bool
+    {
+        return $this->getConfigValue(static::XML_PATH_SRS.'replay_mask_text') ?? true;
+    }
+
     /**
      * @param $blockName
      *
