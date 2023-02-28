@@ -22,9 +22,10 @@ class SentryScript extends Template
 
     /**
      * SentryScript constructor.
-     * @param  DataHelper  $dataHelper
-     * @param  Template\Context  $context
-     * @param  array  $data
+     *
+     * @param DataHelper       $dataHelper
+     * @param Template\Context $context
+     * @param array            $data
      */
     public function __construct(
         DataHelper $dataHelper,
@@ -40,7 +41,9 @@ class SentryScript extends Template
 
     /**
      * Show script tag depending on blockName.
-     * @param  string  $blockName
+     *
+     * @param string $blockName
+     *
      * @return bool
      */
     public function canUseScriptTag($blockName)
@@ -51,6 +54,7 @@ class SentryScript extends Template
 
     /**
      * Get the DSN of Sentry.
+     *
      * @return string
      */
     public function getDSN()
@@ -60,6 +64,7 @@ class SentryScript extends Template
 
     /**
      * Get the version of the JS-SDK of Sentry.
+     *
      * @return string
      */
     public function getJsSdkVersion()
@@ -69,6 +74,7 @@ class SentryScript extends Template
 
     /**
      * Get the current version of the Magento application.
+     *
      * @return int|string
      */
     public function getVersion()
@@ -78,6 +84,7 @@ class SentryScript extends Template
 
     /**
      * Get the current environment of Sentry.
+     *
      * @return mixed
      */
     public function getEnvironment()
@@ -112,6 +119,7 @@ class SentryScript extends Template
 
     /**
      * If LogRocket should be used.
+     *
      * @return bool
      */
     public function useLogRocket()
@@ -121,6 +129,7 @@ class SentryScript extends Template
 
     /**
      * If LogRocket identify should be used.
+     *
      * @return bool
      */
     public function useLogRocketIdentify()
@@ -130,6 +139,7 @@ class SentryScript extends Template
 
     /**
      * Gets the LogRocket key.
+     *
      * @return string
      */
     public function getLogrocketKey()
@@ -139,6 +149,7 @@ class SentryScript extends Template
 
     /**
      * Whether we should strip the static content version from the URL.
+     *
      * @return bool
      */
     public function stripStaticContentVersion()
@@ -148,6 +159,7 @@ class SentryScript extends Template
 
     /**
      * Whether we should strip the store code from the URL.
+     *
      * @return bool
      */
     public function stripStoreCode()
