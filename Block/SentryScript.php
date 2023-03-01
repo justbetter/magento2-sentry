@@ -48,9 +48,19 @@ class SentryScript extends Template
      */
     public function canUseScriptTag($blockName)
     {
-        $jsTracking = ($this->dataHelper->useScriptTag() && $this->dataHelper->showScriptTagInThisBlock($blockName));
-
-        return $this->dataHelper->isActive() && ($jsTracking || $this->dataHelper->useSessionReplay());
+        if (!$this->dataHelper->isActive()) {
+            return false;
+        }
+        
+        if ($this->dataHelper->useScriptTag() && $this->dataHelper->showScriptTagInThisBlock($blockName)) {
+            return true;
+        }
+        
+        if ($this->dataHelper->useSessionReplay()) {
+            return true;
+        }
+        
+        return false;
     }
 
     /**
