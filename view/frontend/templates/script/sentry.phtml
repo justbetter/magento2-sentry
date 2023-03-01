@@ -1,19 +1,26 @@
 <?php
 // phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
-/** @var \JustBetter\Sentry\Block\SentryScript $block */
 
+/** @var \JustBetter\Sentry\Block\SentryScript $block */
 if (!$block->canUseScriptTag($block->getNameInLayout())) {
     return;
 }
 
-$bundleFile = 'bundle.min.js';
+$bundleFile = 'bundle';
+
 if ($block->isTracingEnabled()) {
-    $bundleFile = 'bundle.tracing.min.js';
+    $bundleFile .= '.tracing';
 }
 
+if ($block->useSessionReplay()) {
+    $bundleFile .= '.replay';
+}
+
+$bundleFile .= '.min.js';
+
 $remoteFile = sprintf(
-    'https://browser.sentry-cdn.com/%s/%s', 
-    $block->escapeHtmlAttr($block->getJsSdkVersion()), 
+    'https://browser.sentry-cdn.com/%s/%s',
+    $block->escapeHtmlAttr($block->getJsSdkVersion()),
     $bundleFile
 );
 ?>
@@ -29,9 +36,19 @@ $remoteFile = sprintf(
             <?php if ($block->isTracingEnabled()): ?>
                 new Sentry.BrowserTracing(),
             <?php endif ?>
+            <?php if ($block->useSessionReplay()): ?>
+            new Sentry.Replay({
+                blockAllMedia: <?= $block->escapeHtml($block->getReplayBlockMedia() ? 'true' : 'false') ?>,
+                maskAllText: <?= $block->escapeHtml($block->getReplayMaskText() ? 'true' : 'false') ?>,
+            })
+            <?php endif ?>
         ],
         <?php if ($block->isTracingEnabled()): ?>
         tracesSampleRate: <?= $block->escapeHtml($block->getTracingSampleRate()) ?>,
+        <?php endif ?>
+        <?php if ($block->useSessionReplay()): ?>
+        replaysSessionSampleRate: <?= $block->escapeHtml($block->getReplaySessionSampleRate()) ?>,
+        replaysOnErrorSampleRate: <?= $block->escapeHtml($block->getReplayErrorSampleRate()) ?>,
         <?php endif ?>
         <?php if ($block->stripStaticContentVersion() || $block->stripStoreCode()): ?>
         beforeSend: function(event) {

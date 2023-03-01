@@ -8,7 +8,7 @@ use Magento\Framework\View\Element\Template;
 
 class SentryScript extends Template
 {
-    const CURRENT_VERSION = '5.28.0';
+    const CURRENT_VERSION = '7.39.0';
 
     /**
      * @var DataHelper
@@ -48,9 +48,19 @@ class SentryScript extends Template
      */
     public function canUseScriptTag($blockName)
     {
-        return $this->dataHelper->isActive() &&
-            $this->dataHelper->useScriptTag() &&
-            $this->dataHelper->showScriptTagInThisBlock($blockName);
+        if (!$this->dataHelper->isActive()) {
+            return false;
+        }
+
+        if ($this->dataHelper->useScriptTag() && $this->dataHelper->showScriptTagInThisBlock($blockName)) {
+            return true;
+        }
+
+        if ($this->dataHelper->useSessionReplay()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -91,6 +101,31 @@ class SentryScript extends Template
     public function getEnvironment()
     {
         return $this->dataHelper->getEnvironment();
+    }
+
+    public function useSessionReplay(): bool
+    {
+        return $this->dataHelper->useSessionReplay();
+    }
+
+    public function getReplaySessionSampleRate(): float
+    {
+        return $this->dataHelper->getReplaySessionSampleRate();
+    }
+
+    public function getReplayErrorSampleRate(): float
+    {
+        return $this->dataHelper->getReplayErrorSampleRate();
+    }
+
+    public function getReplayBlockMedia(): bool
+    {
+        return $this->dataHelper->getReplayBlockMedia();
+    }
+
+    public function getReplayMaskText(): bool
+    {
+        return $this->dataHelper->getReplayMaskText();
     }
 
     /**
