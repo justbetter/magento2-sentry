@@ -50,6 +50,7 @@ $remoteFile = sprintf(
         replaysSessionSampleRate: <?= $block->escapeHtml($block->getReplaySessionSampleRate()) ?>,
         replaysOnErrorSampleRate: <?= $block->escapeHtml($block->getReplayErrorSampleRate()) ?>,
         <?php endif ?>
+        ignoreErrors: <?= /** @noEscape */ $block->getIgnoreJsErrors() ?>,
         <?php if ($block->stripStaticContentVersion() || $block->stripStoreCode()): ?>
         beforeSend: function(event) {
             event.exception.values.map(function (value) {

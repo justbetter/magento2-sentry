@@ -36,6 +36,7 @@ class Data extends AbstractHelper
         'js_sdk_version',
         'tracing_enabled',
         'tracing_sample_rate',
+        'ignore_js_errors',
     ];
 
     /**
@@ -88,6 +89,16 @@ class Data extends AbstractHelper
     public function getTracingSampleRate(): float
     {
         return (float) $this->config['tracing_sample_rate'] ?? 0.2;
+    }
+
+    public function getIgnoreJsErrors(): array
+    {
+        $list = $this->config['ignore_js_errors'] ?? [];
+        if ($list !== null && !is_array($list)) {
+            throw new \RuntimeException('Sentry configuration error: `ignore_js_errors` has to be an array or `null`. Given type: '.gettype($list));
+        }
+
+        return $list;
     }
 
     /**
