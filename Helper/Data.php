@@ -4,6 +4,7 @@ namespace JustBetter\Sentry\Helper;
 
 use JustBetter\Sentry\Block\SentryScript;
 use Magento\Framework\App\Area;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
@@ -23,6 +24,31 @@ class Data extends AbstractHelper
     protected $storeManager;
 
     /**
+     * @var State
+     */
+    protected $appState;
+
+    /**
+     * @var ScopeConfigInterface
+     */
+    protected $scopeConfig;
+
+    /**
+     * @var ProductMetaDataInterface
+     */
+    protected $productMetadataInterface;
+
+    /**
+     * @var DeploymentConfig
+     */
+    protected $deploymentConfig;
+
+    /**
+     * @var array
+     */
+    protected $config = [];
+
+    /**
      * @var array
      */
     protected $configKeys = [
@@ -37,16 +63,6 @@ class Data extends AbstractHelper
         'tracing_enabled',
         'tracing_sample_rate',
     ];
-
-    /**
-     * @var array
-     */
-    protected $config = [];
-
-    /**
-     * @var State
-     */
-    protected $appState;
 
     /**
      * Data constructor.
