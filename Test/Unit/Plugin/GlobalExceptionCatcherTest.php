@@ -3,6 +3,7 @@
 declare(strict_types=1);
 /**
  * @by SwiftOtter, Inc., 2019/09/13
+ *
  * @website https://swiftotter.com
  **/
 
