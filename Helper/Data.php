@@ -252,6 +252,14 @@ class Data extends AbstractHelper
     /**
      * @return bool
      */
+    public function isPerformanceTrackingEnabled()
+    {
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_performance_tracking');
+    }
+
+    /**
+     * @return bool
+     */
     public function useScriptTag()
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag');
