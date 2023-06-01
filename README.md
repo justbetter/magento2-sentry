@@ -49,7 +49,7 @@ Next to that there are some configuration options under Stores > Configuration >
 ## Change / Filter events
 This module has an event called `sentry_before_send` that is dispatched before setting the config `before_send`. This provides the means to edit / filter events. You could for example add extra criteria to determine if the exception should be captured to Sentry. To prevent the Exception from being captured you can set the event to `null` or unset it completly.
 
-```
+```PHP
 public function execute(\Magento\Framework\Event\Observer $observer)
 {
     $observer->getEvent()->getSentryEvent()->unsEvent();
