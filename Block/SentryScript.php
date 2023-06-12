@@ -4,6 +4,7 @@ namespace JustBetter\Sentry\Block;
 
 use JustBetter\Sentry\Helper\Data as DataHelper;
 use JustBetter\Sentry\Helper\Version;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Element\Template;
 
 class SentryScript extends Template
@@ -21,6 +22,11 @@ class SentryScript extends Template
     private $version;
 
     /**
+     * @var Json
+     */
+    private $json;
+
+    /**
      * SentryScript constructor.
      *
      * @param DataHelper       $dataHelper
@@ -31,10 +37,12 @@ class SentryScript extends Template
         DataHelper $dataHelper,
         Version $version,
         Template\Context $context,
+        Json $json,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
         $this->version = $version;
+        $this->json = $json;
 
         parent::__construct($context, $data);
     }
@@ -191,5 +199,10 @@ class SentryScript extends Template
     public function getTracingSampleRate(): float
     {
         return $this->dataHelper->getTracingSampleRate();
+    }
+
+    public function getIgnoreJsErrors(): string
+    {
+        return $this->json->serialize($this->dataHelper->getIgnoreJsErrors());
     }
 }
