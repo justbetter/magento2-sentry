@@ -48,6 +48,16 @@ Next to that there are some configuration options under Stores > Configuration >
 ## Sending additional data to Sentry when logging errors
 - When calling any function from the [Psr\Log\LoggerInterface](https://github.com/php-fig/log/blob/master/src/LoggerInterface.php) you can pass any data to the parameter $context and it will be send to Sentry as 'Custom context'.
 
+## Change / Filter events
+This module has an event called `sentry_before_send` that is dispatched before setting the config [before_send](https://docs.sentry.io/platforms/php/configuration/filtering/#using-platformidentifier-namebefore-send-). This provides the means to edit / filter events. You could for example add extra criteria to determine if the exception should be captured to Sentry. To prevent the Exception from being captured you can set the event to `null` or unset it completly.
+
+```PHP
+public function execute(\Magento\Framework\Event\Observer $observer)
+{
+    $observer->getEvent()->getSentryEvent()->unsEvent();
+}
+```
+
 ## Compatibility
 The module is tested on Magento version 2.4.x with sentry sdk version 3.x. Magento 2.1.x is not supported by us anymore, feel free to fork this project or make a pull request.
 
