@@ -56,8 +56,8 @@ class SentryLog extends Monolog
     }
 
     /**
-     * @param $message
-     * @param $logLevel
+     * @param       $message
+     * @param       $logLevel
      * @param array $context
      */
     public function send($message, $logLevel, $context = [])
