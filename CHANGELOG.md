@@ -1,4 +1,8 @@
 # Changelog
+## [3.4.0] - 2023-06-14
+### Added
+    * Added `sentry_before_send` event (https://github.com/justbetter/magento2-sentry/pull/117) thanks to https://github.com/rbnmulder
+    * Added support to ignore javascript errors (https://github.com/justbetter/magento2-sentry/pull/102) thanks to https://github.com/rommelfreddy
 ## [3.3.1] - 2023-03-15
 ### Fixed
     * Fixed PHP 8.2 deprecation errors (https://github.com/justbetter/magento2-sentry/pull/114) thanks to https://github.com/peterjaap
