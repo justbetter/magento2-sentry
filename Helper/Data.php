@@ -167,7 +167,8 @@ class Data extends AbstractHelper
         $this->config['enabled'] = $this->deploymentConfig->get('sentry') !== null;
 
         foreach ($this->configKeys as $value) {
-            $this->config[$value] = $this->deploymentConfig->get('sentry/'.$value);
+            $this->config[$value] = $this->scopeConfig->getValue('sentry/config/'.$value)
+                ?? $this->deploymentConfig->get('sentry/'.$value);
         }
 
         return $this->config;
@@ -361,7 +362,7 @@ class Data extends AbstractHelper
     }
 
     /**
-     * @return int
+     * @return array
      */
     public function getIgnoreExceptions()
     {

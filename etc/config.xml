@@ -9,6 +9,23 @@
                 <use_logrocket>0</use_logrocket>
                 <logrocket_identify>0</logrocket_identify>
             </general>
+            <issue_grouping>
+                <strip_static_content_version>1</strip_static_content_version>
+                <strip_store_code>1</strip_store_code>
+            </issue_grouping>
+            <environment>
+                <dsn/>
+                <logrocket_key/>
+                <environment/>
+                <log_level/>
+                <errorexception_reporting/>
+                <ignore_exceptions/>
+                <mage_mode_development/>
+                <js_sdk_version/>
+                <tracing_enabled/>
+                <tracing_sample_data/>
+                <ignore_js_errors/>
+            </environment>
         </sentry>
     </default>
 </config>
