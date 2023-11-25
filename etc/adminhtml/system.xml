@@ -82,7 +82,84 @@
                     <frontend_model>JustBetter\Sentry\Block\Adminhtml\System\Config\Button</frontend_model>
                 </field>
             </group>
-            <group id="issue_grouping" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+            <group id="environment" translate="label comment" sortOrder="20" showInDefault="1" showInStore="0" showInWebsite="0">
+                <label>Environment Configuration</label>
+                <comment><![CDATA[Setting the configuration here will override the Magento Deployment Configuration.]]></comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="dsn" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>DSN</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="logrocket_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Logrocket Key</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="environment" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Environment</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="log_level" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Log Level</label>
+                    <source_model>JustBetter\Sentry\Model\Config\Source\LogLevel</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="errorexception_reporting" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Error Exception Reporting</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="ignore_exceptions" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Ignore Exceptions</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="mage_mode_development" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Magento Mode Development</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="js_sdk_version" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>JavaScript SDK Version</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="tracing_enabled" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Tracing Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="tracing_sample_rate" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Tracing Sample Rate</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="ignore_js_errors" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Ignore JavaScript Errors</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="issue_grouping" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Sentry issue grouping</label>
                 <comment><![CDATA[Sentry does its best to group related issues, but due to some parts in most Magento URL's, Sentry inadvertently does not group these issues although they might be related. Stripping out these values from the URL helps with this.]]></comment>
                 <field id="strip_static_content_version"  translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
@@ -94,46 +171,6 @@
                     <comment><![CDATA[Caution: this will replace all occurrences of your storecode in the URL, which might cause issues when the store code is too generic.]]></comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <hide_in_single_store_mode>1</hide_in_single_store_mode>
-                </field>
-            </group>
-            <group id="environment" translate="label comment" sortOrder="30" showInDefault="1" showInStore="0" showInWebsite="0">
-                <label>Environment Configuration</label>
-                <comment><![CDATA[Setting the configuration here will override the Magento Deployment Configuration.]]></comment>
-                <field id="dsn" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>DSN</label>
-                </field>
-                <field id="logrocket_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Logrocket Key</label>
-                </field>
-                <field id="environment" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Environment</label>
-                </field>
-                <field id="log_level" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Log Level</label>
-                    <source_model>JustBetter\Sentry\Model\Config\Source\LogLevel</source_model>
-                </field>
-                <field id="errorexception_reporting" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Error Exception Reporting</label>
-                </field>
-                <field id="ignore_exceptions" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Ignore Exceptions</label>
-                </field>
-                <field id="mage_mode_development" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Magento Mode Development</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="js_sdk_version" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>JavaScript SDK Version</label>
-                </field>
-                <field id="tracing_enabled" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Tracing Enabled</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="tracing_sample_rate" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Tracing Sample Rate</label>
-                </field>
-                <field id="ignore_js_errors" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Ignore JavaScript Errors</label>
                 </field>
             </group>
         </section>

@@ -164,10 +164,11 @@ class Data extends AbstractHelper
      */
     public function collectModuleConfig()
     {
-        $this->config['enabled'] = $this->deploymentConfig->get('sentry') !== null;
+        $this->config['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled')
+            ?? $this->deploymentConfig->get('sentry') !== null;
 
         foreach ($this->configKeys as $value) {
-            $this->config[$value] = $this->scopeConfig->getValue('sentry/config/'.$value)
+            $this->config[$value] = $this->scopeConfig->getValue('sentry/environment/'.$value)
                 ?? $this->deploymentConfig->get('sentry/'.$value);
         }
 
