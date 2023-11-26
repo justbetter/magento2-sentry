@@ -10,8 +10,8 @@
                 <logrocket_identify>0</logrocket_identify>
             </general>
             <issue_grouping>
-                <strip_static_content_version>1</strip_static_content_version>
-                <strip_store_code>1</strip_store_code>
+                <strip_static_content_version/>
+                <strip_store_code/>
             </issue_grouping>
             <environment>
                 <dsn/>

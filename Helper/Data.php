@@ -2,6 +2,8 @@
 
 namespace JustBetter\Sentry\Helper;
 
+use ErrorException;
+use InvalidArgumentException;
 use JustBetter\Sentry\Block\SentryScript;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -9,9 +11,12 @@ use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ProductMetadataInterface;
+use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\App\State;
-use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\StoreManagerInterface;
+use RuntimeException;
+use Throwable;
 
 class Data extends AbstractHelper
 {
@@ -64,18 +69,26 @@ class Data extends AbstractHelper
         'tracing_sample_rate',
         'ignore_js_errors',
     ];
+    /**
+     * @var Json
+     */
+    private $serializer;
 
     /**
      * Data constructor.
      *
-     * @param Context               $context
-     * @param StoreManagerInterface $storeManager
-     * @param State                 $appState
+     * @param Context                  $context
+     * @param StoreManagerInterface    $storeManager
+     * @param State                    $appState
+     * @param Json                     $serializer
+     * @param ProductMetadataInterface $productMetadataInterface
+     * @param DeploymentConfig         $deploymentConfig
      */
     public function __construct(
         Context $context,
         StoreManagerInterface $storeManager,
         State $appState,
+        Json $serializer,
         ProductMetadataInterface $productMetadataInterface,
         DeploymentConfig $deploymentConfig
     ) {
@@ -84,6 +97,7 @@ class Data extends AbstractHelper
         $this->scopeConfig = $context->getScopeConfig();
         $this->productMetadataInterface = $productMetadataInterface;
         $this->deploymentConfig = $deploymentConfig;
+        $this->serializer = $serializer;
         $this->collectModuleConfig();
 
         parent::__construct($context);
@@ -109,9 +123,14 @@ class Data extends AbstractHelper
 
     public function getIgnoreJsErrors(): array
     {
-        $list = $this->config['ignore_js_errors'] ?? [];
+        try {
+            $list = $this->serializer->unserialize($this->config['ignore_js_errors']);
+        } catch (InvalidArgumentException $e) {
+            $list = [];
+        }
+
         if ($list !== null && !is_array($list)) {
-            throw new \RuntimeException('Sentry configuration error: `ignore_js_errors` has to be an array or `null`. Given type: '.gettype($list));
+            throw new RuntimeException('Sentry configuration error: `ignore_js_errors` has to be an array or `null`. Given type: '.gettype($list));
         }
 
         return $list;
@@ -120,7 +139,7 @@ class Data extends AbstractHelper
     /**
      * @return string the version of the js sdk of Sentry
      */
-    public function getJsSdkVersion()
+    public function getJsSdkVersion(): string
     {
         return $this->config['js_sdk_version'] ?: SentryScript::CURRENT_VERSION;
     }
@@ -134,8 +153,8 @@ class Data extends AbstractHelper
     }
 
     /**
-     * @param      $field
-     * @param null $storeId
+     * @param string          $field
+     * @param int|string|null $storeId
      *
      * @return mixed
      */
@@ -149,8 +168,8 @@ class Data extends AbstractHelper
     }
 
     /**
-     * @param      $code
-     * @param null $storeId
+     * @param string $code
+     * @param null   $storeId
      *
      * @return mixed
      */
@@ -162,7 +181,7 @@ class Data extends AbstractHelper
     /**
      * @return array
      */
-    public function collectModuleConfig()
+    public function collectModuleConfig(): array
     {
         $this->config['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled')
             ?? $this->deploymentConfig->get('sentry') !== null;
@@ -178,17 +197,15 @@ class Data extends AbstractHelper
     /**
      * @return bool
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return $this->isActiveWithReason()['active'];
     }
 
     /**
-     * @param string $reason : Reason to tell the user why it's not active (Github issue #53)
-     *
-     * @return bool
+     * @return array
      */
-    public function isActiveWithReason()
+    public function isActiveWithReason(): array
     {
         $reasons = [];
         $emptyConfig = empty($this->config);
@@ -215,23 +232,23 @@ class Data extends AbstractHelper
     /**
      * @return bool
      */
-    public function isProductionMode()
+    public function isProductionMode(): bool
     {
-        return $this->appState->emulateAreaCode(Area::AREA_GLOBAL, [$this, 'getAppState']) == 'production';
+        return $this->appState->emulateAreaCode(Area::AREA_GLOBAL, [$this, 'getAppState']) === 'production';
     }
 
     /**
      * @return string
      */
-    public function getAppState()
+    public function getAppState(): string
     {
         return $this->appState->getMode();
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function isOverwriteProductionMode()
+    public function isOverwriteProductionMode(): bool
     {
         return array_key_exists('mage_mode_development', $this->config) && $this->config['mage_mode_development'];
     }
@@ -241,7 +258,7 @@ class Data extends AbstractHelper
      *
      * @return string
      */
-    public function getMagentoVersion()
+    public function getMagentoVersion(): string
     {
         return $this->productMetadataInterface->getVersion();
     }
@@ -257,7 +274,7 @@ class Data extends AbstractHelper
     /**
      * @return bool
      */
-    public function isPhpTrackingEnabled()
+    public function isPhpTrackingEnabled(): bool
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_php_tracking');
     }
@@ -265,7 +282,7 @@ class Data extends AbstractHelper
     /**
      * @return bool
      */
-    public function useScriptTag()
+    public function useScriptTag(): bool
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag');
     }
@@ -296,20 +313,21 @@ class Data extends AbstractHelper
     }
 
     /**
-     * @param $blockName
+     * @param string $blockName
      *
      * @return bool
      */
-    public function showScriptTagInThisBlock($blockName)
+    public function showScriptTagInThisBlock($blockName): bool
     {
         $config = $this->getGeneralConfig('script_tag_placement');
+
         if (!$config) {
             return false;
         }
 
         $name = 'sentry.'.$config;
 
-        return $name == $blockName;
+        return $name === $blockName;
     }
 
     /**
@@ -323,61 +341,71 @@ class Data extends AbstractHelper
     /**
      * @return bool
      */
-    public function useLogrocket()
+    public function useLogrocket(): bool
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'use_logrocket') &&
             array_key_exists('logrocket_key', $this->config) &&
-            $this->config['logrocket_key'] != null;
+            $this->getLogrocketKey() !== null;
     }
 
     /**
      * @return bool
      */
-    public function useLogrocketIdentify()
+    public function useLogrocketIdentify(): bool
     {
-        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'logrocket_identify');
+        return $this->scopeConfig->isSetFlag(
+            static::XML_PATH_SRS.'logrocket_identify'
+        );
     }
 
     /**
      * @return bool
      */
-    public function stripStaticContentVersion()
+    public function stripStaticContentVersion(): bool
     {
-        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS_ISSUE_GROUPING.'strip_static_content_version');
+        return $this->scopeConfig->isSetFlag(
+            static::XML_PATH_SRS_ISSUE_GROUPING.'strip_static_content_version'
+        );
     }
 
     /**
      * @return bool
      */
-    public function stripStoreCode()
+    public function stripStoreCode(): bool
     {
-        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS_ISSUE_GROUPING.'strip_store_code');
+        return $this->scopeConfig->isSetFlag(
+            static::XML_PATH_SRS_ISSUE_GROUPING.'strip_store_code'
+        );
     }
 
     /**
      * @return int
      */
-    public function getErrorExceptionReporting()
+    public function getErrorExceptionReporting(): int
     {
-        return $this->config['errorexception_reporting'] ?? E_ALL;
+        return (int) ($this->config['errorexception_reporting'] ?? E_ALL);
     }
 
     /**
      * @return array
      */
-    public function getIgnoreExceptions()
+    public function getIgnoreExceptions(): array
     {
-        return (array) ($this->config['ignore_exceptions'] ?? []);
+        try {
+            return $this->serializer->unserialize($this->config['ignore_exceptions']);
+        } catch (InvalidArgumentException $e) {
+            return [];
+        }
     }
 
     /**
-     * @param \Throwable $ex
+     * @param Throwable $ex
      *
      * @return bool
      */
-    public function shouldCaptureException(\Throwable $ex)
+    public function shouldCaptureException(Throwable $ex)
     {
-        if ($ex instanceof \ErrorException && !($ex->getSeverity() & $this->getErrorExceptionReporting())) {
+        if ($ex instanceof ErrorException && !($ex->getSeverity() & $this->getErrorExceptionReporting())) {
             return false;
         }
 
