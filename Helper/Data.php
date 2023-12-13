@@ -121,16 +121,25 @@ class Data extends AbstractHelper
         return (float) $this->config['tracing_sample_rate'] ?? 0.2;
     }
 
-    public function getIgnoreJsErrors(): array
+    /**
+     * @return array|null
+     */
+    public function getIgnoreJsErrors()
     {
-        try {
-            $list = $this->serializer->unserialize($this->config['ignore_js_errors']);
-        } catch (InvalidArgumentException $e) {
-            $list = [];
+        $list = $this->config['ignore_js_errors'];
+
+        if ($list === null) {
+            return null;
         }
 
-        if ($list !== null && !is_array($list)) {
-            throw new RuntimeException('Sentry configuration error: `ignore_js_errors` has to be an array or `null`. Given type: '.gettype($list));
+        try {
+            $list = is_array($this->config['ignore_js_errors'])
+                ? $this->config['ignore_js_errors']
+                : $this->serializer->unserialize($this->config['ignore_js_errors']);
+        } catch (InvalidArgumentException $e) {
+            throw new RuntimeException(
+                'Sentry configuration error: `ignore_js_errors` has to be an array or `null`. Given type: '.gettype($list)
+            );
         }
 
         return $list;
@@ -391,6 +400,10 @@ class Data extends AbstractHelper
      */
     public function getIgnoreExceptions(): array
     {
+        if (is_array($this->config['ignore_exceptions'])) {
+            return $this->config['ignore_exceptions'];
+        }
+
         try {
             return $this->serializer->unserialize($this->config['ignore_exceptions']);
         } catch (InvalidArgumentException $e) {
@@ -403,7 +416,7 @@ class Data extends AbstractHelper
      *
      * @return bool
      */
-    public function shouldCaptureException(Throwable $ex)
+    public function shouldCaptureException(Throwable $ex): bool
     {
         if ($ex instanceof ErrorException && !($ex->getSeverity() & $this->getErrorExceptionReporting())) {
             return false;
