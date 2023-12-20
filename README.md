@@ -10,6 +10,8 @@ This Magento 2 module integrates the [Sentry sdk](https://github.com/getsentry/s
 - `bin/magento setup:static-content:deploy`
 
 ## Configuration
+For configuration with Adobe Cloud, [check below](#configuration-for-adobe-cloud).
+
 This module uses the [Magento Deployment Configuration](https://devdocs.magento.com/guides/v2.3/config-guide/config/config-php.html) for most it's configuration. This means that you need to add this array to your `app/etc/env.php`:
 
 ```
@@ -41,6 +43,26 @@ Next to that there are some configuration options under Stores > Configuration >
 * `tracing_enabled` if this option is set to true, tracing got enabled (bundle file got loaded automatically). Default: `false`
 * `tracing_sample_rate` if tracing is enabled, you should also set the sample rate. Default: `0.2`
 * `ignore_js_errors` array of javascript error messages, which should be not send to Sentry. (see also `ignoreErrors` in [Sentry documentation](https://docs.sentry.io/clients/javascript/config/))
+
+### Configuration for Adobe Cloud
+Since Adobe Cloud doesn't allow you to add manually add content to the `env.php` file, the configuration can be done 
+using the "Variables" in Adobe Commerce using the following variables:
+
+* `CONFIG__SENTRY__ENVIRONMENT__ENABLED`: boolean
+* `CONFIG__SENTRY__ENVIRONMENT__DSN`: string
+* `CONFIG__SENTRY__ENVIRONMENT__LOGROCKET_KEY`: string
+* `CONFIG__SENTRY__ENVIRONMENT__ENVIRONMENT`: string
+* `CONFIG__SENTRY__ENVIRONMENT__LOG_LEVEL`: integer
+* `CONFIG__SENTRY__ENVIRONMENT__ERROREXCEPTION_REPORTING`: integer
+* `CONFIG__SENTRY__ENVIRONMENT__IGNORE_EXCEPTIONS`: A JSON encoded array of classes
+* `CONFIG__SENTRY__ENVIRONMENT__MAGE_MODE_DEVELOPMENT`: string
+* `CONFIG__SENTRY__ENVIRONMENT__JS_SDK_VERSION`: string
+* `CONFIG__SENTRY__ENVIRONMENT__TRACING_ENABLED`: boolean
+* `CONFIG__SENTRY__ENVIRONMENT__TRACING_SAMPLE_RATE`: float
+* `CONFIG__SENTRY__ENVIRONMENT__IGNORE_JS_ERRORS`: A JSON encoded array of error messages
+
+The following configuration settings can be overridden in the Magento admin. This is limited to ensure that changes to 
+particular config settings can only be done on server level and can't be broken by changes in the admin.
 
 ## Optional error page configuration
 - Optional you can configure custom error pages in pub/errors. You can use the sentry feedback form and insert here the sentry log ID. The Sentry Log Id is captured in de customer session and can be retrieved in `processor.php`.
