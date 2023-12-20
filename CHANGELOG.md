@@ -1,4 +1,7 @@
 # Changelog
+## [3.5.0] - 2023-12-20
+### Added
+    * Added support for configuration using System Configuration (https://github.com/justbetter/magento2-sentry/pull/121) thanks to https://github.com/ArjenMiedema
 ## [3.4.0] - 2023-06-14
 ### Added
     * Added `sentry_before_send` event (https://github.com/justbetter/magento2-sentry/pull/117) thanks to https://github.com/rbnmulder
