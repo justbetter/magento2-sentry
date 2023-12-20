@@ -11,6 +11,12 @@
     "magento/framework": "*",
     "nyholm/psr7": "^1.2"
   },
+  "repositories": {
+    "magento": {
+      "type": "composer",
+      "url": "https://repo.magento.com/"
+    }
+  },
   "authors": [
     {
       "name": "Rakhal Imming",
@@ -28,5 +34,11 @@
   "autoload": {
     "psr-4": { "JustBetter\\Sentry\\": "" },
     "files": [ "registration.php" ]
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true,
+      "magento/composer-dependency-version-audit-plugin": true
+    }
   }
 }
