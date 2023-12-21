@@ -184,7 +184,7 @@ class Data extends AbstractHelper
      */
     public function getGeneralConfig($code, $storeId = null)
     {
-        return $this->getConfigValue(self::XML_PATH_SRS.$code, $storeId);
+        return $this->getConfigValue(static::XML_PATH_SRS.$code, $storeId);
     }
 
     /**
