@@ -1,4 +1,8 @@
 # Changelog
+## [3.5.1] - 2023-12-21
+### Fixed
+    * Fix getting SCOPE_STORES from incorrect ScopeInterface (https://github.com/justbetter/magento2-sentry/pull/123) thanks to https://github.com/peterjaap
+    * Improve extendibility by changing self to static (https://github.com/justbetter/magento2-sentry/pull/122) thanks to https://github.com/peterjaap
 ## [3.5.0] - 2023-12-20
 ### Added
     * Added support for configuration using System Configuration (https://github.com/justbetter/magento2-sentry/pull/121) thanks to https://github.com/ArjenMiedema
