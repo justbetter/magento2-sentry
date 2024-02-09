@@ -37,7 +37,7 @@ class SentryLog extends Monolog
      * @param string          $name
      * @param array           $handlers
      * @param array           $processors
-     * @param Data|Data\Proxy $data
+     * @param Data $data
      * @param Session         $customerSession
      */
     public function __construct(
