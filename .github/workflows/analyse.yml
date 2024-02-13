@@ -18,9 +18,6 @@ jobs:
           extensions: dom, curl, libxml, mbstring, zip, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
           coverage: none
 
-      - name: Repository Credentials
-        run: composer config repositories.foomanmirror composer https://repo-magento-mirror.fooman.co.nz/
-
       - name: Install dependencies
         run: composer install --no-interaction
 
