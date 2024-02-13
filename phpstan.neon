@@ -1,5 +1,5 @@
 includes:
-	- vendor/bitexpert/phpstan-magento/extension.neon
+    - vendor/bitexpert/phpstan-magento/extension.neon
 parameters:
     paths:
         - .
