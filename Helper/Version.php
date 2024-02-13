@@ -39,9 +39,9 @@ class Version extends AbstractHelper
     private $deploymentConfig;
 
     /**
-     * @param \Magento\Framework\App\State $appState
-     * @param Version\StorageInterface     $versionStorage
-     * @param DeploymentConfig|null        $deploymentConfig
+     * @param \Magento\Framework\App\State                                    $appState
+     * @param \Magento\Framework\App\View\Deployment\Version\StorageInterface $versionStorage
+     * @param DeploymentConfig|null                                           $deploymentConfig
      */
     public function __construct(
         \Magento\Framework\App\State $appState,

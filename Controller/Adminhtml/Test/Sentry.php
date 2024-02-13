@@ -39,14 +39,9 @@ class Sentry extends Action
      */
     private $helperSentry;
     /**
-     * @var JustBetter\Sentry\Model\SentryLog|SentryLog
+     * @var \JustBetter\Sentry\Model\SentryLog|SentryLog
      */
     private $monologPlugin;
-
-    /**
-     * @var ShellInterface
-     */
-    private $shellBackground;
 
     /**
      * Sentry constructor.

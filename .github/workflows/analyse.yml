@@ -1,0 +1,25 @@
+name: PHPStan
+
+on: ['push', 'pull_request']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: analyse
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: dom, curl, libxml, mbstring, zip, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction
+
+      - name: Analyse
+        run: vendor/bin/phpstan analyse
