@@ -19,7 +19,7 @@ jobs:
           coverage: none
 
       - name: Repository Credentials
-        run: composer config repositories.foomanmirror composer repo-magento-mirror.fooman.co.nz
+        run: composer config repositories.foomanmirror composer https://repo-magento-mirror.fooman.co.nz/
 
       - name: Install dependencies
         run: composer install --no-interaction
