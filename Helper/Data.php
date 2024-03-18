@@ -12,6 +12,7 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\State;
+use Magento\Framework\DB\Adapter\TableNotFoundException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -192,12 +193,24 @@ class Data extends AbstractHelper
      */
     public function collectModuleConfig(): array
     {
-        $this->config['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled')
-            ?? $this->deploymentConfig->get('sentry') !== null;
+        if (isset($this->config['enabled'])) {
+            return $this->config;
+        }
+
+        try {
+            $this->config['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled')
+                ?? $this->deploymentConfig->get('sentry') !== null;
+        } catch (TableNotFoundException $e) {
+            $this->config['enabled'] = null;
+        }
 
         foreach ($this->configKeys as $value) {
-            $this->config[$value] = $this->scopeConfig->getValue('sentry/environment/'.$value)
-                ?? $this->deploymentConfig->get('sentry/'.$value);
+            try {
+                $this->config[$value] = $this->scopeConfig->getValue('sentry/environment/'.$value)
+                    ?? $this->deploymentConfig->get('sentry/'.$value);
+            } catch (TableNotFoundException $e) {
+                $this->config[$value] = null;
+            }
         }
 
         return $this->config;
