@@ -192,6 +192,10 @@ class Data extends AbstractHelper
      */
     public function collectModuleConfig(): array
     {
+        if (isset($this->config['enabled'])) {
+            return $this->config;
+        }
+
         $this->config['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled')
             ?? $this->deploymentConfig->get('sentry') !== null;
 
