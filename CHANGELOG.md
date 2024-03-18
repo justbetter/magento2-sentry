@@ -1,4 +1,7 @@
 # Changelog
+## [3.5.2] - 2024-03-18
+### Fixed
+    * Fix start errors without database connection (https://github.com/justbetter/magento2-sentry/pull/125) thanks to https://github.com/fredden
 ## [3.5.1] - 2023-12-21
 ### Fixed
     * Fix getting SCOPE_STORES from incorrect ScopeInterface (https://github.com/justbetter/magento2-sentry/pull/123) thanks to https://github.com/peterjaap
