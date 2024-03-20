@@ -28,6 +28,7 @@ $remoteFile = sprintf(
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise" crossorigin></script>
 <script src="<?= /** @noEscape */$remoteFile ?>" crossorigin="anonymous"></script>
 <script>
+if (typeof Sentry !== 'undefined') {
     Sentry.init({
         dsn: '<?= $block->escapeUrl(trim($block->getDSN())) ?>',
         release: '<?= $block->escapeHtml(trim($block->getVersion())) ?>',
@@ -80,6 +81,7 @@ $remoteFile = sprintf(
         }
     <?php endif; ?>
     });
+}
 </script>
 
 <?php if ($block->useLogRocket()): ?>
