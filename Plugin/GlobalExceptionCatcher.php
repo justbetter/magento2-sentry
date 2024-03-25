@@ -13,7 +13,6 @@ use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 
 class GlobalExceptionCatcher
 {
-
     /**
      * ExceptionCatcher constructor.
      *

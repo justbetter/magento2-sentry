@@ -3,7 +3,6 @@
 namespace JustBetter\Sentry\Controller\Adminhtml\Test;
 
 use JustBetter\Sentry\Helper\Data;
-use JustBetter\Sentry\Model\SentryLog;
 use JustBetter\Sentry\Plugin\MonologPlugin;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
