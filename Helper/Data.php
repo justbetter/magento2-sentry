@@ -25,29 +25,9 @@ class Data extends AbstractHelper
     const XML_PATH_SRS_ISSUE_GROUPING = 'sentry/issue_grouping/';
 
     /**
-     * @var StoreManagerInterface
-     */
-    protected $storeManager;
-
-    /**
-     * @var State
-     */
-    protected $appState;
-
-    /**
      * @var ScopeConfigInterface
      */
     protected $scopeConfig;
-
-    /**
-     * @var ProductMetaDataInterface
-     */
-    protected $productMetadataInterface;
-
-    /**
-     * @var DeploymentConfig
-     */
-    protected $deploymentConfig;
 
     /**
      * @var array
@@ -70,10 +50,6 @@ class Data extends AbstractHelper
         'tracing_sample_rate',
         'ignore_js_errors',
     ];
-    /**
-     * @var Json
-     */
-    private $serializer;
 
     /**
      * Data constructor.
@@ -87,18 +63,13 @@ class Data extends AbstractHelper
      */
     public function __construct(
         Context $context,
-        StoreManagerInterface $storeManager,
-        State $appState,
-        Json $serializer,
-        ProductMetadataInterface $productMetadataInterface,
-        DeploymentConfig $deploymentConfig
+        protected StoreManagerInterface $storeManager,
+        protected State $appState,
+        private Json $serializer,
+        protected ProductMetadataInterface $productMetadataInterface,
+        protected DeploymentConfig $deploymentConfig
     ) {
-        $this->storeManager = $storeManager;
-        $this->appState = $appState;
         $this->scopeConfig = $context->getScopeConfig();
-        $this->productMetadataInterface = $productMetadataInterface;
-        $this->deploymentConfig = $deploymentConfig;
-        $this->serializer = $serializer;
         $this->collectModuleConfig();
 
         parent::__construct($context);

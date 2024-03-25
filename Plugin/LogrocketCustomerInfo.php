@@ -8,15 +8,10 @@ use Magento\Customer\Model\Session;
 
 class LogrocketCustomerInfo
 {
-    protected $currentCustomer;
-    protected $customerSession;
-
     public function __construct(
-        CurrentCustomer $currentCustomer,
-        Session $session
+        protected CurrentCustomer $currentCustomer,
+        protected Session $session
     ) {
-        $this->currentCustomer = $currentCustomer;
-        $this->customerSession = $session;
     }
 
     public function afterGetSectionData(Customer $subject, $result)

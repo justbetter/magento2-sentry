@@ -21,29 +21,6 @@ class Sentry extends Action
     const ADMIN_RESOURCE = 'JustBetter_Sentry::sentry';
 
     /**
-     * @var PageFactory
-     */
-    protected $resultPageFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var Json
-     */
-    private $jsonSerializer;
-    /**
-     * @var Data
-     */
-    private $helperSentry;
-    /**
-     * @var \JustBetter\Sentry\Model\SentryLog|SentryLog
-     */
-    private $monologPlugin;
-
-    /**
      * Sentry constructor.
      *
      * @param Context         $context
@@ -55,18 +32,12 @@ class Sentry extends Action
      */
     public function __construct(
         Context $context,
-        PageFactory $resultPageFactory,
-        Json $jsonSerializer,
-        LoggerInterface $logger,
-        Data $helperSentry,
-        MonologPlugin $monologPlugin
+        protected PageFactory $resultPageFactory,
+        private Json $jsonSerializer,
+        protected LoggerInterface $logger,
+        private Data $helperSentry,
+        private MonologPlugin $monologPlugin
     ) {
-        $this->resultPageFactory = $resultPageFactory;
-        $this->jsonSerializer = $jsonSerializer;
-        $this->logger = $logger;
-        $this->helperSentry = $helperSentry;
-        $this->monologPlugin = $monologPlugin;
-
         parent::__construct($context);
     }
 
