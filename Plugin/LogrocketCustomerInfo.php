@@ -5,6 +5,7 @@ namespace JustBetter\Sentry\Plugin;
 use Magento\Customer\CustomerData\Customer;
 use Magento\Customer\Helper\Session\CurrentCustomer;
 use Magento\Customer\Model\Session;
+use Magento\Customer\Model\Session;
 
 class LogrocketCustomerInfo
 {
@@ -16,7 +17,7 @@ class LogrocketCustomerInfo
 
     public function afterGetSectionData(Customer $subject, $result)
     {
-        if ($this->customerSession->isLoggedIn()) {
+        if ($this->session->isLoggedIn()) {
             $customer = $this->currentCustomer->getCustomer();
 
             $result['email'] = $customer->getEmail();
