@@ -16,7 +16,7 @@ class MonologPlugin extends Monolog
      */
     public function __construct(
         $name,
-        protected Data $data,
+        protected Data $sentryHelper,
         protected SentryLog $sentryLog,
         protected SenteryHelper $sentryHelper,
         protected DeploymentConfig $deploymentConfig,

@@ -10,13 +10,13 @@ class LogrocketCustomerInfo
 {
     public function __construct(
         protected CurrentCustomer $currentCustomer,
-        protected Session $session
+        protected Session $customerSession
     ) {
     }
 
     public function afterGetSectionData(Customer $subject, $result)
     {
-        if ($this->session->isLoggedIn()) {
+        if ($this->customerSession->isLoggedIn()) {
             $customer = $this->currentCustomer->getCustomer();
 
             $result['email'] = $customer->getEmail();
