@@ -17,7 +17,6 @@ class MonologPlugin extends Monolog
         $name,
         protected Data $sentryHelper,
         protected SentryLog $sentryLog,
-        protected SenteryHelper $sentryHelper,
         protected DeploymentConfig $deploymentConfig,
         array $handlers = [],
         array $processors = []
