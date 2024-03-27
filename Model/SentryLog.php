@@ -115,7 +115,7 @@ class SentryLog extends Monolog
                 'website_id' => $customerData->getWebsiteId(),
                 'store_id'   => $customerData->getStoreId(),
             ]);
-        } catch (SessionException $e) {
+        } catch (\Exception $e) {
             return;
         }
     }
