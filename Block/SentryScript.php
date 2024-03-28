@@ -12,21 +12,6 @@ class SentryScript extends Template
     const CURRENT_VERSION = '7.39.0';
 
     /**
-     * @var DataHelper
-     */
-    private $dataHelper;
-
-    /**
-     * @var Version
-     */
-    private $version;
-
-    /**
-     * @var Json
-     */
-    private $json;
-
-    /**
      * SentryScript constructor.
      *
      * @param DataHelper       $dataHelper
@@ -34,16 +19,12 @@ class SentryScript extends Template
      * @param array            $data
      */
     public function __construct(
-        DataHelper $dataHelper,
-        Version $version,
+        private DataHelper $dataHelper,
+        private Version $version,
         Template\Context $context,
-        Json $json,
+        private Json $json,
         array $data = []
     ) {
-        $this->dataHelper = $dataHelper;
-        $this->version = $version;
-        $this->json = $json;
-
         parent::__construct($context, $data);
     }
 

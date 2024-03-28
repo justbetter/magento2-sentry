@@ -11,35 +11,16 @@ use Monolog\DateTimeImmutable;
 class MonologPlugin extends Monolog
 {
     /**
-     * @var Data
-     */
-    protected $sentryHelper;
-
-    /**
-     * @var SentryLog
-     */
-    protected $sentryLog;
-
-    /**
-     * @var DeploymentConfig
-     */
-    protected $deploymentConfig;
-
-    /**
      * {@inheritdoc}
      */
     public function __construct(
         $name,
-        Data $data,
-        SentryLog $sentryLog,
-        DeploymentConfig $deploymentConfig,
+        protected Data $sentryHelper,
+        protected SentryLog $sentryLog,
+        protected DeploymentConfig $deploymentConfig,
         array $handlers = [],
         array $processors = []
     ) {
-        $this->sentryHelper = $data;
-        $this->sentryLog = $sentryLog;
-        $this->deploymentConfig = $deploymentConfig;
-
         parent::__construct($name, $handlers, $processors);
     }
 
