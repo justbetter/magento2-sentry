@@ -45,6 +45,7 @@ class SentryLog extends Monolog
         Data $data,
         Session $customerSession,
         State $appState,
+        private SentryInteraction $sentryInteraction,
         array $handlers = [],
         array $processors = []
     ) {
@@ -77,12 +78,13 @@ class SentryLog extends Monolog
         \Sentry\configureScope(
             function (SentryScope $scope) use ($context, $customTags): void {
                 $this->setTags($scope, $customTags);
-                $this->setUser($scope);
                 if (false === empty($context)) {
                     $scope->setContext('Custom context', $context);
                 }
             }
         );
+
+        $this->sentryInteraction->addUserContext();
 
         if ($message instanceof \Throwable) {
             $lastEventId = \Sentry\captureException($message);
@@ -95,26 +97,6 @@ class SentryLog extends Monolog
             if (true === $this->canGetCustomerData()) {
                 $this->customerSession->setSentryEventId($lastEventId);
             }
-        } catch (SessionException $e) {
-            return;
-        }
-    }
-
-    private function setUser(SentryScope $scope): void
-    {
-        try {
-            if (!$this->canGetCustomerData()
-                || !$this->customerSession->isLoggedIn()) {
-                return;
-            }
-
-            $customerData = $this->customerSession->getCustomer();
-            $scope->setUser([
-                'id'         => $customerData->getEntityId(),
-                'email'      => $customerData->getEmail(),
-                'website_id' => $customerData->getWebsiteId(),
-                'store_id'   => $customerData->getStoreId(),
-            ]);
         } catch (SessionException $e) {
             return;
         }

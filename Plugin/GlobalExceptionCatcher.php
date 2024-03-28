@@ -90,6 +90,7 @@ class GlobalExceptionCatcher
         } catch (\Throwable $ex) {
             try {
                 if ($this->sentryHelper->shouldCaptureException($ex)) {
+                    $this->sentryInteraction->addUserContext();
                     $this->sentryInteraction->captureException($ex);
                 }
             } catch (\Throwable $bigProblem) {
