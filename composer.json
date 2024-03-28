@@ -5,7 +5,7 @@
   "version": "3.5.2",
   "license": "MIT",
   "require": {
-    "php": ">=7.0",
+    "php": ">=8.0",
     "sentry/sdk": "^3.0",
     "monolog/monolog": ">=2.7.0",
     "magento/framework": "*",
