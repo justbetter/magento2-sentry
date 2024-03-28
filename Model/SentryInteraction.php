@@ -6,9 +6,6 @@ namespace JustBetter\Sentry\Model;
 
 // phpcs:disable Magento2.Functions.DiscouragedFunction
 
-use function Sentry\captureException;
-use function Sentry\configureScope;
-use function Sentry\init;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Backend\Model\Auth\Session as AdminSession;
 use Magento\Customer\Model\Session as CustomerSession;
@@ -17,12 +14,17 @@ use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Sentry\State\Scope;
 
+use function Sentry\captureException;
+use function Sentry\configureScope;
+use function Sentry\init;
+
 class SentryInteraction
 {
     public function __construct(
         private UserContextInterface $userContext,
         private State $appState
-    ) { }
+    ) {
+    }
 
     public function initialize($config)
     {
@@ -49,10 +51,10 @@ class SentryInteraction
         if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
             $adminSession = $objectManager->get(AdminSession::class);
 
-            if($adminSession->isLoggedIn()) {
+            if ($adminSession->isLoggedIn()) {
                 return [
-                    'id' => $adminSession->getUser()->getId(),
-                    'email' => $adminSession->getUser()->getEmail(),
+                    'id'        => $adminSession->getUser()->getId(),
+                    'email'     => $adminSession->getUser()->getEmail(),
                     'user_type' => UserContextInterface::USER_TYPE_ADMIN,
                 ];
             }
@@ -61,13 +63,13 @@ class SentryInteraction
         if ($this->appState->getAreaCode() === Area::AREA_FRONTEND) {
             $customerSession = $objectManager->get(CustomerSession::class);
 
-            if($customerSession->loggedIn()) {
+            if ($customerSession->loggedIn()) {
                 return [
-                    'id' => $customerSession->getCustomer()->getId(),
-                    'email' => $customerSession->getCustomer()->getEmail(),
+                    'id'         => $customerSession->getCustomer()->getId(),
+                    'email'      => $customerSession->getCustomer()->getEmail(),
                     'website_id' => $customerSession->getCustomer()->getWebsiteId(),
                     'store_id'   => $customerSession->getCustomer()->getStoreId(),
-                    'user_type' => UserContextInterface::USER_TYPE_CUSTOMER,
+                    'user_type'  => UserContextInterface::USER_TYPE_CUSTOMER,
                 ];
             }
         }
@@ -80,6 +82,7 @@ class SentryInteraction
         $userId = null;
         $userType = null;
         $userData = [];
+
         try {
             $userId = $this->userContext->getUserId();
             if ($userId) {
@@ -100,7 +103,7 @@ class SentryInteraction
                 $scope->setUser([
                     'id' => $userId,
                     ...$userData,
-                    'user_type' => match($userType) {
+                    'user_type' => match ($userType) {
                         UserContextInterface::USER_TYPE_INTEGRATION => 'integration',
                         UserContextInterface::USER_TYPE_ADMIN       => 'admin',
                         UserContextInterface::USER_TYPE_CUSTOMER    => 'customer',
