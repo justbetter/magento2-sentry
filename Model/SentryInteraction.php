@@ -51,8 +51,8 @@ class SentryInteraction
 
             if($adminSession->isLoggedIn()) {
                 return [
-                    'id' => $adminSession->getUser()->getId(),
-                    'email' => $adminSession->getUser()->getEmail(),
+                    'id'        => $adminSession->getUser()->getId(),
+                    'email'     => $adminSession->getUser()->getEmail(),
                     'user_type' => UserContextInterface::USER_TYPE_ADMIN,
                 ];
             }
@@ -63,11 +63,11 @@ class SentryInteraction
 
             if($customerSession->loggedIn()) {
                 return [
-                    'id' => $customerSession->getCustomer()->getId(),
-                    'email' => $customerSession->getCustomer()->getEmail(),
+                    'id'         => $customerSession->getCustomer()->getId(),
+                    'email'      => $customerSession->getCustomer()->getEmail(),
                     'website_id' => $customerSession->getCustomer()->getWebsiteId(),
                     'store_id'   => $customerSession->getCustomer()->getStoreId(),
-                    'user_type' => UserContextInterface::USER_TYPE_CUSTOMER,
+                    'user_type'  => UserContextInterface::USER_TYPE_CUSTOMER,
                 ];
             }
         }
@@ -108,7 +108,6 @@ class SentryInteraction
                         default                                     => 'unknown'
                     },
                 ]);
-                dump($scope->getUser());
             });
         } catch (\Throwable $e) {
         }
