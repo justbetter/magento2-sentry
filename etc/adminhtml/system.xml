@@ -9,65 +9,65 @@
             <label>Sentry configuration</label>
             <tab>justbetter</tab>
             <resource>JustBetter_Sentry::configuration</resource>
-            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                 <label>Sentry general config</label>
-                <field id="deployment_config_info" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="deployment_config_info" translate="label" type="select" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Deployment config info</label>
                     <frontend_model>JustBetter\Sentry\Block\Adminhtml\System\Config\DeploymentConfigInfo</frontend_model>
                 </field>
-                <field id="enable_php_tracking" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="enable_php_tracking" translate="label" type="select" sortOrder="20" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Enable PHP Tracking</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="enable_script_tag" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="enable_script_tag" translate="label" type="select" sortOrder="20" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Enable Javascript Tracking</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="script_tag_placement" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="script_tag_placement" translate="label" type="select" sortOrder="30" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Script tag location</label>
                     <source_model>JustBetter\Sentry\Model\Config\Source\ScriptTagPlacement</source_model>
                     <depends>
                         <field id="enable_script_tag">1</field>
                     </depends>
                 </field>
-                <field id="enable_session_replay" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="enable_session_replay" translate="label" type="select" sortOrder="40" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Enable Session Replay</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="replay_session_sample_rate" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="replay_session_sample_rate" translate="label" type="text" sortOrder="50" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Session Sample Rate</label>
                     <depends>
                         <field id="enable_session_replay">1</field>
                     </depends>
                 </field>
-                <field id="replay_error_sample_rate" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="replay_error_sample_rate" translate="label" type="text" sortOrder="50" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Error Sample Rate</label>
                     <depends>
                         <field id="enable_session_replay">1</field>
                     </depends>
                 </field>
-                <field id="replay_block_media" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="replay_block_media" translate="label" type="select" sortOrder="50" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Block Media</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enable_session_replay">1</field>
                     </depends>
                 </field>
-                <field id="replay_mask_text" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="replay_mask_text" translate="label" type="select" sortOrder="50" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Mask text</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enable_session_replay">1</field>
                     </depends>
                 </field>
-                <field id="use_logrocket" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="use_logrocket" translate="label" type="select" sortOrder="40" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Use LogRocket</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enable_script_tag">1</field>
                     </depends>
                 </field>
-                <field id="logrocket_identify" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="logrocket_identify" translate="label" type="select" sortOrder="50" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>LogRocket include user data</label>
                     <tooltip>Include user ID, name and email to identify logged in users in LogRocket</tooltip>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -82,46 +82,46 @@
                     <frontend_model>JustBetter\Sentry\Block\Adminhtml\System\Config\Button</frontend_model>
                 </field>
             </group>
-            <group id="environment" translate="label comment" sortOrder="20" showInDefault="1" showInStore="0" showInWebsite="0">
+            <group id="environment" translate="label comment" sortOrder="20" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                 <label>Environment Configuration</label>
                 <comment><![CDATA[Setting the configuration here will override the Magento Deployment Configuration.]]></comment>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="dsn" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="dsn" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>DSN</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="logrocket_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="logrocket_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Logrocket Key</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="environment" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="environment" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Environment</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="log_level" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="log_level" translate="label" type="select" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Log Level</label>
                     <source_model>JustBetter\Sentry\Model\Config\Source\LogLevel</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="tracing_enabled" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="tracing_enabled" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Tracing Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="tracing_sample_rate" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="tracing_sample_rate" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Tracing Sample Rate</label>
                     <validate>validate-not-negative-number validate-number</validate>
                     <depends>
@@ -129,14 +129,14 @@
                     </depends>
                 </field>
             </group>
-            <group id="issue_grouping" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+            <group id="issue_grouping" translate="label" type="text" sortOrder="30" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                 <label>Sentry issue grouping</label>
                 <comment><![CDATA[Sentry does its best to group related issues, but due to some parts in most Magento URL's, Sentry inadvertently does not group these issues although they might be related. Stripping out these values from the URL helps with this.]]></comment>
-                <field id="strip_static_content_version"  translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="strip_static_content_version"  translate="label" type="select" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Strip static version from URL</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="strip_store_code" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="strip_store_code" translate="label" type="select" sortOrder="20" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Strip store code from URL</label>
                     <comment><![CDATA[Caution: this will replace all occurrences of your storecode in the URL, which might cause issues when the store code is too generic.]]></comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

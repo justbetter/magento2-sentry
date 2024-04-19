@@ -80,17 +80,17 @@ class Data extends AbstractHelper
      */
     public function getDSN()
     {
-        return $this->config['dsn'];
+        return $this->config[$this->getStoreId()]['dsn'];
     }
 
     public function isTracingEnabled(): bool
     {
-        return $this->config['tracing_enabled'] ?? false;
+        return $this->config[$this->getStoreId()]['tracing_enabled'] ?? false;
     }
 
     public function getTracingSampleRate(): float
     {
-        return (float) $this->config['tracing_sample_rate'] ?? 0.2;
+        return (float) $this->config[$this->getStoreId()]['tracing_sample_rate'] ?? 0.2;
     }
 
     /**
@@ -98,16 +98,16 @@ class Data extends AbstractHelper
      */
     public function getIgnoreJsErrors()
     {
-        $list = $this->config['ignore_js_errors'];
+        $list = $this->config[$this->getStoreId()]['ignore_js_errors'];
 
         if ($list === null) {
             return null;
         }
 
         try {
-            $list = is_array($this->config['ignore_js_errors'])
-                ? $this->config['ignore_js_errors']
-                : $this->serializer->unserialize($this->config['ignore_js_errors']);
+            $list = is_array($this->config[$this->getStoreId()]['ignore_js_errors'])
+                ? $this->config[$this->getStoreId()]['ignore_js_errors']
+                : $this->serializer->unserialize($this->config[$this->getStoreId()]['ignore_js_errors']);
         } catch (InvalidArgumentException $e) {
             throw new RuntimeException(
                 'Sentry configuration error: `ignore_js_errors` has to be an array or `null`. Given type: '.gettype($list)
@@ -122,7 +122,7 @@ class Data extends AbstractHelper
      */
     public function getJsSdkVersion(): string
     {
-        return $this->config['js_sdk_version'] ?: SentryScript::CURRENT_VERSION;
+        return $this->config[$this->getStoreId()]['js_sdk_version'] ?: SentryScript::CURRENT_VERSION;
     }
 
     /**
@@ -130,7 +130,7 @@ class Data extends AbstractHelper
      */
     public function getEnvironment()
     {
-        return $this->config['environment'];
+        return $this->config[$this->getStoreId()]['environment'];
     }
 
     /**
@@ -160,31 +160,39 @@ class Data extends AbstractHelper
     }
 
     /**
+     * @return int
+     */
+    public function getStoreId():int
+    {
+        return $this->getStore()->getId() ?? 0;
+    }
+
+    /**
      * @return array
      */
     public function collectModuleConfig(): array
     {
-        if (isset($this->config['enabled'])) {
-            return $this->config;
+        if (isset($this->config[$this->getStoreId()]['enabled'])) {
+            return $this->config[$this->getStoreId()];
         }
 
         try {
-            $this->config['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled')
+            $this->config[$this->getStoreId()]['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled', ScopeInterface::SCOPE_STORE)
                 ?? $this->deploymentConfig->get('sentry') !== null;
         } catch (TableNotFoundException $e) {
-            $this->config['enabled'] = null;
+            $this->config[$this->getStoreId()]['enabled'] = null;
         }
 
         foreach ($this->configKeys as $value) {
             try {
-                $this->config[$value] = $this->scopeConfig->getValue('sentry/environment/'.$value)
+                $this->config[$this->getStoreId()][$value] = $this->scopeConfig->getValue('sentry/environment/'.$value, ScopeInterface::SCOPE_STORE)
                     ?? $this->deploymentConfig->get('sentry/'.$value);
             } catch (TableNotFoundException $e) {
-                $this->config[$value] = null;
+                $this->config[$this->getStoreId()][$value] = null;
             }
         }
 
-        return $this->config;
+        return $this->config[$this->getStoreId()];
     }
 
     /**
@@ -201,8 +209,8 @@ class Data extends AbstractHelper
     public function isActiveWithReason(): array
     {
         $reasons = [];
-        $emptyConfig = empty($this->config);
-        $configEnabled = array_key_exists('enabled', $this->config) && $this->config['enabled'];
+        $emptyConfig = empty($this->config[$this->getStoreId()]);
+        $configEnabled = array_key_exists('enabled', $this->config[$this->getStoreId()]) && $this->config[$this->getStoreId()]['enabled'];
         $dsnNotEmpty = $this->getDSN();
         $productionMode = ($this->isProductionMode() || $this->isOverwriteProductionMode());
 
@@ -243,7 +251,7 @@ class Data extends AbstractHelper
      */
     public function isOverwriteProductionMode(): bool
     {
-        return array_key_exists('mage_mode_development', $this->config) && $this->config['mage_mode_development'];
+        return array_key_exists('mage_mode_development', $this->config[$this->getStoreId()]) && $this->config[$this->getStoreId()]['mage_mode_development'];
     }
 
     /**
@@ -269,7 +277,7 @@ class Data extends AbstractHelper
      */
     public function isPhpTrackingEnabled(): bool
     {
-        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_php_tracking');
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_php_tracking', ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -277,12 +285,12 @@ class Data extends AbstractHelper
      */
     public function useScriptTag(): bool
     {
-        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag');
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag', ScopeInterface::SCOPE_STORE);
     }
 
     public function useSessionReplay(): bool
     {
-        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_session_replay');
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_session_replay', ScopeInterface::SCOPE_STORE);
     }
 
     public function getReplaySessionSampleRate(): float
@@ -328,7 +336,7 @@ class Data extends AbstractHelper
      */
     public function getLogrocketKey()
     {
-        return $this->config['logrocket_key'];
+        return $this->config[$this->getStoreId()]['logrocket_key'];
     }
 
     /**
@@ -337,7 +345,7 @@ class Data extends AbstractHelper
     public function useLogrocket(): bool
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'use_logrocket') &&
-            array_key_exists('logrocket_key', $this->config) &&
+            array_key_exists('logrocket_key', $this->config[$this->getStoreId()]) &&
             $this->getLogrocketKey() !== null;
     }
 
@@ -347,7 +355,8 @@ class Data extends AbstractHelper
     public function useLogrocketIdentify(): bool
     {
         return $this->scopeConfig->isSetFlag(
-            static::XML_PATH_SRS.'logrocket_identify'
+            static::XML_PATH_SRS.'logrocket_identify',
+            ScopeInterface::SCOPE_STORE
         );
     }
 
@@ -357,7 +366,8 @@ class Data extends AbstractHelper
     public function stripStaticContentVersion(): bool
     {
         return $this->scopeConfig->isSetFlag(
-            static::XML_PATH_SRS_ISSUE_GROUPING.'strip_static_content_version'
+            static::XML_PATH_SRS_ISSUE_GROUPING.'strip_static_content_version',
+            ScopeInterface::SCOPE_STORE
         );
     }
 
@@ -367,7 +377,8 @@ class Data extends AbstractHelper
     public function stripStoreCode(): bool
     {
         return $this->scopeConfig->isSetFlag(
-            static::XML_PATH_SRS_ISSUE_GROUPING.'strip_store_code'
+            static::XML_PATH_SRS_ISSUE_GROUPING.'strip_store_code',
+            ScopeInterface::SCOPE_STORE
         );
     }
 
@@ -376,7 +387,7 @@ class Data extends AbstractHelper
      */
     public function getErrorExceptionReporting(): int
     {
-        return (int) ($this->config['errorexception_reporting'] ?? E_ALL);
+        return (int) ($this->config[$this->getStoreId()]['errorexception_reporting'] ?? E_ALL);
     }
 
     /**
@@ -384,12 +395,12 @@ class Data extends AbstractHelper
      */
     public function getIgnoreExceptions(): array
     {
-        if (is_array($this->config['ignore_exceptions'])) {
-            return $this->config['ignore_exceptions'];
+        if (is_array($this->config[$this->getStoreId()]['ignore_exceptions'])) {
+            return $this->config[$this->getStoreId()]['ignore_exceptions'];
         }
 
         try {
-            return $this->serializer->unserialize($this->config['ignore_exceptions']);
+            return $this->serializer->unserialize($this->config[$this->getStoreId()]['ignore_exceptions']);
         } catch (InvalidArgumentException $e) {
             return [];
         }
