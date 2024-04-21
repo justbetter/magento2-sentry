@@ -162,7 +162,7 @@ class Data extends AbstractHelper
     /**
      * @return int
      */
-    public function getStoreId():int
+    public function getStoreId(): int
     {
         return $this->getStore()?->getId() ?? 0;
     }
