@@ -81,7 +81,6 @@ class Data extends AbstractHelper
      */
     public function getDSN()
     {
-
         return $this->collectModuleConfig()['dsn'];
     }
 
@@ -256,6 +255,7 @@ class Data extends AbstractHelper
     public function isOverwriteProductionMode(): bool
     {
         $config = $this->collectModuleConfig();
+
         return isset($config['mage_mode_development']) && $config['mage_mode_development'];
     }
 
