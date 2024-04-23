@@ -184,7 +184,7 @@ class Data extends AbstractHelper
         try {
             $this->config[$this->getStoreId()]['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled', ScopeInterface::SCOPE_STORE)
                 ?? $this->deploymentConfig->get('sentry') !== null;
-        } catch (TableNotFoundException | FileSystemException | \Magento\Framework\Exception\RuntimeException $e) {
+        } catch (TableNotFoundException | FileSystemException | RuntimeException $e) {
             $this->config[$this->getStoreId()]['enabled'] = null;
         }
 
@@ -192,7 +192,7 @@ class Data extends AbstractHelper
             try {
                 $this->config[$this->getStoreId()][$value] = $this->scopeConfig->getValue('sentry/environment/'.$value, ScopeInterface::SCOPE_STORE)
                     ?? $this->deploymentConfig->get('sentry/'.$value);
-            } catch (TableNotFoundException | FileSystemException | \Magento\Framework\Exception\RuntimeException $e) {
+            } catch (TableNotFoundException | FileSystemException | RuntimeException $e) {
                 $this->config[$this->getStoreId()][$value] = null;
             }
         }
