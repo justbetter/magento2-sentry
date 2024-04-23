@@ -210,7 +210,7 @@ class Data extends AbstractHelper
     {
         $reasons = [];
         $emptyConfig = empty($this->config[$this->getStoreId()]);
-        $configEnabled = array_key_exists('enabled', $this->config[$this->getStoreId()]) && $this->config[$this->getStoreId()]['enabled'];
+        $configEnabled = isset($this->config[$this->getStoreId()]['enabled']) && $this->config[$this->getStoreId()]['enabled'];
         $dsnNotEmpty = $this->getDSN();
         $productionMode = ($this->isProductionMode() || $this->isOverwriteProductionMode());
 
@@ -251,7 +251,7 @@ class Data extends AbstractHelper
      */
     public function isOverwriteProductionMode(): bool
     {
-        return array_key_exists('mage_mode_development', $this->config[$this->getStoreId()]) && $this->config[$this->getStoreId()]['mage_mode_development'];
+        return isset($this->config[$this->getStoreId()]['mage_mode_development']) && $this->config[$this->getStoreId()]['mage_mode_development'];
     }
 
     /**
@@ -345,7 +345,7 @@ class Data extends AbstractHelper
     public function useLogrocket(): bool
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'use_logrocket') &&
-            array_key_exists('logrocket_key', $this->config[$this->getStoreId()]) &&
+            isset($this->config[$this->getStoreId()]['logrocket_key']) &&
             $this->getLogrocketKey() !== null;
     }
 
