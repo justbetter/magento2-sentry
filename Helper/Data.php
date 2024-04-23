@@ -17,7 +17,7 @@ use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use RuntimeException;
+use Magento\Framework\Exception\RuntimeException;
 use Throwable;
 
 class Data extends AbstractHelper
@@ -172,8 +172,6 @@ class Data extends AbstractHelper
 
     /**
      * @return array
-     * @throws FileSystemException
-     * @throws \Magento\Framework\Exception\RuntimeException
      */
     public function collectModuleConfig(): array
     {
