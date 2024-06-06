@@ -6,17 +6,17 @@ namespace JustBetter\Sentry\Model;
 
 // phpcs:disable Magento2.Functions.DiscouragedFunction
 
+use function Sentry\captureException;
+use function Sentry\configureScope;
+use function Sentry\init;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Backend\Model\Auth\Session as AdminSession;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
+use ReflectionClass;
 use Sentry\State\Scope;
-
-use function Sentry\captureException;
-use function Sentry\configureScope;
-use function Sentry\init;
 
 class SentryInteraction
 {
@@ -34,7 +34,7 @@ class SentryInteraction
     private function canGetUserData()
     {
         try {
-            return @$this->appState->getAreaCode();
+            return in_array(@$this->appState->getAreaCode(), [Area::AREA_ADMINHTML, Area::AREA_FRONTEND]);
         } catch (LocalizedException $ex) {
             return false;
         }
@@ -47,8 +47,15 @@ class SentryInteraction
         }
 
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $reflectionClass = new ReflectionClass($objectManager);
+        $sharedInstances = $reflectionClass->getProperty('_sharedInstances');
+        $sharedInstances->setAccessible(true);
 
         if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+            if (!array_key_exists(ltrim(AdminSession::class, '\\'), $sharedInstances->getValue($objectManager))) {
+                // Don't intitialise session if it has not already been started, this causes problems with dynamic resources.
+                return [];
+            }
             $adminSession = $objectManager->get(AdminSession::class);
 
             if ($adminSession->isLoggedIn()) {
@@ -61,6 +68,9 @@ class SentryInteraction
         }
 
         if ($this->appState->getAreaCode() === Area::AREA_FRONTEND) {
+            if (!array_key_exists(ltrim(CustomerSession::class, '\\'), $sharedInstances->getValue($objectManager))) {
+                return [];
+            }
             $customerSession = $objectManager->get(CustomerSession::class);
 
             if ($customerSession->loggedIn()) {
@@ -83,6 +93,7 @@ class SentryInteraction
         $userType = null;
         $userData = [];
 
+        \Magento\Framework\Profiler::start('SENTRY::add_user_context');
         try {
             $userId = $this->userContext->getUserId();
             if ($userId) {
@@ -90,8 +101,8 @@ class SentryInteraction
             }
 
             if ($this->canGetUserData() && count($userData = $this->getSessionUserData())) {
-                $userId = $userData['id'] || $userId;
-                $userType = $userData['user_type'] || $userType;
+                $userId = $userData['id'] ?? $userId;
+                $userType = $userData['user_type'] ?? $userType;
                 unset($userData['user_type']);
             }
 
@@ -114,6 +125,7 @@ class SentryInteraction
             });
         } catch (\Throwable $e) {
         }
+        \Magento\Framework\Profiler::stop('SENTRY::add_user_context');
     }
 
     public function captureException(\Throwable $ex)

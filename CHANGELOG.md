@@ -1,4 +1,11 @@
 # Changelog
+## [3.6.0] - 2024-03-29
+This release drops support for php 7.4 as it has been completely EOL for over a year. [https://www.php.net/supported-versions.php](https://www.php.net/supported-versions.php)
+### Fixed
+    * Check if Sentry is defined before running init (https://github.com/justbetter/magento2-sentry/pull/129) thanks to https://github.com/netzkollektiv
+### Changed
+    * Use property promotions (https://github.com/justbetter/magento2-sentry/pull/130) thanks to https://github.com/cirolosapio
+    * Raised sentry/sdk version to 4.0+
 ## [3.5.2] - 2024-03-18
 ### Fixed
     * Fix start errors without database connection (https://github.com/justbetter/magento2-sentry/pull/125) thanks to https://github.com/fredden
@@ -22,7 +29,6 @@
 ## [3.2.0] - 2022-07-07
 ### Fixed
     * Changed addAlert to addRecord for Test error (https://github.com/justbetter/magento2-sentry/pull/98) thanks to https://github.com/peterjaap
-
 ### Added
     * Send context data top Sentry as Custom Data (https://github.com/justbetter/magento2-sentry/pull/97) thanks to https://github.com/oneserv-heuser
 ## [3.1.0] - 2022-06-14
