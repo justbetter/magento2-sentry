@@ -35,7 +35,9 @@ if (typeof Sentry !== 'undefined') {
         environment: '<?= $block->escapeHtml(trim($block->getEnvironment())) ?>',
         integrations: [
             <?php if ($block->isTracingEnabled()): ?>
-                new Sentry.BrowserTracing(),
+            Sentry.browserTracingIntegration({
+                enableInp: true,
+            }),
             <?php endif ?>
             <?php if ($block->useSessionReplay()): ?>
             new Sentry.Replay({
