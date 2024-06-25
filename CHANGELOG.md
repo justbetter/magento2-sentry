@@ -1,4 +1,9 @@
 # Changelog
+## [3.7.0] - 2024-06-25
+### Fixed
+    * Replace polyfill CDN with fastly (https://github.com/justbetter/magento2-sentry/pull/140) thanks to https://github.com/barryvdh
+### Added
+    * Enable INP when tracing is enabled (https://github.com/justbetter/magento2-sentry/pull/137) thanks to https://github.com/amenk
 ## [3.6.0] - 2024-03-29
 This release drops support for php 7.4 as it has been completely EOL for over a year. [https://www.php.net/supported-versions.php](https://www.php.net/supported-versions.php)
 ### Fixed
