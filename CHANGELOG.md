@@ -1,4 +1,7 @@
 # Changelog
+## [3.7.1] - 2024-06-25
+### Fixed
+    * Fix CSP after Polyfill changes (https://github.com/justbetter/magento2-sentry/pull/141) thanks to https://github.com/sprankhub
 ## [3.7.0] - 2024-06-25
 ### Fixed
     * Replace polyfill CDN with fastly (https://github.com/justbetter/magento2-sentry/pull/140) thanks to https://github.com/barryvdh
