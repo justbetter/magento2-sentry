@@ -80,6 +80,8 @@ public function execute(\Magento\Framework\Event\Observer $observer)
 }
 ```
 
+Example: https://github.com/justbetter/magento2-sentry-filter-events
+
 ## Compatibility
 The module is tested on Magento version 2.4.x with sentry sdk version 3.x. Magento 2.1.x is not supported by us anymore, feel free to fork this project or make a pull request.
 
