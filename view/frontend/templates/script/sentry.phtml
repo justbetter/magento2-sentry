@@ -40,7 +40,7 @@ if (typeof Sentry !== 'undefined') {
             }),
             <?php endif ?>
             <?php if ($block->useSessionReplay()): ?>
-            new Sentry.Replay({
+            Sentry.replayIntegration({
                 blockAllMedia: <?= $block->escapeHtml($block->getReplayBlockMedia() ? 'true' : 'false') ?>,
                 maskAllText: <?= $block->escapeHtml($block->getReplayMaskText() ? 'true' : 'false') ?>,
             })
