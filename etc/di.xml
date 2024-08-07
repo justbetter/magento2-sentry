@@ -26,4 +26,12 @@
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
         </arguments>
     </type>
+
+    <!-- Profiling -->
+    <type name="Magento\Framework\Event\ManagerInterface">
+        <plugin name="sentry-profiling" type="JustBetter\Sentry\Plugin\Profiling\EventManagerPlugin" disabled="false" />
+    </type>
+    <type name="Magento\Framework\View\Element\Template">
+        <plugin name="sentry-profiling" type="JustBetter\Sentry\Plugin\Profiling\TemplatePlugin" disabled="false" />
+    </type>
 </config>

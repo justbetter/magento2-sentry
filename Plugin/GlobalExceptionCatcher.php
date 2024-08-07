@@ -7,6 +7,7 @@ namespace JustBetter\Sentry\Plugin;
 use JustBetter\Sentry\Helper\Data as SenteryHelper;
 use JustBetter\Sentry\Model\ReleaseIdentifier;
 use JustBetter\Sentry\Model\SentryInteraction;
+use JustBetter\Sentry\Model\SentryPerformance;
 use Magento\Framework\AppInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObjectFactory;
@@ -15,21 +16,13 @@ use Sentry\Integration\IntegrationInterface;
 
 class GlobalExceptionCatcher
 {
-    /**
-     * ExceptionCatcher constructor.
-     *
-     * @param SenteryHelper         $sentryHelper
-     * @param ReleaseIdentifier     $releaseIdentifier
-     * @param SentryInteraction     $sentryInteraction
-     * @param EventManagerInterface $eventManager
-     * @param DataObjectFactory     $dataObjectFactory
-     */
     public function __construct(
         protected SenteryHelper $sentryHelper,
         private ReleaseIdentifier $releaseIdentifier,
         private SentryInteraction $sentryInteraction,
         private EventManagerInterface $eventManager,
-        private DataObjectFactory $dataObjectFactory
+        private DataObjectFactory $dataObjectFactory,
+        private SentryPerformance $sentryPerformance
     ) {
     }
 
@@ -76,7 +69,7 @@ class GlobalExceptionCatcher
             static fn (IntegrationInterface $integration) => !in_array(get_class($integration), $disabledDefaultIntegrations)
         ));
 
-        if ($this->sentryHelper->isTracingEnabled() && $this->sentryHelper->isPerformanceTrackingEnabled()) {
+        if ($this->sentryHelper->isPerformanceTrackingEnabled()) {
             $config->setTracesSampleRate($this->sentryHelper->getTracingSampleRate());
         }
 
@@ -85,9 +78,10 @@ class GlobalExceptionCatcher
         ]);
 
         $this->sentryInteraction->initialize($config->getData());
+        $this->sentryPerformance->startTransaction($subject);
 
         try {
-            return $proceed();
+            return $response = $proceed();
         } catch (\Throwable $ex) {
             try {
                 if ($this->sentryHelper->shouldCaptureException($ex)) {
@@ -99,6 +93,12 @@ class GlobalExceptionCatcher
             }
 
             throw $ex;
+        } finally {
+            try {
+                $this->sentryPerformance->finishTransaction($response ?? 500);
+            } catch (\Throwable $bigProblem) {
+                // do nothing if sentry fails
+            }
         }
     }
 }

@@ -46,10 +46,12 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'js_sdk_version' => \JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION,
     'tracing_enabled' => true,
     'tracing_sample_rate' => 0.5,
-    'ignore_js_errors' => [],
     'disable_default_integrations' => [
         \Sentry\Integration\ModulesIntegration::class,
     ]
+    'performance_tracking_enabled' => true,
+    'performance_tracking_excluded_areas' => ['adminhtml', 'crontab'],
+    'ignore_js_errors' => []
 ]
 ```
 
@@ -65,6 +67,8 @@ Next to that there are some configuration options under Stores > Configuration >
 * `js_sdk_version`: if this option is set, it will load the explicit version of the javascript SDK of Sentry.
 * `tracing_enabled` if this option is set to true, tracing got enabled (bundle file got loaded automatically). Default: `false`
 * `tracing_sample_rate` if tracing is enabled, you should also set the sample rate. Default: `0.2`
+* `performance_tracking_enabled` if performance tracking is enabled, a performance report got generated for the request. Default: `false`
+* `performance_tracking_excluded_areas`: if `performance_tracking_enabled` is enabled, we recommend to exclude the `adminhtml` & `crontab` area. Default `['adminhtml', 'crontab']`
 * `ignore_js_errors` array of javascript error messages, which should be not send to Sentry. (see also `ignoreErrors` in [Sentry documentation](https://docs.sentry.io/clients/javascript/config/))
 * `disable_default_integrations` provide a list of FQCN of default integrations, which you do not want to use. [List of default integrations](https://github.com/getsentry/sentry-php/tree/master/src/Integration). Default: `[]`
 
@@ -83,6 +87,8 @@ using the "Variables" in Adobe Commerce using the following variables:
 * `CONFIG__SENTRY__ENVIRONMENT__JS_SDK_VERSION`: string
 * `CONFIG__SENTRY__ENVIRONMENT__TRACING_ENABLED`: boolean
 * `CONFIG__SENTRY__ENVIRONMENT__TRACING_SAMPLE_RATE`: float
+* `CONFIG__SENTRY__ENVIRONMENT__TRACING_PERFORMANCE_TRACKING_ENABLED`: boolean
+* `CONFIG__SENTRY__ENVIRONMENT__TRACING_PERFORMANCE_TRACKING_EXCLUDED_AREAS`: boolean
 * `CONFIG__SENTRY__ENVIRONMENT__IGNORE_JS_ERRORS`: A JSON encoded array of error messages
 
 The following configuration settings can be overridden in the Magento admin. This is limited to ensure that changes to
