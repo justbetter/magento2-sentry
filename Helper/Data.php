@@ -51,6 +51,7 @@ class Data extends AbstractHelper
         'tracing_sample_rate',
         'performance_tracking_enabled',
         'performance_tracking_excluded_areas',
+        'profiles_sample_rate',
         'ignore_js_errors',
         'disable_default_integrations',
     ];
@@ -87,6 +88,11 @@ class Data extends AbstractHelper
     public function getDSN()
     {
         return $this->collectModuleConfig()['dsn'];
+    }
+
+    public function getPhpProfileSampleRate(): float
+    {
+        return (float) ($this->config['profiles_sample_rate'] ?? 0);
     }
 
     /**

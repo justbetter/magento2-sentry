@@ -73,6 +73,10 @@ class GlobalExceptionCatcher
             $config->setTracesSampleRate($this->sentryHelper->getTracingSampleRate());
         }
 
+        if ($rate = $this->sentryHelper->getPhpProfileSampleRate()) {
+            $config->setData('profiles_sample_rate', $rate);
+        }
+
         $this->eventManager->dispatch('sentry_before_init', [
             'config' => $config,
         ]);
