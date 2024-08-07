@@ -99,16 +99,22 @@ class SentryPerformance
             $this->transaction->setHttpStatus($statusCode);
         }
 
-        $isHttp = in_array($state->getAreaCode(), ['frontend', 'webapi', 'graphql', 'adminhtml']);
-        $this->transaction->setOp(($isHttp ? 'http.' : '').$state->getAreaCode());
-        $this->transaction->setData(array_merge(
-            $this->transaction->getData(),
-            $this->request->__debugInfo(),
-            [
-                'module' => $this->request->getModuleName(),
-                'action' => $this->request->getFullActionName(),
-            ]
-        ));
+        if (in_array($state->getAreaCode(), ['frontend', 'webapi_rest', 'adminhtml'])) {
+            $this->transaction->setOp('http');
+
+            $this->transaction->setData(array_merge(
+                $this->transaction->getData(),
+                $this->request->__debugInfo(),
+                [
+                    'module' => $this->request->getModuleName(),
+                    'action' => $this->request->getFullActionName(),
+                ]
+            ));
+        } elseif ($state->getAreaCode() === 'graphql') {
+            $this->transaction->setOp('graphql');
+        } else {
+            $this->transaction->setOp('other');
+        }
 
         // Finish the transaction, this submits the transaction and it's span to Sentry
         $this->transaction->finish();

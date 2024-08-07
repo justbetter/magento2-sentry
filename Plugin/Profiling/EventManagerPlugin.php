@@ -51,7 +51,10 @@ class EventManagerPlugin
 
         $context = SpanContext::make()
             ->setOp('event')
-            ->setDescription($eventName);
+            ->setDescription($eventName)
+            ->setData([
+                'event.name' => $eventName,
+            ]);
 
         $span = $parent->startChild($context);
         SentrySdk::getCurrentHub()->setSpan($span);

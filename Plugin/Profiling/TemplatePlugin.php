@@ -21,7 +21,7 @@ class TemplatePlugin
         }
 
         $context = SpanContext::make()
-            ->setOp('render-view')
+            ->setOp('template.render')
             ->setDescription($subject->getNameInLayout() ?: $fileName)
             ->setData([
                 'block_name'  => $subject->getNameInLayout(),
