@@ -8,8 +8,10 @@ use JustBetter\Sentry\Helper\Data as SenteryHelper;
 use JustBetter\Sentry\Model\ReleaseIdentifier;
 use JustBetter\Sentry\Model\SentryInteraction;
 use Magento\Framework\AppInterface;
+use Magento\Framework\DataObject;
 use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
+use Sentry\Integration\IntegrationInterface;
 
 class GlobalExceptionCatcher
 {
@@ -37,6 +39,7 @@ class GlobalExceptionCatcher
             return $proceed();
         }
 
+        /** @var DataObject $config */
         $config = $this->dataObjectFactory->create();
 
         $config->setDsn($this->sentryHelper->getDSN());
@@ -58,6 +61,12 @@ class GlobalExceptionCatcher
 
             return $data->getEvent();
         });
+
+        $disabledDefaultIntegrations = $this->sentryHelper->getDisabledDefaultIntegrations();
+        $config->setData('integrations', static fn (array $integrations) => array_filter(
+            $integrations,
+            static fn (IntegrationInterface $integration) => !in_array(get_class($integration), $disabledDefaultIntegrations)
+        ));
 
         $this->eventManager->dispatch('sentry_before_init', [
             'config' => $config,

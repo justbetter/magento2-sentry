@@ -49,6 +49,7 @@ class Data extends AbstractHelper
         'tracing_enabled',
         'tracing_sample_rate',
         'ignore_js_errors',
+        'disable_default_integrations',
     ];
 
     /**
@@ -91,6 +92,11 @@ class Data extends AbstractHelper
     public function getTracingSampleRate(): float
     {
         return (float) $this->config['tracing_sample_rate'] ?? 0.2;
+    }
+
+    public function getDisabledDefaultIntegrations(): array
+    {
+        return $this->config['disable_default_integrations'] ?? [];
     }
 
     /**
