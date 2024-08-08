@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace JustBetter\Sentry\Plugin\Profiling;
 
+use JustBetter\Sentry\Model\SentryPerformance;
 use Magento\Framework\Event\ConfigInterface;
 use Magento\Framework\Event\ManagerInterface;
-use Sentry\SentrySdk;
-use Sentry\Tracing\Span;
 use Sentry\Tracing\SpanContext;
 
 class EventManagerPlugin
 {
-    private const SPAN_STORAGE_KEY = '__sentry_profiling_span';
-
     public function __construct(
         private ConfigInterface $config,
         private array $excludePatterns = []
@@ -24,29 +21,33 @@ class EventManagerPlugin
             '_load_after$',
             '_$',
             '^view_block_abstract_',
+            '^core_layout_render_e',
         ], $excludePatterns);
     }
 
-    public function beforeDispatch(ManagerInterface $subject, string|null $eventName, array $data = []): array
+    private function _canTrace(string|null $eventName): bool
     {
         if ($eventName === null) {
-            return [$eventName, $data];
-        }
-
-        $parent = SentrySdk::getCurrentHub()->getSpan();
-        if ($parent === null) {
-            // can happen if no transaction has been started
-            return [$eventName, $data];
+            return false;
         }
 
         foreach ($this->excludePatterns as $excludePattern) {
             if (preg_match('/'.$excludePattern.'/i', $eventName)) {
-                return [$eventName, $data];
+                return false;
             }
         }
 
         if ($this->config->getObservers(mb_strtolower($eventName)) === []) {
-            return [$eventName, $data];
+            return false;
+        }
+
+        return true;
+    }
+
+    public function aroundDispatch(ManagerInterface $subject, callable $callable, string $eventName, array $data = []): mixed
+    {
+        if (!$this->_canTrace($eventName)) {
+            return $callable($eventName, $data);
         }
 
         $context = SpanContext::make()
@@ -56,25 +57,12 @@ class EventManagerPlugin
                 'event.name' => $eventName,
             ]);
 
-        $span = $parent->startChild($context);
-        SentrySdk::getCurrentHub()->setSpan($span);
-        $data[self::SPAN_STORAGE_KEY] = [$span, $parent];
+        $tracingDto = SentryPerformance::traceStart($context);
 
-        return [$eventName, $data];
-    }
-
-    public function afterDispatch(ManagerInterface $subject, $result, string $name, array $data = []): void
-    {
-        /** @var Span[]|null $span */
-        $span = $data[self::SPAN_STORAGE_KEY] ?? null;
-        if (!is_array($span)) {
-            return;
-        }
-
-        if (isset($span[0])) {
-            $span[0]->finish();
-
-            SentrySdk::getCurrentHub()->setSpan($span[1]);
+        try {
+            return $callable($eventName, $data);
+        } finally {
+            SentryPerformance::traceEnd($tracingDto);
         }
     }
 }

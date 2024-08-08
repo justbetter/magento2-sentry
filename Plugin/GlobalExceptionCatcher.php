@@ -4,7 +4,7 @@ namespace JustBetter\Sentry\Plugin;
 
 // phpcs:disable Magento2.CodeAnalysis.EmptyBlock
 
-use JustBetter\Sentry\Helper\Data as SenteryHelper;
+use JustBetter\Sentry\Helper\Data as SentryHelper;
 use JustBetter\Sentry\Model\ReleaseIdentifier;
 use JustBetter\Sentry\Model\SentryInteraction;
 use JustBetter\Sentry\Model\SentryPerformance;
@@ -13,11 +13,12 @@ use Magento\Framework\DataObject;
 use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Sentry\Integration\IntegrationInterface;
+use Throwable;
 
 class GlobalExceptionCatcher
 {
     public function __construct(
-        protected SenteryHelper $sentryHelper,
+        private SentryHelper $sentryHelper,
         private ReleaseIdentifier $releaseIdentifier,
         private SentryInteraction $sentryInteraction,
         private EventManagerInterface $eventManager,
@@ -86,23 +87,12 @@ class GlobalExceptionCatcher
 
         try {
             return $response = $proceed();
-        } catch (\Throwable $ex) {
-            try {
-                if ($this->sentryHelper->shouldCaptureException($ex)) {
-                    $this->sentryInteraction->addUserContext();
-                    $this->sentryInteraction->captureException($ex);
-                }
-            } catch (\Throwable $bigProblem) {
-                // do nothing if sentry fails
-            }
+        } catch (Throwable $exception) {
+            $this->sentryInteraction->captureException($exception);
 
-            throw $ex;
+            throw $exception;
         } finally {
-            try {
-                $this->sentryPerformance->finishTransaction($response ?? 500);
-            } catch (\Throwable $bigProblem) {
-                // do nothing if sentry fails
-            }
+            $this->sentryPerformance->finishTransaction($response ?? 500);
         }
     }
 }

@@ -8,11 +8,4 @@
         />
     </type>
 
-    <type name="Magento\Framework\DB\Logger\LoggerProxy">
-        <plugin name="JustBetter\Sentry\Plugin\LoggerProxyPlugin"
-                type="JustBetter\Sentry\Plugin\LoggerProxyPlugin"
-                sortOrder="99"
-        />
-    </type>
-
 </config>

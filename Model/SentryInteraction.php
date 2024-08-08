@@ -15,6 +15,8 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManager\ConfigInterface;
 use ReflectionClass;
 use Sentry\State\Scope;
+use JustBetter\Sentry\Helper\Data;
+use Throwable;
 
 use function Sentry\captureException;
 use function Sentry\configureScope;
@@ -35,7 +37,8 @@ class SentryInteraction
      */
     public function __construct(
         private State $appState,
-        private ConfigInterface $omConfigInterface
+        private ConfigInterface $omConfigInterface,
+        private Data $sentryHelper
     ) {
     }
 
@@ -213,8 +216,18 @@ class SentryInteraction
      */
     public function captureException(\Throwable $ex): void
     {
+        if (!$this->sentryHelper->shouldCaptureException($ex)) {
+            return;
+        }
+
+        $this->addUserContext();
+
         ob_start();
-        captureException($ex);
+
+        try {
+            captureException($ex);
+        } catch (Throwable) {
+        }
         ob_end_clean();
     }
 }

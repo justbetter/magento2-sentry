@@ -20,6 +20,7 @@ use Sentry\Tracing\SpanContext;
 use Sentry\Tracing\Transaction;
 use Sentry\Tracing\TransactionContext;
 use Sentry\Tracing\TransactionSource;
+use Throwable;
 
 use function Sentry\startTransaction;
 
@@ -68,8 +69,6 @@ class SentryPerformance
         }
 
         $this->transaction = $transaction;
-
-        // Set the current transaction as the current span so we can retrieve it later
         SentrySdk::getCurrentHub()->setSpan($transaction);
     }
 
@@ -113,28 +112,38 @@ class SentryPerformance
         } elseif ($state->getAreaCode() === 'graphql') {
             $this->transaction->setOp('graphql');
         } else {
-            $this->transaction->setOp('other');
+            $this->transaction->setOp($state->getAreaCode());
         }
 
-        // Finish the transaction, this submits the transaction and it's span to Sentry
-        $this->transaction->finish();
+        try {
+            // Finish the transaction, this submits the transaction and it's span to Sentry
+            $this->transaction->finish();
+        } catch (Throwable) {
+        }
 
         $this->transaction = null;
     }
 
-    public function addSqlQuery($sql, $startTime, $endTime = null): void
+    public static function traceStart(SpanContext $context): PerformanceTracingDto
     {
-        $parentSpan = SentrySdk::getCurrentHub()->getSpan();
-        if (!$parentSpan) {
-            return;
+        $scope = SentrySdk::getCurrentHub()->pushScope();
+        $span = null;
+
+        $parentSpan = $scope->getSpan();
+        if ($parentSpan !== null && $parentSpan->getSampled()) {
+            $span = $parentSpan->startChild($context);
+            $scope->setSpan($span);
         }
 
-        $context = new SpanContext();
-        $context->setOp('db.sql.query');
-        $context->setDescription($sql);
-        $context->setStartTimestamp($startTime);
-        $context->setEndTimestamp($endTime ?: microtime(true));
+        return new PerformanceTracingDto($scope, $parentSpan, $span);
+    }
 
-        $parentSpan->startChild($context);
+    public static function traceEnd(PerformanceTracingDto $context): void
+    {
+        if ($context->getSpan()) {
+            $context->getSpan()->finish();
+            $context->getScope()->setSpan($context->getParentSpan());
+        }
+        SentrySdk::getCurrentHub()->popScope();
     }
 }
