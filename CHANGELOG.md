@@ -1,4 +1,9 @@
 # Changelog
+## [3.8.0] - 2024-08-09
+### Added 
+    * Added option to exclude default-integrations (https://github.com/justbetter/magento2-sentry/pull/146) thanks to https://github.com/rommelfreddy
+### Removed
+    * Removed promise-polyfill (https://github.com/justbetter/magento2-sentry/pull/142) thanks to https://github.com/rommelfreddy
 ## [3.7.2] - 2024-07-04
 ### Fixed
     * fix initialisation of replay integration (https://github.com/justbetter/magento2-sentry/pull/143) thanks to https://github.com/rommelfreddy
