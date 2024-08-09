@@ -24,9 +24,12 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'ignore_exceptions' => [],
     'mage_mode_development' => false,
     'js_sdk_version' => \JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION,
-    'tracing_enabled' => true, 
+    'tracing_enabled' => true,
     'tracing_sample_rate' => 0.5,
-    'ignore_js_errors' => []
+    'ignore_js_errors' => [],
+    'disable_default_integrations' => [
+        \Sentry\Integration\ModulesIntegration::class,
+    ]
 ]
 ```
 
@@ -39,13 +42,14 @@ Next to that there are some configuration options under Stores > Configuration >
 * `errorexception_reporting`: If the Exception being thrown is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php) send the error to sentry if it matches the error reporting. This uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php) eg. `E_ERROR | E_WARNING` to only log Errors and Warnings.
 * `ignore_exceptions`: If the class being thrown matches any in this list do not send it to Sentry e.g. `[\Magento\Framework\Exception\NoSuchEntityException::class]`
 * `mage_mode_development`: If this option is set to true you will receive issues in Sentry even if you're Magento is running in develop mode.
-* `js_sdk_version`: if this option is set, it will load the explicit version of the javascript SDK of Sentry. 
+* `js_sdk_version`: if this option is set, it will load the explicit version of the javascript SDK of Sentry.
 * `tracing_enabled` if this option is set to true, tracing got enabled (bundle file got loaded automatically). Default: `false`
 * `tracing_sample_rate` if tracing is enabled, you should also set the sample rate. Default: `0.2`
 * `ignore_js_errors` array of javascript error messages, which should be not send to Sentry. (see also `ignoreErrors` in [Sentry documentation](https://docs.sentry.io/clients/javascript/config/))
+* `disable_default_integrations` provide a list of FQCN of default integrations, which you do not want to use. [List of default integrations](https://github.com/getsentry/sentry-php/tree/master/src/Integration). Default: `[]`
 
 ### Configuration for Adobe Cloud
-Since Adobe Cloud doesn't allow you to add manually add content to the `env.php` file, the configuration can be done 
+Since Adobe Cloud doesn't allow you to add manually add content to the `env.php` file, the configuration can be done
 using the "Variables" in Adobe Commerce using the following variables:
 
 * `CONFIG__SENTRY__ENVIRONMENT__ENABLED`: boolean
@@ -61,7 +65,7 @@ using the "Variables" in Adobe Commerce using the following variables:
 * `CONFIG__SENTRY__ENVIRONMENT__TRACING_SAMPLE_RATE`: float
 * `CONFIG__SENTRY__ENVIRONMENT__IGNORE_JS_ERRORS`: A JSON encoded array of error messages
 
-The following configuration settings can be overridden in the Magento admin. This is limited to ensure that changes to 
+The following configuration settings can be overridden in the Magento admin. This is limited to ensure that changes to
 particular config settings can only be done on server level and can't be broken by changes in the admin.
 
 ## Optional error page configuration
