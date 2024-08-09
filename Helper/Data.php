@@ -12,7 +12,6 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\State;
-use Magento\Framework\DB\Adapter\TableNotFoundException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -174,19 +173,18 @@ class Data extends AbstractHelper
             return $this->config;
         }
 
-        try {
-            $this->config['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled')
-                ?? $this->deploymentConfig->get('sentry') !== null;
-        } catch (TableNotFoundException $e) {
-            $this->config['enabled'] = null;
+        $this->config['enabled'] = $this->deploymentConfig->get('sentry') !== null;
+
+        foreach ($this->configKeys as $key) {
+            $this->config[$key] = $this->deploymentConfig->get('sentry/' . $key);
         }
 
-        foreach ($this->configKeys as $value) {
-            try {
-                $this->config[$value] = $this->scopeConfig->getValue('sentry/environment/'.$value)
-                    ?? $this->deploymentConfig->get('sentry/'.$value);
-            } catch (TableNotFoundException $e) {
-                $this->config[$value] = null;
+        if ($this->scopeConfig->isSetFlag('sentry/environment/override')) {
+            $allowedConfigKeys = array_merge(['enabled'], $this->configKeys);
+            foreach ($this->scopeConfig->getValue('sentry/environment') as $key => $value) {
+                if ($value !== null && in_array($key, $allowedConfigKeys, true)) {
+                    $this->config[$key] = $value;
+                }
             }
         }
 
