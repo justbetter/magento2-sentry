@@ -3,7 +3,6 @@
     <policies>
         <policy id="script-src">
             <values>
-                <value id="polyfill" type="host">https://polyfill-fastly.io</value>
                 <value id="sentry-cdn" type="host">https://browser.sentry-cdn.com</value>
             </values>
         </policy>
