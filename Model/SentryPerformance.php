@@ -99,6 +99,10 @@ class SentryPerformance
         }
 
         if (in_array($state->getAreaCode(), ['frontend', 'webapi_rest', 'adminhtml'])) {
+            if (!empty($this->request->getFullActionName())) {
+                $this->transaction->setName(strtoupper($this->request->getMethod()). ' ' .$this->request->getFullActionName());
+            }
+
             $this->transaction->setOp('http');
 
             $this->transaction->setData(array_merge(
