@@ -2,6 +2,8 @@
 // phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
 
 /** @var \JustBetter\Sentry\Block\SentryScript $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
 if (!$block->canUseScriptTag($block->getNameInLayout())) {
     return;
 }
@@ -26,79 +28,86 @@ $remoteFile = sprintf(
 ?>
 
 <script src="<?= /** @noEscape */$remoteFile ?>" crossorigin="anonymous"></script>
-<script>
+<?php
+// The following script can be omitted in which case the
+// `Chessio_Matomo/js/tracker' component will inject the tracker script instead.
+// However that might cause the tracker script to miss the `DOMContentLoaded'
+// event which breaks the link tracking feature.
+$scriptString = <<<script
 if (typeof Sentry !== 'undefined') {
     Sentry.init({
-        dsn: '<?= $block->escapeUrl(trim($block->getDSN())) ?>',
-        release: '<?= $block->escapeHtml(trim($block->getVersion())) ?>',
-        environment: '<?= $block->escapeHtml(trim($block->getEnvironment())) ?>',
+        dsn: '{$block->escapeUrl(trim($block->getDSN()))}',
+        release: '{$block->escapeHtml(trim($block->getVersion()))}',
+        environment: '{$block->escapeHtml(trim($block->getEnvironment()))}',
         integrations: [
-            <?php if ($block->isTracingEnabled()): ?>
-            Sentry.browserTracingIntegration({
+script;
+if ($block->isTracingEnabled()) {
+    $scriptString .= "Sentry.browserTracingIntegration({
                 enableInp: true,
-            }),
-            <?php endif ?>
-            <?php if ($block->useSessionReplay()): ?>
-            Sentry.replayIntegration({
-                blockAllMedia: <?= $block->escapeHtml($block->getReplayBlockMedia() ? 'true' : 'false') ?>,
-                maskAllText: <?= $block->escapeHtml($block->getReplayMaskText() ? 'true' : 'false') ?>,
-            })
-            <?php endif ?>
-        ],
-        <?php if ($block->isTracingEnabled()): ?>
-        tracesSampleRate: <?= $block->escapeHtml($block->getTracingSampleRate()) ?>,
-        <?php endif ?>
-        <?php if ($block->useSessionReplay()): ?>
-        replaysSessionSampleRate: <?= $block->escapeHtml($block->getReplaySessionSampleRate()) ?>,
-        replaysOnErrorSampleRate: <?= $block->escapeHtml($block->getReplayErrorSampleRate()) ?>,
-        <?php endif ?>
-        ignoreErrors: <?= /** @noEscape */ $block->getIgnoreJsErrors() ?>,
-        <?php if ($block->stripStaticContentVersion() || $block->stripStoreCode()): ?>
-        beforeSend: function(event) {
+            }),";
+}
+if ($block->useSessionReplay()) {
+    $scriptString .= "Sentry.replayIntegration({
+                blockAllMedia: {$block->escapeHtml($block->getReplayBlockMedia() ? 'true' : 'false')},
+                maskAllText: {$block->escapeHtml($block->getReplayMaskText() ? 'true' : 'false')},
+            }),";
+}
+$scriptString .= '],';
+if ($block->isTracingEnabled()) {
+    $scriptString .= "tracesSampleRate: {$block->escapeHtml($block->getTracingSampleRate())},";
+}
+
+if ($block->useSessionReplay()) {
+    $scriptString .=
+        "replaysSessionSampleRate: {$block->escapeHtml($block->getReplaySessionSampleRate())},
+        replaysOnErrorSampleRate: {$block->escapeHtml($block->getReplayErrorSampleRate())},";
+}
+
+$scriptString .= "ignoreErrors: {$block->getIgnoreJsErrors()},";
+
+if ($block->stripStaticContentVersion() || $block->stripStoreCode()) {
+    $scriptString .= "beforeSend: function(event) {
             event.exception.values.map(function (value) {
                 if (value.stacktrace === undefined || ! value.stacktrace) {
                     return value;
-                }
-
-                <?php if ($block->stripStaticContentVersion()): ?>
-                value.stacktrace.frames.map(function (frame) {
-                    frame.filename = frame.filename.replace(/version[0-9]{10}\//, '');
+                }";
+    if ($block->stripStaticContentVersion()) {
+        $scriptString .= "value.stacktrace.frames.map(function (frame) {
+            frame.filename = frame.filename.replace(/version[0-9]{10}\//, '');
+            return frame;
+        });";
+    }
+    if ($block->stripStoreCode()) {
+        $scripetString .= "value.stacktrace.frames.map(function (frame) {
+                    frame.filename = frame.filename.replace('/{$block->escapeHtml($block->getStoreCode())}/', '/');
                     return frame;
-                });
-                <?php endif; ?>
-
-                <?php if ($block->stripStoreCode()): ?>
-                value.stacktrace.frames.map(function (frame) {
-                    <?php // phpcs:disable Generic.Files.LineLength ?>
-                    frame.filename = frame.filename.replace('/<?= $block->escapeHtml($block->getStoreCode()); ?>/', '/');
-                    <?php // phpcs:enable Generic.Files.LineLength ?>
-                    return frame;
-                });
-                <?php endif; ?>
-
-                return value;
+                });";
+    }
+    $scriptString .= "return value;
             });
             return event;
-        }
-    <?php endif; ?>
-    });
+        }";
 }
-</script>
 
+$scriptString .= "});
+}";
+
+echo $secureRenderer->renderTag('script', [], $scriptString, false);
+?>
 <?php if ($block->useLogRocket()): ?>
     <script src="https://cdn.lr-ingest.io/LogRocket.min.js" crossorigin="anonymous"></script>
-    <script>
-        window.LogRocket && window.LogRocket.init('<?= /* @noEscape */ trim($block->getLogrocketKey()) ?>');
-    </script>
-    <script>
-        LogRocket.getSessionURL(sessionURL => {
-            Sentry.configureScope(scope => {
-                scope.setExtra("sessionURL", sessionURL);
-            });
+<?php
+$scriptString = <<<script
+    window.LogRocket && window.LogRocket.init('{$block->getLogrocketKey()}');
+    LogRocket.getSessionURL(sessionURL => {
+        Sentry.configureScope(scope => {
+            scope.setExtra("sessionURL", sessionURL);
         });
+    });
+script;
 
-        <?php if ($block->useLogRocketIdentify()): ?>
-
+if ($block->useLogRocketIdentify()) {
+    $scriptString = <<<script
         define('customerData',
             ['jquery', 'Magento_Customer/js/customer-data'],
             function ($, customerData) {
@@ -151,8 +160,7 @@ if (typeof Sentry !== 'undefined') {
 
             });
         });
-
-
-        <?php endif; ?>
-    </script>
-<?php endif; ?>
+script;
+}
+    echo $secureRenderer->renderTag('script', [], $scriptString, false);
+endif;
