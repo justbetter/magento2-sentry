@@ -4,6 +4,7 @@
         <policy id="script-src">
             <values>
                 <value id="sentry-cdn" type="host">https://browser.sentry-cdn.com</value>
+                <value id="logrocket-cdn" type="host">https://cdn.lr-ingest.io</value>
             </values>
         </policy>
         <policy id="connect-src">
