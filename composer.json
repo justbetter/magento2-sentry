@@ -20,6 +20,12 @@
   },
   "authors": [
     {
+      "name": "Indy Koning",
+      "email": "indy@justbetter.nl",
+      "homepage": "https://justbetter.nl",
+      "role": "Developer"
+    },
+    {
       "name": "Rakhal Imming",
       "email": "rakhal@justbetter.nl",
       "homepage": "https://justbetter.nl",
