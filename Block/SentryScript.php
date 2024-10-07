@@ -103,7 +103,7 @@ class SentryScript extends Template
     }
 
     /**
-     * Get the session replay sample rate
+     * Get the session replay sample rate.
      */
     public function getReplaySessionSampleRate(): float
     {
@@ -111,7 +111,7 @@ class SentryScript extends Template
     }
 
     /**
-     * Get the session replay error sample rate
+     * Get the session replay error sample rate.
      */
     public function getReplayErrorSampleRate(): float
     {
@@ -185,7 +185,7 @@ class SentryScript extends Template
     }
 
     /**
-     * Get Store code
+     * Get Store code.
      *
      * @return string
      */
@@ -195,7 +195,7 @@ class SentryScript extends Template
     }
 
     /**
-     * Whether tracing is enabled
+     * Whether tracing is enabled.
      */
     public function isTracingEnabled(): bool
     {
@@ -203,7 +203,7 @@ class SentryScript extends Template
     }
 
     /**
-     * Get sample rate for tracing
+     * Get sample rate for tracing.
      */
     public function getTracingSampleRate(): float
     {

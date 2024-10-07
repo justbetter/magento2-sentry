@@ -24,7 +24,7 @@ class SentryInteraction
     }
 
     /**
-     * Capture passed exception
+     * Capture passed exception.
      *
      * @param \Throwable $ex
      *
