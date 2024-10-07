@@ -332,7 +332,7 @@ class Data extends AbstractHelper
     }
 
     /**
-     * Get the session replay sample rate
+     * Get the session replay sample rate.
      */
     public function getReplaySessionSampleRate(): float
     {
@@ -340,7 +340,7 @@ class Data extends AbstractHelper
     }
 
     /**
-     * Get the session replay error sample rate
+     * Get the session replay error sample rate.
      */
     public function getReplayErrorSampleRate(): float
     {

@@ -7,7 +7,7 @@ use Magento\Framework\Option\ArrayInterface;
 class ScriptTagPlacement implements ArrayInterface
 {
     /**
-     * Mapping of script include positions to strings
+     * Mapping of script include positions to strings.
      *
      * @return array
      */

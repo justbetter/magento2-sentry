@@ -40,7 +40,7 @@ class SentryLog extends Monolog
     }
 
     /**
-     * Check and send log information to Sentry
+     * Check and send log information to Sentry.
      *
      * @param \Throwable|string $message
      * @param int               $logLevel
