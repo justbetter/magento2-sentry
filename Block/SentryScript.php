@@ -9,13 +9,15 @@ use Magento\Framework\View\Element\Template;
 
 class SentryScript extends Template
 {
-    const CURRENT_VERSION = '8.7.0';
+    public const CURRENT_VERSION = '8.7.0';
 
     /**
      * SentryScript constructor.
      *
      * @param DataHelper       $dataHelper
+     * @param Version          $version
      * @param Template\Context $context
+     * @param Json             $json
      * @param array            $data
      */
     public function __construct(
@@ -92,26 +94,41 @@ class SentryScript extends Template
         return $this->dataHelper->getEnvironment();
     }
 
+    /**
+     * Whether to enable session replay.
+     */
     public function useSessionReplay(): bool
     {
         return $this->dataHelper->useSessionReplay();
     }
 
+    /**
+     * Get the session replay sample rate
+     */
     public function getReplaySessionSampleRate(): float
     {
         return $this->dataHelper->getReplaySessionSampleRate();
     }
 
+    /**
+     * Get the session replay error sample rate
+     */
     public function getReplayErrorSampleRate(): float
     {
         return $this->dataHelper->getReplayErrorSampleRate();
     }
 
+    /**
+     * Whether to block media during replay.
+     */
     public function getReplayBlockMedia(): bool
     {
         return $this->dataHelper->getReplayBlockMedia();
     }
 
+    /**
+     * Whether to show mask text.
+     */
     public function getReplayMaskText(): bool
     {
         return $this->dataHelper->getReplayMaskText();
@@ -167,21 +184,35 @@ class SentryScript extends Template
         return $this->dataHelper->stripStoreCode();
     }
 
+    /**
+     * Get Store code
+     *
+     * @return string
+     */
     public function getStoreCode()
     {
         return $this->_storeManager->getStore()->getCode();
     }
 
+    /**
+     * Whether tracing is enabled
+     */
     public function isTracingEnabled(): bool
     {
         return $this->dataHelper->isTracingEnabled();
     }
 
+    /**
+     * Get sample rate for tracing
+     */
     public function getTracingSampleRate(): float
     {
         return $this->dataHelper->getTracingSampleRate();
     }
 
+    /**
+     * Get a list of js errors to ignore.
+     */
     public function getIgnoreJsErrors(): string
     {
         return $this->json->serialize($this->dataHelper->getIgnoreJsErrors());

@@ -22,10 +22,11 @@ class SentryLog extends Monolog
      * SentryLog constructor.
      *
      * @param string  $name
-     * @param array   $handlers
-     * @param array   $processors
      * @param Data    $data
      * @param Session $customerSession
+     * @param State   $appState
+     * @param array   $handlers
+     * @param array   $processors
      */
     public function __construct(
         $name,
@@ -39,9 +40,11 @@ class SentryLog extends Monolog
     }
 
     /**
-     * @param       $message
-     * @param       $logLevel
-     * @param array $context
+     * Check and send log information to Sentry
+     *
+     * @param \Throwable|string $message
+     * @param int               $logLevel
+     * @param array             $context
      */
     public function send($message, $logLevel, $context = [])
     {
@@ -83,6 +86,11 @@ class SentryLog extends Monolog
         }
     }
 
+    /**
+     * Attempt to add user information based on customerSession.
+     *
+     * @param SentryScope $scope
+     */
     private function setUser(SentryScope $scope): void
     {
         try {
@@ -103,6 +111,11 @@ class SentryLog extends Monolog
         }
     }
 
+    /**
+     * Check if we can retrieve customer data.
+     *
+     * @return bool
+     */
     private function canGetCustomerData()
     {
         try {
@@ -113,6 +126,8 @@ class SentryLog extends Monolog
     }
 
     /**
+     * Add additional tags to the scope.
+     *
      * @param SentryScope $scope
      * @param array       $customTags
      */

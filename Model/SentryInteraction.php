@@ -11,11 +11,25 @@ use function Sentry\init;
 
 class SentryInteraction
 {
+    /**
+     * Initialize Sentry with passed config.
+     *
+     * @param array $config Sentry config @see: https://docs.sentry.io/platforms/php/configuration/
+     *
+     * @return void
+     */
     public function initialize($config)
     {
         init($config);
     }
 
+    /**
+     * Capture passed exception
+     *
+     * @param \Throwable $ex
+     *
+     * @return void
+     */
     public function captureException(\Throwable $ex)
     {
         ob_start();

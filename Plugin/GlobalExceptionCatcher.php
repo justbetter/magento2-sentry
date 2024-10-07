@@ -33,6 +33,14 @@ class GlobalExceptionCatcher
     ) {
     }
 
+    /**
+     * Wrap launch, start watching for exceptions.
+     *
+     * @param AppInterface $subject
+     * @param callable $proceed
+     *
+     * @return \Magento\Framework\App\ResponseInterface
+     */
     public function aroundLaunch(AppInterface $subject, callable $proceed)
     {
         if ((!$this->sentryHelper->isActive()) || (!$this->sentryHelper->isPhpTrackingEnabled())) {

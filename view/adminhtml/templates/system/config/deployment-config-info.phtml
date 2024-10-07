@@ -1,11 +1,17 @@
+<?php
+  /**
+   * @var \JustBetter\Sentry\Block\Adminhtml\System\Config $block
+   * @var \Magento\Framework\Escaper $escaper
+   */
+?>
 <td></td>
 <td>
-    <h2><?= $block->escapeHtml(__('How to configure Sentry?')); ?></h2>
-    <p><?= $block->escapeHtml(__('This module uses the')); ?>
+    <h2><?= $escaper->escapeHtml(__('How to configure Sentry?')); ?></h2>
+    <p><?= $escaper->escapeHtml(__('This module uses the')); ?>
         <a href="https://devdocs.magento.com/guides/v2.3/config-guide/config/config-php.html" target="_BLANK">
-            <?= $block->escapeHtml(__('Magento Deployment Configuration')); ?>
+            <?= $escaper->escapeHtml(__('Magento Deployment Configuration')); ?>
         </a>
-        <?= $block->escapeHtml(__('for most it\'s configuration. This means that you need to add this array to your `app/etc/env.php`:')); ?>
+        <?= $escaper->escapeHtml(__('for most it\'s configuration. This means that you need to add this array to your `app/etc/env.php`:')); ?>
     </p>
 
     <pre>
@@ -21,5 +27,5 @@
 ]"); ?>
     </pre>
 
-    <p><?= $block->escapeHtml(__("Release ID: %1", $block->getVersion())); ?></p>
+    <p><?= $escaper->escapeHtml(__("Release ID: %1", $block->getVersion())); ?></p>
 </td>
