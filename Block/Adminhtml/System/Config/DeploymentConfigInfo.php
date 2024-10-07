@@ -18,8 +18,8 @@ class DeploymentConfigInfo extends Field
      * DeploymentConfigInfo constructor.
      *
      * @param Context $context
-     * @param array   $data
      * @param Version $version
+     * @param array   $data
      */
     public function __construct(
         Context $context,
@@ -29,6 +29,13 @@ class DeploymentConfigInfo extends Field
         parent::__construct($context, $data);
     }
 
+    /**
+     * Render the field.
+     *
+     * @param AbstractElement $element
+     *
+     * @return string
+     */
     public function render(AbstractElement $element)
     {
         return $this->_toHtml();

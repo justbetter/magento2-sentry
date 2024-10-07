@@ -20,6 +20,12 @@
   },
   "authors": [
     {
+      "name": "Indy Koning",
+      "email": "indy@justbetter.nl",
+      "homepage": "https://justbetter.nl",
+      "role": "Developer"
+    },
+    {
       "name": "Rakhal Imming",
       "email": "rakhal@justbetter.nl",
       "homepage": "https://justbetter.nl",
@@ -39,11 +45,22 @@
   "config": {
     "allow-plugins": {
       "php-http/discovery": true,
-      "magento/composer-dependency-version-audit-plugin": true
+      "magento/composer-dependency-version-audit-plugin": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
     }
   },
+  "scripts": {
+    "analyse": "vendor/bin/phpstan analyse --memory-limit='1G'",
+    "phpcs": "vendor/bin/phpcs --colors --standard=vendor/magento/magento-coding-standard/Magento2 --exclude=Generic.Files.LineLength --report=full,summary,gitblame --extensions=php,phtml --ignore=./vendor ./",
+    "phpcbf": "vendor/bin/phpcbf --colors --standard=vendor/magento/magento-coding-standard/Magento2 --exclude=Generic.Files.LineLength --extensions=php,phtml --ignore=./vendor ./ || exit 0",
+    "codestyle": [
+      "@phpcbf",
+      "@phpcs"
+    ]
+  },
   "require-dev": {
-    "bitexpert/phpstan-magento": "^0.11.0",
-    "phpstan/phpstan": "^1.10"
+    "bitexpert/phpstan-magento": "^0.32.0",
+    "magento/magento-coding-standard": "^34",
+    "phpstan/phpstan": "^1.12"
   }
 }

@@ -8,6 +8,8 @@ use Monolog\Logger;
 class LogLevel implements ArrayInterface
 {
     /**
+     * Mapping of Monolog values to Strings.
+     *
      * @return array
      */
     public function toOptionArray()

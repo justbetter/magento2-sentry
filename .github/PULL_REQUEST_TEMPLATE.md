@@ -18,3 +18,8 @@
   Example: The exact commands you ran and their output,
   screenshots / videos if the pull request changes UI.
 -->
+
+**Checklist**
+
+- [ ] I've ran `composer run codestyle`
+- [ ] I've ran `composer run phpstan`

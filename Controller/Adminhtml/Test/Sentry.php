@@ -17,7 +17,7 @@ class Sentry extends Action
      *
      * @see _isAllowed()
      */
-    const ADMIN_RESOURCE = 'JustBetter_Sentry::sentry';
+    public const ADMIN_RESOURCE = 'JustBetter_Sentry::sentry';
 
     /**
      * Sentry constructor.
@@ -43,7 +43,7 @@ class Sentry extends Action
     /**
      * Execute view action.
      *
-     * @return \Magento\Framework\Controller\ResultInterface
+     * @return \Magento\Framework\Controller\ResultInterface|\Magento\Framework\App\ResponseInterface
      */
     public function execute()
     {
@@ -68,7 +68,10 @@ class Sentry extends Action
             $result['content'] = implode(PHP_EOL, $activeWithReason['reasons']);
         }
 
-        return $this->getResponse()->representJson(
+        /** @var \Magento\Framework\App\Response\Http $response */
+        $response = $this->getResponse();
+
+        return $response->representJson(
             $this->jsonSerializer->serialize($result)
         );
     }

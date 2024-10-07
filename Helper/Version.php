@@ -78,7 +78,7 @@ class Version extends AbstractHelper
                 );
             }
             $result = $this->generateVersion();
-            $this->versionStorage->save($result);
+            $this->versionStorage->save((string) $result);
         }
 
         return $result;
