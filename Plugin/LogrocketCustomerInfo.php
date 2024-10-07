@@ -12,7 +12,7 @@ class LogrocketCustomerInfo
      * LogrocketCustomerInfo construct.
      *
      * @param CurrentCustomer $currentCustomer
-     * @param Session $customerSession
+     * @param Session         $customerSession
      */
     public function __construct(
         protected CurrentCustomer $currentCustomer,
@@ -24,7 +24,7 @@ class LogrocketCustomerInfo
      * Add customer info to the section.
      *
      * @param Customer $subject
-     * @param array $result
+     * @param array    $result
      *
      * @return array $result
      */
@@ -33,7 +33,7 @@ class LogrocketCustomerInfo
         if (!$this->customerSession->isLoggedIn()) {
             return $result;
         }
-        
+
         $customer = $this->currentCustomer->getCustomer();
 
         $result['email'] = $customer->getEmail();
