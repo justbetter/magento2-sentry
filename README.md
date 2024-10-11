@@ -1,4 +1,8 @@
 # Magento 2 Sentry Logger
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/justbetter/magento2-sentry.svg?style=flat-square)](https://packagist.org/packages/justbetter/magento2-sentry)
+[![Total Downloads](https://img.shields.io/packagist/dt/justbetter/magento2-sentry.svg?style=flat-square)](https://packagist.org/packages/justbetter/magento2-sentry)
+![Magento Support](https://img.shields.io/badge/magento-2.4-orange.svg?logo=magento&longCache=true&style=flat-square)
+[![PHPStan passing](https://img.shields.io/github/actions/workflow/status/justbetter/magento2-sentry/analyse.yml?label=PHPStan&style=flat-square)](https://github.com/justbetter/magento2-sentry/actions/workflows/analyse.yml)
 
 This Magento 2 module integrates the [Sentry sdk](https://github.com/getsentry/sentry-php) into magento 2. Depending on the log level configured in the backend of magento 2, notifications and errors can be send to sentry.
 
@@ -87,10 +91,19 @@ public function execute(\Magento\Framework\Event\Observer $observer)
 Example: https://github.com/justbetter/magento2-sentry-filter-events
 
 ## Compatibility
-The module is tested on Magento version 2.4.x with sentry sdk version 3.x. Magento 2.1.x is not supported by us anymore, feel free to fork this project or make a pull request.
+The module is tested on Magento version 2.4.x with sentry sdk version 3.x. feel free to fork this project or make a pull request.
 
 ## Ideas, bugs or suggestions?
 Please create a [issue](https://github.com/justbetter/magento2-sentry/issues) or a [pull request](https://github.com/justbetter/magento2-sentry/pulls).
+
+## Contributing
+Contributing? Awesome! Thank you for your help improving the module!
+
+- When making a PR please add a description what you've added, and if relevant why.
+- To save time on codestyle feedback, please run 
+    - `composer install`
+    - `composer run codestyle`
+    - `composer run analyse`
 
 ## About us
 We’re a innovative development agency from The Netherlands building awesome websites, webshops and web applications with Laravel and Magento. Check out our website [justbetter.nl](https://justbetter.nl) and our [open source projects](https://github.com/justbetter).
