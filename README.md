@@ -103,7 +103,7 @@ Contributing? Awesome! Thank you for your help improving the module!
 - To save time on codestyle feedback, please run 
     - `composer install`
     - `composer run codestyle`
-    - `composer run phpstan`
+    - `composer run analyse`
 
 ## About us
 We’re a innovative development agency from The Netherlands building awesome websites, webshops and web applications with Laravel and Magento. Check out our website [justbetter.nl](https://justbetter.nl) and our [open source projects](https://github.com/justbetter).
