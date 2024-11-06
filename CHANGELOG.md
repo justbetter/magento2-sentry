@@ -1,4 +1,20 @@
 # Changelog
+## [3.8.0] - 2024-08-09
+### Added 
+    * Added option to exclude default-integrations (https://github.com/justbetter/magento2-sentry/pull/146) thanks to https://github.com/rommelfreddy
+### Removed
+    * Removed promise-polyfill (https://github.com/justbetter/magento2-sentry/pull/142) thanks to https://github.com/rommelfreddy
+## [3.7.2] - 2024-07-04
+### Fixed
+    * fix initialisation of replay integration (https://github.com/justbetter/magento2-sentry/pull/143) thanks to https://github.com/rommelfreddy
+## [3.7.1] - 2024-06-25
+### Fixed
+    * Fix CSP after Polyfill changes (https://github.com/justbetter/magento2-sentry/pull/141) thanks to https://github.com/sprankhub
+## [3.7.0] - 2024-06-25
+### Fixed
+    * Replace polyfill CDN with fastly (https://github.com/justbetter/magento2-sentry/pull/140) thanks to https://github.com/barryvdh
+### Added
+    * Enable INP when tracing is enabled (https://github.com/justbetter/magento2-sentry/pull/137) thanks to https://github.com/amenk
 ## [3.6.0] - 2024-03-29
 This release drops support for php 7.4 as it has been completely EOL for over a year. [https://www.php.net/supported-versions.php](https://www.php.net/supported-versions.php)
 ### Fixed

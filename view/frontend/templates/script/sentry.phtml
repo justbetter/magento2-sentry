@@ -1,7 +1,8 @@
 <?php
-// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
-
-/** @var \JustBetter\Sentry\Block\SentryScript $block */
+/**
+ * @var \JustBetter\Sentry\Block\SentryScript $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
 if (!$block->canUseScriptTag($block->getNameInLayout())) {
     return;
 }
@@ -20,36 +21,37 @@ $bundleFile .= '.min.js';
 
 $remoteFile = sprintf(
     'https://browser.sentry-cdn.com/%s/%s',
-    $block->escapeHtmlAttr($block->getJsSdkVersion()),
+    $escaper->escapeHtmlAttr($block->getJsSdkVersion()),
     $bundleFile
 );
 ?>
 
-<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise" crossorigin></script>
 <script src="<?= /** @noEscape */$remoteFile ?>" crossorigin="anonymous"></script>
 <script>
 if (typeof Sentry !== 'undefined') {
     Sentry.init({
-        dsn: '<?= $block->escapeUrl(trim($block->getDSN())) ?>',
-        release: '<?= $block->escapeHtml(trim($block->getVersion())) ?>',
-        environment: '<?= $block->escapeHtml(trim($block->getEnvironment())) ?>',
+        dsn: '<?= $escaper->escapeUrl(trim($block->getDSN())) ?>',
+        release: '<?= $escaper->escapeHtml(trim($block->getVersion())) ?>',
+        environment: '<?= $escaper->escapeHtml(trim($block->getEnvironment())) ?>',
         integrations: [
             <?php if ($block->isTracingEnabled()): ?>
-                new Sentry.BrowserTracing(),
+            Sentry.browserTracingIntegration({
+                enableInp: true,
+            }),
             <?php endif ?>
             <?php if ($block->useSessionReplay()): ?>
-            new Sentry.Replay({
-                blockAllMedia: <?= $block->escapeHtml($block->getReplayBlockMedia() ? 'true' : 'false') ?>,
-                maskAllText: <?= $block->escapeHtml($block->getReplayMaskText() ? 'true' : 'false') ?>,
+            Sentry.replayIntegration({
+                blockAllMedia: <?= $escaper->escapeHtml($block->getReplayBlockMedia() ? 'true' : 'false') ?>,
+                maskAllText: <?= $escaper->escapeHtml($block->getReplayMaskText() ? 'true' : 'false') ?>,
             })
             <?php endif ?>
         ],
         <?php if ($block->isTracingEnabled()): ?>
-        tracesSampleRate: <?= $block->escapeHtml($block->getTracingSampleRate()) ?>,
+        tracesSampleRate: <?= $escaper->escapeHtml($block->getTracingSampleRate()) ?>,
         <?php endif ?>
         <?php if ($block->useSessionReplay()): ?>
-        replaysSessionSampleRate: <?= $block->escapeHtml($block->getReplaySessionSampleRate()) ?>,
-        replaysOnErrorSampleRate: <?= $block->escapeHtml($block->getReplayErrorSampleRate()) ?>,
+        replaysSessionSampleRate: <?= $escaper->escapeHtml($block->getReplaySessionSampleRate()) ?>,
+        replaysOnErrorSampleRate: <?= $escaper->escapeHtml($block->getReplayErrorSampleRate()) ?>,
         <?php endif ?>
         ignoreErrors: <?= /** @noEscape */ $block->getIgnoreJsErrors() ?>,
         <?php if ($block->stripStaticContentVersion() || $block->stripStoreCode()): ?>
@@ -69,7 +71,7 @@ if (typeof Sentry !== 'undefined') {
                 <?php if ($block->stripStoreCode()): ?>
                 value.stacktrace.frames.map(function (frame) {
                     <?php // phpcs:disable Generic.Files.LineLength ?>
-                    frame.filename = frame.filename.replace('/<?= $block->escapeHtml($block->getStoreCode()); ?>/', '/');
+                    frame.filename = frame.filename.replace('/<?= $escaper->escapeHtml($block->getStoreCode()); ?>/', '/');
                     <?php // phpcs:enable Generic.Files.LineLength ?>
                     return frame;
                 });

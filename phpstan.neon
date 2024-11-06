@@ -6,6 +6,4 @@ parameters:
     excludePaths:
         - vendor
         - Test/*
-    level: 1
-    ignoreErrors:
-        - '#Magento\\Framework\\DataObjectFactory#'
+    level: 5

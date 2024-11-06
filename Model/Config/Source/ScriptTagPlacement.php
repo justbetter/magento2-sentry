@@ -6,6 +6,11 @@ use Magento\Framework\Option\ArrayInterface;
 
 class ScriptTagPlacement implements ArrayInterface
 {
+    /**
+     * Mapping of script include positions to strings.
+     *
+     * @return array
+     */
     public function toOptionArray()
     {
         return [

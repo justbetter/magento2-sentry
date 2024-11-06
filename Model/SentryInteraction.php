@@ -21,26 +21,46 @@ use function Sentry\init;
 
 class SentryInteraction
 {
+    /**
+     * SentryInteraction constructor.
+     *
+     * @param UserContextInterface  $userContext
+     * @param State                 $appState
+     */
     public function __construct(
         private UserContextInterface $userContext,
         private State $appState
     ) {
     }
 
+    /**
+     * Initialize Sentry with passed config.
+     *
+     * @param array $config Sentry config @see: https://docs.sentry.io/platforms/php/configuration/
+     *
+     * @return void
+     */
     public function initialize($config)
     {
         init($config);
     }
 
+    /**
+     * Check if we might be able to get the user data.
+     */
     private function canGetUserData()
     {
         try {
+            // @phpcs:ignore Generic.PHP.NoSilencedErrors
             return in_array(@$this->appState->getAreaCode(), [Area::AREA_ADMINHTML, Area::AREA_FRONTEND]);
         } catch (LocalizedException $ex) {
             return false;
         }
     }
 
+    /**
+     * Attempt to get userdata from the current session.
+     */
     private function getSessionUserData()
     {
         if (!$this->canGetUserData()) {
@@ -74,7 +94,7 @@ class SentryInteraction
             }
             $customerSession = $objectManager->get(CustomerSession::class);
 
-            if ($customerSession->loggedIn()) {
+            if ($customerSession->isLoggedIn()) {
                 return [
                     'id'         => $customerSession->getCustomer()->getId(),
                     'email'      => $customerSession->getCustomer()->getEmail(),
@@ -88,6 +108,9 @@ class SentryInteraction
         return [];
     }
 
+    /**
+     * Attempt to add the user context to the exception.
+     */
     public function addUserContext()
     {
         $userId = null;
@@ -126,10 +149,21 @@ class SentryInteraction
                 ]);
             });
         } catch (\Throwable $e) {
+            // User context could not be found or added.
+            \Magento\Framework\Profiler::stop('SENTRY::add_user_context');
+
+            return;
         }
         \Magento\Framework\Profiler::stop('SENTRY::add_user_context');
     }
-
+    
+    /**
+     * Capture passed exception.
+     *
+     * @param \Throwable $ex
+     *
+     * @return void
+     */
     public function captureException(\Throwable $ex)
     {
         ob_start();
