@@ -3,7 +3,6 @@
 namespace JustBetter\Sentry\Model;
 
 use JustBetter\Sentry\Helper\Data;
-use JustBetter\Sentry\Model\SentryInteraction;
 use Magento\Customer\Model\Session;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;

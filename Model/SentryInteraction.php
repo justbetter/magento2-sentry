@@ -24,8 +24,8 @@ class SentryInteraction
     /**
      * SentryInteraction constructor.
      *
-     * @param UserContextInterface  $userContext
-     * @param State                 $appState
+     * @param UserContextInterface $userContext
+     * @param State                $appState
      */
     public function __construct(
         private UserContextInterface $userContext,
@@ -156,7 +156,7 @@ class SentryInteraction
         }
         \Magento\Framework\Profiler::stop('SENTRY::add_user_context');
     }
-    
+
     /**
      * Capture passed exception.
      *
