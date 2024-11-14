@@ -85,46 +85,60 @@
             <group id="environment" translate="label comment" sortOrder="20" showInDefault="1" showInStore="0" showInWebsite="0">
                 <label>Environment Configuration</label>
                 <comment><![CDATA[Setting the configuration here will override the Magento Deployment Configuration.]]></comment>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="override" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Override environment configuration</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>If enabled, the deployment configuration from env.php got overridden by the following fields. Reset fields to system value, if you want to use the deployment configuration from env.php</comment>
+                </field>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="override">1</field>
+                    </depends>
                 </field>
-                <field id="dsn" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="dsn" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>DSN</label>
                     <depends>
+                        <field id="override">1</field>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="logrocket_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="logrocket_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Logrocket Key</label>
                     <depends>
+                        <field id="override">1</field>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="environment" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="environment" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Environment</label>
                     <depends>
+                        <field id="override">1</field>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="log_level" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="log_level" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Log Level</label>
                     <source_model>JustBetter\Sentry\Model\Config\Source\LogLevel</source_model>
                     <depends>
+                        <field id="override">1</field>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="tracing_enabled" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="tracing_enabled" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Tracing Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
+                        <field id="override">1</field>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="tracing_sample_rate" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="tracing_sample_rate" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Tracing Sample Rate</label>
                     <validate>validate-not-negative-number validate-number</validate>
                     <depends>
+                        <field id="override">1</field>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
