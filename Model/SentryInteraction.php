@@ -22,7 +22,7 @@ use function Sentry\init;
 class SentryInteraction
 {
     /**
-     * @var ?UserContextInterface $userContext
+     * @var ?UserContextInterface
      */
     private ?UserContextInterface $userContext = null;
 
@@ -47,7 +47,7 @@ class SentryInteraction
     {
         init($config);
     }
-    
+
     /**
      * Check if we might be able to get user context.
      */
