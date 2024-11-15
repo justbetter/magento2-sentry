@@ -22,13 +22,16 @@ use function Sentry\init;
 class SentryInteraction
 {
     /**
+     * @var ?UserContextInterface
+     */
+    private ?UserContextInterface $userContext = null;
+
+    /**
      * SentryInteraction constructor.
      *
-     * @param UserContextInterface $userContext
-     * @param State                $appState
+     * @param State $appState
      */
     public function __construct(
-        private UserContextInterface $userContext,
         private State $appState
     ) {
     }
@@ -46,9 +49,36 @@ class SentryInteraction
     }
 
     /**
+     * Check if we might be able to get user context.
+     */
+    public function canGetUserContext()
+    {
+        try {
+            // @phpcs:ignore Generic.PHP.NoSilencedErrors
+            return in_array(@$this->appState->getAreaCode(), [Area::AREA_ADMINHTML, Area::AREA_FRONTEND, Area::AREA_WEBAPI_REST, Area::AREA_WEBAPI_SOAP, Area::AREA_GRAPHQL]);
+        } catch (LocalizedException $ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Attempt to get userContext from the objectManager, so we don't request it too early.
+     */
+    public function getUserContext(): ?UserContextInterface
+    {
+        if ($this->userContext) {
+            return $this->userContext;
+        }
+
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+        return $this->userContext = $objectManager->get(UserContextInterface::class);
+    }
+
+    /**
      * Check if we might be able to get the user data.
      */
-    private function canGetUserData()
+    public function canGetUserData()
     {
         try {
             // @phpcs:ignore Generic.PHP.NoSilencedErrors
@@ -120,12 +150,14 @@ class SentryInteraction
         \Magento\Framework\Profiler::start('SENTRY::add_user_context');
 
         try {
-            $userId = $this->userContext->getUserId();
-            if ($userId) {
-                $userType = $this->userContext->getUserType();
+            if ($this->canGetUserContext()) {
+                $userId = $this->getUserContext()->getUserId();
+                if ($userId) {
+                    $userType = $this->getUserContext()->getUserType();
+                }
             }
 
-            if ($this->canGetUserData() && count($userData = $this->getSessionUserData())) {
+            if (count($userData = $this->getSessionUserData())) {
                 $userId = $userData['id'] ?? $userId;
                 $userType = $userData['user_type'] ?? $userType;
                 unset($userData['user_type']);
