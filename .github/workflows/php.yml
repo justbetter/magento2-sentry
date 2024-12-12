@@ -1,9 +1,29 @@
-name: PHPCS
-on: [push]
+name: Code Style
+
+on: 
+  push: 
+    branches:
+      - master
+  pull_request:
+
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    name: PHPCS
+
     steps:
-    - uses: actions/checkout@master
-    - name: PHPCS
-      run: docker run --rm -v $PWD:/code:ro domw/phpcs phpcs --colors --standard=Magento2 --report=full,summary,gitblame --extensions=php,phtml ./
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: dom, curl, libxml, mbstring, zip, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction
+
+      - name: Analyse
+        run: composer run phpcs

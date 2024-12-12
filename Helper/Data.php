@@ -22,8 +22,8 @@ use Throwable;
 
 class Data extends AbstractHelper
 {
-    const XML_PATH_SRS = 'sentry/general/';
-    const XML_PATH_SRS_ISSUE_GROUPING = 'sentry/issue_grouping/';
+    public const XML_PATH_SRS = 'sentry/general/';
+    public const XML_PATH_SRS_ISSUE_GROUPING = 'sentry/issue_grouping/';
 
     /**
      * @var ScopeConfigInterface
@@ -50,6 +50,7 @@ class Data extends AbstractHelper
         'tracing_enabled',
         'tracing_sample_rate',
         'ignore_js_errors',
+        'disable_default_integrations',
     ];
 
     /**
@@ -77,6 +78,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get the sentry DSN.
+     *
      * @return mixed
      */
     public function getDSN()
@@ -84,17 +87,33 @@ class Data extends AbstractHelper
         return $this->collectModuleConfig()['dsn'];
     }
 
+    /**
+     * Whether tracing is enabled.
+     */
     public function isTracingEnabled(): bool
     {
         return $this->collectModuleConfig()['tracing_enabled'] ?? false;
     }
 
+    /**
+     * Get sample rate for tracing.
+     */
     public function getTracingSampleRate(): float
     {
-        return (float) $this->collectModuleConfig()['tracing_sample_rate'] ?? 0.2;
+        return (float) ($this->collectModuleConfig()['tracing_sample_rate'] ?? 0.2);
     }
 
     /**
+     * Get a list of integrations to disable.
+     */
+    public function getDisabledDefaultIntegrations(): array
+    {
+        return $this->config['disable_default_integrations'] ?? [];
+    }
+
+    /**
+     * Get list of js errors to ignore.
+     *
      * @return array|null
      */
     public function getIgnoreJsErrors()
@@ -112,7 +131,7 @@ class Data extends AbstractHelper
                 : $this->serializer->unserialize($config['ignore_js_errors']);
         } catch (InvalidArgumentException $e) {
             throw new RuntimeException(
-                'Sentry configuration error: `ignore_js_errors` has to be an array or `null`. Given type: '.gettype($list)
+                'Sentry configuration error: `ignore_js_errors` has to be an array or `null`. Given type: '.gettype($list) // phpcs:ignore
             );
         }
 
@@ -120,6 +139,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get the sdk version string.
+     *
      * @return string the version of the js sdk of Sentry
      */
     public function getJsSdkVersion(): string
@@ -128,6 +149,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get the current environment.
+     *
      * @return mixed
      */
     public function getEnvironment()
@@ -136,6 +159,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Retrieve config values.
+     *
      * @param string          $field
      * @param int|string|null $storeId
      *
@@ -151,6 +176,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Retrieve Sentry General config values.
+     *
      * @param string $code
      * @param null   $storeId
      *
@@ -162,6 +189,7 @@ class Data extends AbstractHelper
     }
 
     /**
+     *
      * @return int
      */
     public function getStoreId(): int
@@ -170,6 +198,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Gather all configuration.
+     *
      * @return array
      */
     public function collectModuleConfig(): array
@@ -198,6 +228,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Whether Sentry is active.
+     *
      * @return bool
      */
     public function isActive(): bool
@@ -206,6 +238,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Whether sentry is active, adding a reason why not.
+     *
      * @return array
      */
     public function isActiveWithReason(): array
@@ -234,6 +268,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Whether the application is in production.
+     *
      * @return bool
      */
     public function isProductionMode(): bool
@@ -242,6 +278,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get the current mode.
+     *
      * @return string
      */
     public function getAppState(): string
@@ -250,6 +288,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Is sentry enabled on development mode?
+     *
      * @return bool
      */
     public function isOverwriteProductionMode(): bool
@@ -274,10 +314,12 @@ class Data extends AbstractHelper
      */
     public function getStore()
     {
-        return $this->storeManager ? $this->storeManager->getStore() : null;
+        return $this->storeManager->getStore();
     }
 
     /**
+     * Is php tracking enabled?
+     *
      * @return bool
      */
     public function isPhpTrackingEnabled(): bool
@@ -286,6 +328,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Is the script tag enabled?
+     *
      * @return bool
      */
     public function useScriptTag(): bool
@@ -293,32 +337,49 @@ class Data extends AbstractHelper
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag', ScopeInterface::SCOPE_STORE);
     }
 
+    /**
+     * Whether to enable session replay.
+     */
     public function useSessionReplay(): bool
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_session_replay', ScopeInterface::SCOPE_STORE);
     }
 
+    /**
+     * Get the session replay sample rate.
+     */
     public function getReplaySessionSampleRate(): float
     {
         return $this->getConfigValue(static::XML_PATH_SRS.'replay_session_sample_rate') ?? 0.1;
     }
 
+    /**
+     * Get the session replay error sample rate.
+     */
     public function getReplayErrorSampleRate(): float
     {
         return $this->getConfigValue(static::XML_PATH_SRS.'replay_error_sample_rate') ?? 1;
     }
 
+    /**
+     * Whether to block media during replay.
+     */
     public function getReplayBlockMedia(): bool
     {
         return $this->getConfigValue(static::XML_PATH_SRS.'replay_block_media') ?? true;
     }
 
+    /**
+     * Whether to show mask text.
+     */
     public function getReplayMaskText(): bool
     {
         return $this->getConfigValue(static::XML_PATH_SRS.'replay_mask_text') ?? true;
     }
 
     /**
+     * Should we load the script tag in the current block?
+     *
      * @param string $blockName
      *
      * @return bool
@@ -337,6 +398,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get logrocket key.
+     *
      * @return mixed
      */
     public function getLogrocketKey()
@@ -345,6 +408,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Whether to use logrocket.
+     *
      * @return bool
      */
     public function useLogrocket(): bool
@@ -355,6 +420,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Should logrocket identify.
+     *
      * @return bool
      */
     public function useLogrocketIdentify(): bool
@@ -366,6 +433,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Whether to remove static content versioning from the url sent to sentry.
+     *
      * @return bool
      */
     public function stripStaticContentVersion(): bool
@@ -377,6 +446,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Whether to remove store code from the url sent to sentry.
+     *
      * @return bool
      */
     public function stripStoreCode(): bool
@@ -388,6 +459,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get the ErrorException reporting level we will send at.
+     *
      * @return int
      */
     public function getErrorExceptionReporting(): int
@@ -396,6 +469,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get a list of exceptions we should never send to Sentry.
+     *
      * @return array
      */
     public function getIgnoreExceptions(): array
@@ -413,6 +488,8 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Check whether we should capture the given exception based on severity and ignore exceptions.
+     *
      * @param Throwable $ex
      *
      * @return bool
