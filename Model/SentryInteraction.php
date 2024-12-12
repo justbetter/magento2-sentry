@@ -12,6 +12,7 @@ use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\ObjectManager\ConfigInterface;
 use ReflectionClass;
 use Sentry\State\Scope;
 
@@ -29,10 +30,12 @@ class SentryInteraction
     /**
      * SentryInteraction constructor.
      *
-     * @param State $appState
+     * @param State           $appState
+     * @param ConfigInterface $omConfigInterface
      */
     public function __construct(
-        private State $appState
+        private State $appState,
+        private ConfigInterface $omConfigInterface
     ) {
     }
 
@@ -62,6 +65,26 @@ class SentryInteraction
     }
 
     /**
+     * Get a class instance, but only if it is already available within the objectManager.
+     *
+     * @param string $class The classname of the type you want from the objectManager.
+     */
+    public function getObjectIfInitialized($class): ?object
+    {
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $reflectionClass = new ReflectionClass($objectManager);
+        $sharedInstances = $reflectionClass->getProperty('_sharedInstances');
+        $sharedInstances->setAccessible(true);
+        $class = $this->omConfigInterface->getPreference($class);
+
+        if (!array_key_exists(ltrim($class, '\\'), $sharedInstances->getValue($objectManager))) {
+            return null;
+        }
+
+        return $objectManager->get($class);
+    }
+
+    /**
      * Attempt to get userContext from the objectManager, so we don't request it too early.
      */
     public function getUserContext(): ?UserContextInterface
@@ -70,9 +93,7 @@ class SentryInteraction
             return $this->userContext;
         }
 
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-
-        return $this->userContext = $objectManager->get(UserContextInterface::class);
+        return $this->userContext = $this->getObjectIfInitialized(UserContextInterface::class);
     }
 
     /**
@@ -97,17 +118,11 @@ class SentryInteraction
             return [];
         }
 
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $reflectionClass = new ReflectionClass($objectManager);
-        $sharedInstances = $reflectionClass->getProperty('_sharedInstances');
-        $sharedInstances->setAccessible(true);
-
         if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
-            if (!array_key_exists(ltrim(AdminSession::class, '\\'), $sharedInstances->getValue($objectManager))) {
-                // Don't intitialise session if it has not already been started, this causes problems with dynamic resources.
+            $adminSession = $this->getObjectIfInitialized(AdminSession::class);
+            if ($adminSession === null) {
                 return [];
             }
-            $adminSession = $objectManager->get(AdminSession::class);
 
             if ($adminSession->isLoggedIn()) {
                 return [
@@ -119,10 +134,10 @@ class SentryInteraction
         }
 
         if ($this->appState->getAreaCode() === Area::AREA_FRONTEND) {
-            if (!array_key_exists(ltrim(CustomerSession::class, '\\'), $sharedInstances->getValue($objectManager))) {
+            $customerSession = $this->getObjectIfInitialized(CustomerSession::class);
+            if ($customerSession === null) {
                 return [];
             }
-            $customerSession = $objectManager->get(CustomerSession::class);
 
             if ($customerSession->isLoggedIn()) {
                 return [
