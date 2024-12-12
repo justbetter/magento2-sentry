@@ -30,6 +30,7 @@ class SentryInteraction
      * SentryInteraction constructor.
      *
      * @param State $appState
+     * @param ConfigInterface $omConfigInterface
      */
     public function __construct(
         private State $appState,
@@ -62,6 +63,11 @@ class SentryInteraction
         }
     }
 
+    /**
+     * Get a class instance, but only if it is already available within the objectManager.
+     *
+     * @param string $class The classname of the type you want from the objectManager.
+     */
     public function getObjectIfInitialized($class): ?object
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
