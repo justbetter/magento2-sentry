@@ -30,7 +30,7 @@ class SentryInteraction
     /**
      * SentryInteraction constructor.
      *
-     * @param State $appState
+     * @param State           $appState
      * @param ConfigInterface $omConfigInterface
      */
     public function __construct(
