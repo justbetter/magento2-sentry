@@ -6,9 +6,6 @@ namespace JustBetter\Sentry\Model;
 
 // phpcs:disable Magento2.Functions.DiscouragedFunction
 
-use function Sentry\captureException;
-use function Sentry\configureScope;
-use function Sentry\init;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Backend\Model\Auth\Session as AdminSession;
 use Magento\Customer\Model\Session as CustomerSession;
@@ -18,6 +15,10 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManager\ConfigInterface;
 use ReflectionClass;
 use Sentry\State\Scope;
+
+use function Sentry\captureException;
+use function Sentry\configureScope;
+use function Sentry\init;
 
 class SentryInteraction
 {
