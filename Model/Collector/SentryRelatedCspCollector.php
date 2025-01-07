@@ -8,7 +8,6 @@ use Magento\Csp\Model\Policy\FetchPolicy;
 
 class SentryRelatedCspCollector implements PolicyCollectorInterface
 {
-
     public function __construct(
         private DataHelper $dataHelper
     ) {
