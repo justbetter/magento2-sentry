@@ -1,0 +1,57 @@
+<?php /** @var \JustBetter\Sentry\Block\SentryScript $block */ ?>
+if (typeof Sentry !== 'undefined') {
+    Sentry.init({
+    dsn: '<?= $block->escapeUrl(trim($block->getDSN())) ?>',
+    release: '<?= $block->escapeHtml(trim($block->getVersion())) ?>',
+    environment: '<?= $block->escapeHtml(trim($block->getEnvironment())) ?>',
+    integrations: [
+    <?php if ($block->isTracingEnabled()): ?>
+        Sentry.browserTracingIntegration({
+        enableInp: true,
+        }),
+    <?php endif ?>
+    <?php if ($block->useSessionReplay()): ?>
+        Sentry.replayIntegration({
+        blockAllMedia: <?= $block->escapeHtml($block->getReplayBlockMedia() ? 'true' : 'false') ?>,
+        maskAllText: <?= $block->escapeHtml($block->getReplayMaskText() ? 'true' : 'false') ?>,
+        })
+    <?php endif ?>
+    ],
+    <?php if ($block->isTracingEnabled()): ?>
+        tracesSampleRate: <?= $block->escapeHtml($block->getTracingSampleRate()) ?>,
+    <?php endif ?>
+    <?php if ($block->useSessionReplay()): ?>
+        replaysSessionSampleRate: <?= $block->escapeHtml($block->getReplaySessionSampleRate()) ?>,
+        replaysOnErrorSampleRate: <?= $block->escapeHtml($block->getReplayErrorSampleRate()) ?>,
+    <?php endif ?>
+    ignoreErrors: <?= /** @noEscape */ $block->getIgnoreJsErrors() ?>,
+    <?php if ($block->stripStaticContentVersion() || $block->stripStoreCode()): ?>
+        beforeSend: function(event) {
+        event.exception.values.map(function (value) {
+        if (value.stacktrace === undefined || ! value.stacktrace) {
+        return value;
+        }
+
+        <?php if ($block->stripStaticContentVersion()): ?>
+            value.stacktrace.frames.map(function (frame) {
+            frame.filename = frame.filename.replace(/version[0-9]{10}\//, '');
+            return frame;
+            });
+        <?php endif; ?>
+
+        <?php if ($block->stripStoreCode()): ?>
+            value.stacktrace.frames.map(function (frame) {
+            <?php // phpcs:disable Generic.Files.LineLength ?>
+            frame.filename = frame.filename.replace('/<?= $block->escapeHtml($block->getStoreCode()); ?>/', '/');
+            <?php // phpcs:enable Generic.Files.LineLength ?>
+            return frame;
+            });
+        <?php endif; ?>
+
+        return value;
+        });
+        return event;
+        }
+    <?php endif; ?>
+    });
+}
