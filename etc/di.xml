@@ -34,4 +34,13 @@
         <plugin name="LogrocketCustomerInfo" type="JustBetter\Sentry\Plugin\LogrocketCustomerInfo"
                 sortOrder="10" disabled="false"/>
     </type>
+
+    <type name="Magento\Csp\Model\CompositePolicyCollector">
+        <arguments>
+            <argument name="collectors" xsi:type="array">
+                <item name="sentry" xsi:type="object" sortOrder="99">JustBetter\Sentry\Model\Collector\SentryRelatedCspCollector\Proxy</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>
