@@ -17,7 +17,7 @@ class SentryRelatedCspCollector implements PolicyCollectorInterface
     public function collect(array $defaultPolicies = []): array
     {
         $policies = $defaultPolicies;
-        if(!$this->dataHelper->isActive()) {
+        if (!$this->dataHelper->isActive()) {
             return $policies;
         }
 
