@@ -211,19 +211,18 @@ class Data extends AbstractHelper
             return $this->config[$storeId];
         }
 
-        try {
-            $this->config[$storeId]['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled', ScopeInterface::SCOPE_STORE)
-                ?? $this->deploymentConfig->get('sentry') !== null;
-        } catch (TableNotFoundException|FileSystemException|RuntimeException $e) {
-            $this->config[$storeId]['enabled'] = null;
+        if (! $this->scopeConfig->isSetFlag('sentry/environment/enabled', ScopeInterface::SCOPE_STORE)) {
+            $this->config[$storeId]['enabled'] = $this->deploymentConfig->get('sentry') !== null;
+        } else {
+            $this->config[$storeId]['enabled'] = true;
         }
 
         foreach ($this->configKeys as $value) {
-            try {
-                $this->config[$storeId][$value] = $this->scopeConfig->getValue('sentry/environment/'.$value, ScopeInterface::SCOPE_STORE)
-                    ?? $this->deploymentConfig->get('sentry/'.$value);
-            } catch (TableNotFoundException|FileSystemException|RuntimeException $e) {
-                $this->config[$storeId][$value] = null;
+            if (! $this->scopeConfig->isSetFlag('sentry/environment/enabled', ScopeInterface::SCOPE_STORE)) {
+                $this->config[$storeId][$value] = $this->deploymentConfig->get('sentry/' . $value);
+            } else {
+                $this->config[$storeId][$value] = $this->scopeConfig->getValue('sentry/environment/' . $value, ScopeInterface::SCOPE_STORE)
+                    ?? $this->deploymentConfig->get('sentry/' . $value);
             }
         }
 
