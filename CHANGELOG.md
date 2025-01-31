@@ -1,4 +1,9 @@
 # Changelog
+## [3.9.0] - 2025-01-31
+### Added 
+    * Raised PHPStan level to 5 (https://github.com/justbetter/magento2-sentry/pull/149)
+    * Added user context to logging and errors when possible (https://github.com/justbetter/magento2-sentry/pull/133 & https://github.com/justbetter/magento2-sentry/pull/152)
+    * Allow overriding some config per store (https://github.com/justbetter/magento2-sentry/pull/155) thanks to https://github.com/bruno-blackbird
 ## [3.8.0] - 2024-08-09
 ### Added 
     * Added option to exclude default-integrations (https://github.com/justbetter/magento2-sentry/pull/146) thanks to https://github.com/rommelfreddy
