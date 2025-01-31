@@ -46,7 +46,7 @@ class SentryInteraction
      *
      * @return void
      */
-    public function initialize($config)
+    public function initialize($config): void
     {
         init($config);
     }
@@ -54,7 +54,7 @@ class SentryInteraction
     /**
      * Check if we might be able to get user context.
      */
-    public function canGetUserContext()
+    public function canGetUserContext(): bool
     {
         try {
             // @phpcs:ignore Generic.PHP.NoSilencedErrors
@@ -99,7 +99,7 @@ class SentryInteraction
     /**
      * Check if we might be able to get the user data.
      */
-    public function canGetUserData()
+    public function canGetUserData(): bool
     {
         try {
             // @phpcs:ignore Generic.PHP.NoSilencedErrors
@@ -112,7 +112,7 @@ class SentryInteraction
     /**
      * Attempt to get userdata from the current session.
      */
-    private function getSessionUserData()
+    private function getSessionUserData(): array
     {
         if (!$this->canGetUserData()) {
             return [];
@@ -156,7 +156,7 @@ class SentryInteraction
     /**
      * Attempt to add the user context to the exception.
      */
-    public function addUserContext()
+    public function addUserContext(): void
     {
         $userId = null;
         $userType = null;
@@ -211,7 +211,7 @@ class SentryInteraction
      *
      * @return void
      */
-    public function captureException(\Throwable $ex)
+    public function captureException(\Throwable $ex): void
     {
         ob_start();
         captureException($ex);
