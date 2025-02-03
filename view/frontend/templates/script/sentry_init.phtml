@@ -1,9 +1,9 @@
 <?php /** @var \JustBetter\Sentry\Block\SentryScript $block */ ?>
 if (typeof Sentry !== 'undefined') {
     Sentry.init({
-    dsn: '<?= $block->escapeUrl(trim($block->getDSN())) ?>',
-    release: '<?= $block->escapeHtml(trim($block->getVersion())) ?>',
-    environment: '<?= $block->escapeHtml(trim($block->getEnvironment())) ?>',
+    dsn: '<?= $escaper->escapeUrl(trim($block->getDSN())) ?>',
+    release: '<?= $escaper->escapeHtml(trim($block->getVersion())) ?>',
+    environment: '<?= $escaper->escapeHtml(trim($block->getEnvironment())) ?>',
     integrations: [
     <?php if ($block->isTracingEnabled()): ?>
         Sentry.browserTracingIntegration({
@@ -12,17 +12,17 @@ if (typeof Sentry !== 'undefined') {
     <?php endif ?>
     <?php if ($block->useSessionReplay()): ?>
         Sentry.replayIntegration({
-        blockAllMedia: <?= $block->escapeHtml($block->getReplayBlockMedia() ? 'true' : 'false') ?>,
-        maskAllText: <?= $block->escapeHtml($block->getReplayMaskText() ? 'true' : 'false') ?>,
+        blockAllMedia: <?= $escaper->escapeHtml($block->getReplayBlockMedia() ? 'true' : 'false') ?>,
+        maskAllText: <?= $escaper->escapeHtml($block->getReplayMaskText() ? 'true' : 'false') ?>,
         })
     <?php endif ?>
     ],
     <?php if ($block->isTracingEnabled()): ?>
-        tracesSampleRate: <?= $block->escapeHtml($block->getTracingSampleRate()) ?>,
+        tracesSampleRate: <?= $escaper->escapeHtml($block->getTracingSampleRate()) ?>,
     <?php endif ?>
     <?php if ($block->useSessionReplay()): ?>
-        replaysSessionSampleRate: <?= $block->escapeHtml($block->getReplaySessionSampleRate()) ?>,
-        replaysOnErrorSampleRate: <?= $block->escapeHtml($block->getReplayErrorSampleRate()) ?>,
+        replaysSessionSampleRate: <?= $escaper->escapeHtml($block->getReplaySessionSampleRate()) ?>,
+        replaysOnErrorSampleRate: <?= $escaper->escapeHtml($block->getReplayErrorSampleRate()) ?>,
     <?php endif ?>
     ignoreErrors: <?= /** @noEscape */ $block->getIgnoreJsErrors() ?>,
     <?php if ($block->stripStaticContentVersion() || $block->stripStoreCode()): ?>
@@ -42,7 +42,7 @@ if (typeof Sentry !== 'undefined') {
         <?php if ($block->stripStoreCode()): ?>
             value.stacktrace.frames.map(function (frame) {
             <?php // phpcs:disable Generic.Files.LineLength ?>
-            frame.filename = frame.filename.replace('/<?= $block->escapeHtml($block->getStoreCode()); ?>/', '/');
+            frame.filename = frame.filename.replace('/<?= $escaper->escapeHtml($block->getStoreCode()); ?>/', '/');
             <?php // phpcs:enable Generic.Files.LineLength ?>
             return frame;
             });

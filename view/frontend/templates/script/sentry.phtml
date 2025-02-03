@@ -20,29 +20,35 @@ $bundleFile .= '.min.js';
 
 $remoteFile = sprintf(
     'https://browser.sentry-cdn.com/%s/%s',
-    $block->escapeHtmlAttr($block->getJsSdkVersion()),
+    $escaper->escapeHtmlAttr($block->getJsSdkVersion()),
     $bundleFile
 );
 ?>
 
-<?= $secureRenderer->renderTag('script', ['src' => $remoteFile, 'crossorigin' => 'anonymous']) ?>
-<?= $secureRenderer->renderTag('script', [], $block->getLayout()->createBlock(\JustBetter\Sentry\Block\SentryScript::class)
+<?= /* @noEscape */ $secureRenderer->renderTag('script', ['src' => $remoteFile, 'crossorigin' => 'anonymous']) ?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $block->getLayout()->createBlock(\JustBetter\Sentry\Block\SentryScript::class)
     ->setTemplate('JustBetter_Sentry::script/sentry_init.phtml')
-    ->toHtml()); ?>
+    ->toHtml(), false); ?>
 
 <?php if ($block->useLogRocket()): ?>
-    <?= $secureRenderer->renderTag('script', ['src' => 'https://cdn.lr-ingest.io/LogRocket.min.js', 'crossorigin' => 'anonymous']) ?>
-    <?= $secureRenderer->renderTag('script', [],
-        "window.LogRocket && window.LogRocket.init('" . /* @noEscape */ trim($block->getLogrocketKey()) . "');"
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', ['src' => 'https://cdn.lr-ingest.io/LogRocket.min.js', 'crossorigin' => 'anonymous']) ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag(
+        'script',
+        [],
+        "window.LogRocket && window.LogRocket.init('" . /* @noEscape */ trim($block->getLogrocketKey()) . "');",
+        false
     ); ?>
-    <?= $secureRenderer->renderTag('script', [],
-       'LogRocket.getSessionURL(sessionURL => {
+    <?= /* @noEscape */ $secureRenderer->renderTag(
+        'script',
+        [],
+        'LogRocket.getSessionURL(sessionURL => {
             Sentry.configureScope(scope => {
                 scope.setExtra("sessionURL", sessionURL);
             });
-        });'
+        });',
+        false
     ); ?>
-    <?= $secureRenderer->renderTag('script', [], $block->getLayout()->createBlock(\JustBetter\Sentry\Block\SentryScript::class)
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $block->getLayout()->createBlock(\JustBetter\Sentry\Block\SentryScript::class)
         ->setTemplate('JustBetter_Sentry::script/logrocket_init.phtml')
-        ->toHtml()); ?>
+        ->toHtml(), false); ?>
 <?php endif; ?>
