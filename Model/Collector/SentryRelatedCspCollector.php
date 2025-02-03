@@ -8,11 +8,17 @@ use Magento\Csp\Model\Policy\FetchPolicy;
 
 class SentryRelatedCspCollector implements PolicyCollectorInterface
 {
+    /**
+     * @param DataHelper $dataHelper
+     */
     public function __construct(
         private DataHelper $dataHelper
     ) {
     }
 
+    /**
+     * @inheritDoc
+     */
     public function collect(array $defaultPolicies = []): array
     {
         $policies = $defaultPolicies;
