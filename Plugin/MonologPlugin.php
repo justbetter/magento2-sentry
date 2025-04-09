@@ -7,7 +7,6 @@ use JustBetter\Sentry\Logger\Handler\Sentry;
 use JustBetter\Sentry\Model\SentryLog;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Logger\Monolog;
-use Monolog\DateTimeImmutable;
 
 class MonologPlugin extends Monolog
 {
