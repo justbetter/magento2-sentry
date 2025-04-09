@@ -30,7 +30,7 @@ class Sentry extends AbstractHandler
     public function isHandling(array $record): bool
     {
         $config = $this->sentryHelper->collectModuleConfig();
-        $this->setLevel((int) $config['log_level']); // @phpstan-ignore-line
+        $this->setLevel($config['log_level']);
 
         return parent::isHandling($record) && $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
     }
