@@ -8,10 +8,9 @@ use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\SessionException;
-use Magento\Framework\Logger\Monolog;
 use Sentry\State\Scope as SentryScope;
 
-class SentryLog extends Monolog
+class SentryLog
 {
     /**
      * @var array
@@ -21,24 +20,17 @@ class SentryLog extends Monolog
     /**
      * SentryLog constructor.
      *
-     * @param string            $name
      * @param Data              $data
      * @param Session           $customerSession
      * @param State             $appState
      * @param SentryInteraction $sentryInteraction
-     * @param array             $handlers
-     * @param array             $processors
      */
     public function __construct(
-        $name,
         protected Data $data,
         protected Session $customerSession,
         private State $appState,
         private SentryInteraction $sentryInteraction,
-        array $handlers = [],
-        array $processors = []
     ) {
-        parent::__construct($name, $handlers, $processors);
     }
 
     /**

@@ -1,28 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="JustBetter\Sentry\Model\SentryLog">
-        <arguments>
-            <argument name="name" xsi:type="string">SentryLog</argument>
-            <argument name="handlers" xsi:type="array">
-                <item name="system" xsi:type="object">Magento\Framework\Logger\Handler\System</item>
-            </argument>
-            <argument name="processors" xsi:type="array"/>
-            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
-        </arguments>
-    </type>
-
-    <type name="JustBetter\Sentry\Plugin\MonologPlugin">
-        <arguments>
-            <argument name="name" xsi:type="string"></argument>
-            <argument name="data" xsi:type="object">JustBetter\Sentry\Helper\Data\Proxy</argument>
-            <argument name="sentryLog" xsi:type="object">JustBetter\Sentry\Model\SentryLog\Proxy</argument>
-            <argument name="deploymentConfig" xsi:type="object">Magento\Framework\App\DeploymentConfig\Proxy</argument>
-            <argument name="handlers" xsi:type="array"></argument>
-            <argument name="processors" xsi:type="array"></argument>
-        </arguments>
-    </type>
-
     <!-- Cannot use plugin https://github.com/magento/magento2/issues/14950 -->
     <preference for="Magento\Framework\Logger\Monolog" type="JustBetter\Sentry\Plugin\MonologPlugin"/>
     <type name="Magento\Framework\AppInterface">
@@ -42,5 +20,4 @@
             </argument>
         </arguments>
     </type>
-
 </config>
