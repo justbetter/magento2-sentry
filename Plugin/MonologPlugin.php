@@ -5,8 +5,11 @@ namespace JustBetter\Sentry\Plugin;
 use JustBetter\Sentry\Helper\Data;
 use JustBetter\Sentry\Model\SentryLog;
 use Magento\Framework\App\DeploymentConfig;
+use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\RuntimeException;
 use Magento\Framework\Logger\Monolog;
-use Monolog\DateTimeImmutable;
+use Monolog\JsonSerializableDateTimeImmutable;
+use Monolog\Level;
 
 class MonologPlugin extends Monolog
 {
@@ -34,21 +37,27 @@ class MonologPlugin extends Monolog
     /**
      * Adds a log record to Sentry.
      *
-     * @param int               $level    The logging level
-     * @param string            $message  The log message
-     * @param array             $context  The log context
-     * @param DateTimeImmutable $datetime Datetime of log
+     * @param Level|int $level The logging level
+     * @param string $message The log message
+     * @param array $context The log context
+     * @param JsonSerializableDateTimeImmutable|null $datetime Datetime of log
      *
      * @return bool Whether the record has been processed
+     * @throws FileSystemException
+     * @throws RuntimeException
      */
     public function addRecord(
-        int $level,
+        \Monolog\Level|int $level,
         string $message,
         array $context = [],
-        DateTimeImmutable $datetime = null
+        ?\Monolog\JsonSerializableDateTimeImmutable $datetime = null
     ): bool {
         if ($this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive()) {
-            $this->sentryLog->send($message, $level, $context);
+            $this->sentryLog->send(
+                $message,
+                is_int($level) ? $level : $level->value,
+                $context
+            );
         }
 
         // @phpstan-ignore argument.type
