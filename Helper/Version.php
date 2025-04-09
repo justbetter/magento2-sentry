@@ -36,7 +36,7 @@ class Version extends AbstractHelper
     public function __construct(
         private \Magento\Framework\App\State $appState,
         private \Magento\Framework\App\View\Deployment\Version\StorageInterface $versionStorage,
-        DeploymentConfig $deploymentConfig = null
+        ?DeploymentConfig $deploymentConfig = null
     ) {
         $this->deploymentConfig = $deploymentConfig ?: ObjectManager::getInstance()->get(DeploymentConfig::class);
     }
