@@ -27,7 +27,7 @@ class Sentry extends AbstractHandler
     /**
      * @inheritDoc
      */
-    public function isHandling(array $record): bool
+    public function isHandling($record): bool
     {
         $config = $this->sentryHelper->collectModuleConfig();
         $this->setLevel($config['log_level']);
@@ -38,7 +38,7 @@ class Sentry extends AbstractHandler
     /**
      * @inheritDoc
      */
-    public function handle(array $record): bool
+    public function handle($record): bool
     {
         if (!$this->isHandling($record)) {
             return false;
