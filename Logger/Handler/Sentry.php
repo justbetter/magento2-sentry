@@ -9,6 +9,13 @@ use Monolog\Handler\AbstractHandler;
 
 class Sentry extends AbstractHandler
 {
+    /**
+     * Construct.
+     *
+     * @param Data $sentryHelper
+     * @param SentryLog $sentryLog
+     * @param DeploymentConfig $deploymentConfig
+     */
     public function __construct(
         protected Data $sentryHelper,
         protected SentryLog $sentryLog,
@@ -18,18 +25,18 @@ class Sentry extends AbstractHandler
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isHandling(array $record): bool
     {
         $config = $this->sentryHelper->collectModuleConfig();
-        $this->setLevel((int) $config['log_level']);
+        $this->setLevel((int) $config['log_level']); // @phpstan-ignore-line
 
         return parent::isHandling($record) && $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function handle(array $record): bool
     {
