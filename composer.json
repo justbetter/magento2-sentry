@@ -7,7 +7,7 @@
   "require": {
     "php": ">=8.0",
     "sentry/sdk": "^4.0",
-    "monolog/monolog": ">=2.7.0",
+    "monolog/monolog": ">=3.0",
     "magento/framework": "*",
     "nyholm/psr7": "^1.2",
     "magento/module-config": "^101.2"
