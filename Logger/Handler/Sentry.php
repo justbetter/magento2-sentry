@@ -12,8 +12,8 @@ class Sentry extends AbstractHandler
     /**
      * Construct.
      *
-     * @param Data $sentryHelper
-     * @param SentryLog $sentryLog
+     * @param Data             $sentryHelper
+     * @param SentryLog        $sentryLog
      * @param DeploymentConfig $deploymentConfig
      */
     public function __construct(
