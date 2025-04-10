@@ -51,7 +51,7 @@
   },
   "scripts": {
     "analyse": "vendor/bin/phpstan analyse --memory-limit='1G'",
-    "phpcs": "vendor/bin/phpcs --colors --standard=vendor/magento/magento-coding-standard/Magento2 --exclude=Generic.Files.LineLength --report=full,summary,gitblame --extensions=php,phtml --ignore=./vendor ./",
+    "phpcs": "vendor/bin/phpcs --colors --standard=vendor/magento/magento-coding-standard/Magento2 -s --exclude=Generic.Files.LineLength --report=full,summary,gitblame --extensions=php,phtml --ignore=./vendor ./",
     "phpcbf": "vendor/bin/phpcbf --colors --standard=vendor/magento/magento-coding-standard/Magento2 --exclude=Generic.Files.LineLength --extensions=php,phtml --ignore=./vendor ./ || exit 0",
     "codestyle": [
       "@phpcbf",

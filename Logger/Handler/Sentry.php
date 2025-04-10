@@ -10,7 +10,7 @@ use Monolog\Logger;
 use Monolog\LogRecord;
 
 // TODO: Remove once V2 support is dropped.
-// phpcs:disable Generic.Classes.DuplicateClassName,PSR2.Classes.ClassDeclaration
+// phpcs:disable Generic.Classes.DuplicateClassName,PSR2.Classes.ClassDeclaration,PSR1.Classes.ClassDeclaration.MultipleClasses
 if (Logger::API < 3) {
     class Sentry extends AbstractHandler
     {
@@ -35,7 +35,9 @@ if (Logger::API < 3) {
         public function isHandling(array $record): bool
         {
             $config = $this->sentryHelper->collectModuleConfig();
-            $this->setLevel($config['log_level']);
+            if ($config['log_level']) {
+                $this->setLevel($config['log_level']);
+            }
 
             return parent::isHandling($record) && $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
         }
@@ -78,7 +80,9 @@ if (Logger::API < 3) {
         public function isHandling(LogRecord $record): bool
         {
             $config = $this->sentryHelper->collectModuleConfig();
-            $this->setLevel($config['log_level']);
+            if ($config['log_level']) {
+                $this->setLevel($config['log_level']);
+            }
 
             return parent::isHandling($record) && $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
         }
@@ -98,4 +102,4 @@ if (Logger::API < 3) {
         }
     }
 }
-// phpcs:enable Generic.Classes.DuplicateClassName,PSR2.Classes.ClassDeclaration
+// phpcs:enable Generic.Classes.DuplicateClassName,PSR2.Classes.ClassDeclaration,PSR1.Classes.ClassDeclaration.MultipleClasses
