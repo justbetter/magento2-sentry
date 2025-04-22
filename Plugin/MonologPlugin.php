@@ -4,6 +4,8 @@ namespace JustBetter\Sentry\Plugin;
 
 use JustBetter\Sentry\Logger\Handler\Sentry;
 use Magento\Framework\Logger\Monolog;
+use Monolog\LogRecord;
+use Monolog\Processor\ProcessorInterface;
 
 class MonologPlugin extends Monolog
 {
@@ -14,6 +16,8 @@ class MonologPlugin extends Monolog
      * @param Sentry                              $sentryHandler
      * @param \Monolog\Handler\HandlerInterface[] $handlers      Optional stack of handlers, the first one in the array is called first, etc.
      * @param callable[]                          $processors    Optional array of processors
+     * 
+     * @phpstan-param array<(callable(LogRecord|array): LogRecord|array)|ProcessorInterface> $processors
      */
     public function __construct(
         $name,

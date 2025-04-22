@@ -9,7 +9,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: analyse
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.2, 8.3]
+        stability: [prefer-lowest, prefer-stable]
+
+    name: PHPStan - P${{ matrix.php }} - ${{ matrix.stability }}
 
     steps:
       - name: Checkout code
@@ -18,12 +24,12 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
           coverage: none
 
       - name: Install dependencies
-        run: composer install --no-interaction
+        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Analyse
         run: composer run analyse
