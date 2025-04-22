@@ -99,12 +99,12 @@ class SentryLog
     {
         return EventHint::fromArray(
             [
-                'exception' => ($context['exception'] ?? null) instanceof \Throwable ? $context['exception'] : null,
-                'mechanism' => ($context['mechanism'] ?? null) instanceof ExceptionMechanism ? $context['mechanism'] : null,
+                'exception'  => ($context['exception'] ?? null) instanceof \Throwable ? $context['exception'] : null,
+                'mechanism'  => ($context['mechanism'] ?? null) instanceof ExceptionMechanism ? $context['mechanism'] : null,
                 'stacktrace' => ($context['stacktrace'] ?? null) instanceof Stacktrace ? $context['stacktrace'] : null,
-                'extra' => array_filter(
+                'extra'      => array_filter(
                     $context,
-                    fn($key) => !in_array($key, ['exception', 'mechanism', 'stacktrace']),
+                    fn ($key) => !in_array($key, ['exception', 'mechanism', 'stacktrace']),
                     ARRAY_FILTER_USE_KEY
                 ) ?: [],
             ]
