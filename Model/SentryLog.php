@@ -8,6 +8,9 @@ use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\SessionException;
+use Sentry\EventHint;
+use Sentry\ExceptionMechanism;
+use Sentry\Stacktrace;
 use Sentry\State\Scope as SentryScope;
 
 class SentryLog
@@ -68,7 +71,11 @@ class SentryLog
         if ($message instanceof \Throwable) {
             $lastEventId = \Sentry\captureException($message);
         } else {
-            $lastEventId = \Sentry\captureMessage($message, \Sentry\Severity::fromError($logLevel));
+            $lastEventId = \Sentry\captureMessage(
+                $message,
+                \Sentry\Severity::fromError($logLevel),
+                $this->monologContextToSentryHint($context)
+            );
         }
 
         /// when using JS SDK you can use this for custom error page printing
@@ -79,6 +86,29 @@ class SentryLog
         } catch (SessionException $e) {
             return;
         }
+    }
+
+    /**
+     * Turn the monolog context into a format Sentrys EventHint can deal with.
+     *
+     * @param array $context
+     *
+     * @return EventHint|null
+     */
+    public function monologContextToSentryHint(array $context): ?EventHint
+    {
+        return EventHint::fromArray(
+            [
+                'exception' => ($context['exception'] ?? null) instanceof \Throwable ? $context['exception'] : null,
+                'mechanism' => ($context['mechanism'] ?? null) instanceof ExceptionMechanism ? $context['mechanism'] : null,
+                'stacktrace' => ($context['stacktrace'] ?? null) instanceof Stacktrace ? $context['stacktrace'] : null,
+                'extra' => array_filter(
+                    $context,
+                    fn($key) => !in_array($key, ['exception', 'mechanism', 'stacktrace']),
+                    ARRAY_FILTER_USE_KEY
+                ) ?: [],
+            ]
+        );
     }
 
     /**
