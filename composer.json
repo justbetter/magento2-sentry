@@ -9,6 +9,7 @@
     "sentry/sdk": "^4.0",
     "monolog/monolog": ">=2.7.0|^3.0",
     "magento/framework": "*",
+    "magento/module-csp": "*",
     "nyholm/psr7": "^1.2",
     "magento/module-config": "^101.2"
   },
