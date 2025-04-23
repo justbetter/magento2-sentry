@@ -7,8 +7,9 @@
   "require": {
     "php": ">=8.0",
     "sentry/sdk": "^4.0",
-    "monolog/monolog": ">=2.7.0",
+    "monolog/monolog": ">=2.7.0|^3.0",
     "magento/framework": "*",
+    "magento/module-csp": "*",
     "nyholm/psr7": "^1.2",
     "magento/module-config": "^101.2"
   },
@@ -51,7 +52,7 @@
   },
   "scripts": {
     "analyse": "vendor/bin/phpstan analyse --memory-limit='1G'",
-    "phpcs": "vendor/bin/phpcs --colors --standard=vendor/magento/magento-coding-standard/Magento2 --exclude=Generic.Files.LineLength --report=full,summary,gitblame --extensions=php,phtml --ignore=./vendor ./",
+    "phpcs": "vendor/bin/phpcs --colors --standard=vendor/magento/magento-coding-standard/Magento2 -s --exclude=Generic.Files.LineLength --report=full,summary,gitblame --extensions=php,phtml --ignore=./vendor ./",
     "phpcbf": "vendor/bin/phpcbf --colors --standard=vendor/magento/magento-coding-standard/Magento2 --exclude=Generic.Files.LineLength --extensions=php,phtml --ignore=./vendor ./ || exit 0",
     "codestyle": [
       "@phpcbf",

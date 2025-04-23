@@ -22,4 +22,4 @@
 **Checklist**
 
 - [ ] I've ran `composer run codestyle`
-- [ ] I've ran `composer run phpstan`
+- [ ] I've ran `composer run analyse`

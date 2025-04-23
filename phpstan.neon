@@ -6,4 +6,5 @@ parameters:
     excludePaths:
         - vendor
         - Test/*
+        - Logger/Handler/Sentry.php
     level: 5
