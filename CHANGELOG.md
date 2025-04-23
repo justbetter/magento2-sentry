@@ -1,4 +1,12 @@
 # Changelog
+## [4.0.0] - 2025-04-23
+### Added 
+    * Moved sentry logging to a monolog handler (https://github.com/justbetter/magento2-sentry/pull/165)
+    * Added support for Magento 2.4.8
+    * Added support for Monolog V3
+### Changed
+    * Dynamically add sentry and logrocket domains to CSP whitelist (https://github.com/justbetter/magento2-sentry/pull/156) thanks to https://github.com/brosenberger
+    * Use secureRenderer for including sentry frontend js (https://github.com/justbetter/magento2-sentry/pull/157) thanks to https://github.com/brosenberger
 ## [3.9.0] - 2025-01-31
 ### Added 
     * Raised PHPStan level to 5 (https://github.com/justbetter/magento2-sentry/pull/149)
