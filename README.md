@@ -1,3 +1,8 @@
+<a href="https://github.com/justbetter/magento2-sentry" title="JustBetter">
+    <img src="./.github/assets/banner.svg" alt="Package banner">
+</a>
+
+
 # Magento 2 Sentry Logger
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/justbetter/magento2-sentry.svg?style=flat-square)](https://packagist.org/packages/justbetter/magento2-sentry)
 [![Total Downloads](https://img.shields.io/packagist/dt/justbetter/magento2-sentry.svg?style=flat-square)](https://packagist.org/packages/justbetter/magento2-sentry)
@@ -5,6 +10,16 @@
 [![PHPStan passing](https://img.shields.io/github/actions/workflow/status/justbetter/magento2-sentry/analyse.yml?label=PHPStan&style=flat-square)](https://github.com/justbetter/magento2-sentry/actions/workflows/analyse.yml)
 
 This Magento 2 module integrates the [Sentry sdk](https://github.com/getsentry/sentry-php) into magento 2. Depending on the log level configured in the backend of magento 2, notifications and errors can be send to sentry.
+
+## Features
+
+- Send exceptions and logs to Sentry
+- Show detailed context on thrown exceptions (Like Magento user/api consumer id)
+- Easily control which events get sent to Sentry
+- Backend and frontend error reporting
+- Session replay
+- Logrocket support
+- Sentry feedback form after an error
 
 ## Installation
 - `composer require justbetter/magento2-sentry`
@@ -111,6 +126,6 @@ We’re a innovative development agency from The Netherlands building awesome we
 ## License
 [MIT](LICENSE)
 
----
-
-<a href="https://justbetter.nl" title="JustBetter"><img src="https://raw.githubusercontent.com/justbetter/art/master/justbetter-logo.png" width="200px" alt="JustBetter logo"></a>
+<a href="https://justbetter.nl" title="JustBetter">
+    <img src="./.github/assets/footer.svg" alt="Package footer">
+</a>
