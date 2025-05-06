@@ -1,8 +1,27 @@
 {
   "name": "justbetter/magento2-sentry",
   "description": "Magento 2 Logger for Sentry",
+  "keywords": [
+    "PHP",
+    "Magento",
+    "Magento 2",
+    "javascript",
+    "Sentry",
+    "Logger",
+    "Logging",
+    "Error",
+    "Error Reporting",
+    "Error Tracking",
+    "Exception",
+    "Exception Reporting",
+    "Exception Tracking",
+    "Session Replay",
+    "Logrocket",
+    "Tracing",
+    "Performance"
+  ],
   "type": "magento2-module",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "license": "MIT",
   "require": {
     "php": ">=8.0",

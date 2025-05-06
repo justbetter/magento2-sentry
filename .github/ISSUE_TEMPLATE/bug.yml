@@ -1,0 +1,53 @@
+name: Bug Report
+description: File a bug report.
+title: "[🐛]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for participating in this project!
+        Please fill out the following sections to help us understand the issue you're experiencing.
+
+        In any case,
+          - make sure you are using the latest version of the extension;
+          - do at least one search in current issues or questions, your question might already be answered;
+          - do include as many details as possible - site URL with the issue, screenshots when it's a visual issue, console errors, ...;
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: What is the current behavior?
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: What is the expected behavior?
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: How can we reproduce the issue?
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: What is the proposed solution?
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: do you have any additional information for us?
+      description: Please include any additional information that may be helpful in resolving the issue. Like logs, screenshots, or any other relevant details.
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+      - label: I have searched the existing issues
+        required: true
+  - type: checkboxes
+    attributes:
+      label: Are you willing to create a pull request for this?
+      description: Thank you so much for your willingness to help us out! We really appreciate it.
+      options:
+      - label: If i have a fix i would be willing to create a pull request

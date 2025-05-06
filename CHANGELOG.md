@@ -1,4 +1,7 @@
 # Changelog
+## [4.0.1] - 2025-05-06
+### Fixed 
+    * Load customerSession in SentryLog via proxy (Fixing https://github.com/justbetter/magento2-sentry/issues/160) (https://github.com/justbetter/magento2-sentry/pull/169) thanks to https://github.com/brosenberger
 ## [4.0.0] - 2025-04-23
 ### Added 
     * Moved sentry logging to a monolog handler (https://github.com/justbetter/magento2-sentry/pull/165)

@@ -9,7 +9,8 @@
 ![Magento Support](https://img.shields.io/badge/magento-2.4-orange.svg?logo=magento&longCache=true&style=flat-square)
 [![PHPStan passing](https://img.shields.io/github/actions/workflow/status/justbetter/magento2-sentry/analyse.yml?label=PHPStan&style=flat-square)](https://github.com/justbetter/magento2-sentry/actions/workflows/analyse.yml)
 
-This Magento 2 module integrates the [Sentry sdk](https://github.com/getsentry/sentry-php) into magento 2. Depending on the log level configured in the backend of magento 2, notifications and errors can be send to sentry.
+This Magento 2 module integrates [Sentry](https://github.com/getsentry/sentry-php) into magento 2. 
+Depending on the log level configured in the backend of magento 2, notifications and errors can be sent to sentry.
 
 ## Features
 
@@ -114,18 +115,23 @@ Please create a [issue](https://github.com/justbetter/magento2-sentry/issues) or
 ## Contributing
 Contributing? Awesome! Thank you for your help improving the module!
 
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
+
+Most importantly:
 - When making a PR please add a description what you've added, and if relevant why.
 - To save time on codestyle feedback, please run 
     - `composer install`
     - `composer run codestyle`
     - `composer run analyse`
 
-## About us
-We’re a innovative development agency from The Netherlands building awesome websites, webshops and web applications with Laravel and Magento. Check out our website [justbetter.nl](https://justbetter.nl) and our [open source projects](https://github.com/justbetter).
+## Security Vulnerabilities
+
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## License
-[MIT](LICENSE)
+
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
 
 <a href="https://justbetter.nl" title="JustBetter">
-    <img src="./.github/assets/footer.svg" alt="Package footer">
+    <img src="./.github/assets/footer.svg" alt="We’re a innovative development agency from The Netherlands.">
 </a>

@@ -1,0 +1,4 @@
+contact_links:
+  - name: Security Report
+    url: https://github.com/justbetter/magento2-sentry/security/policy
+    about: Please see our security policy.
