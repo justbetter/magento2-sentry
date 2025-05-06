@@ -2,6 +2,7 @@ name: Feature Request
 description: Create a feature request.
 title: "[⭐]: "
 labels: ["enhancement"]
+type: feature
 body:
   - type: markdown
     attributes:
