@@ -20,4 +20,10 @@
             </argument>
         </arguments>
     </type>
+        
+    <type name="JustBetter\Sentry\Model\SentryLog">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
 </config>
