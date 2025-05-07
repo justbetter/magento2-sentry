@@ -113,8 +113,6 @@ class SentryPerformance
                     'action' => $this->request->getFullActionName(),
                 ]
             ));
-        } elseif ($state->getAreaCode() === 'graphql') {
-            $this->transaction->setOp('graphql');
         } else {
             $this->transaction->setOp($state->getAreaCode());
         }
