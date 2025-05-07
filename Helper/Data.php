@@ -92,7 +92,7 @@ class Data extends AbstractHelper
 
     public function getPhpProfileSampleRate(): float
     {
-        return (float) ($this->config['profiles_sample_rate'] ?? 0);
+        return (float) ($this->collectModuleConfig()['profiles_sample_rate'] ?? 0);
     }
 
     /**
@@ -340,12 +340,12 @@ class Data extends AbstractHelper
 
     public function isPerformanceTrackingEnabled(): bool
     {
-        return $this->isTracingEnabled() && $this->config['performance_tracking_enabled'] ?? false;
+        return $this->isTracingEnabled() && ($this->collectModuleConfig()['performance_tracking_enabled'] ?? false);
     }
 
     public function getPerformanceTrackingExcludedAreas(): array
     {
-        return $this->config['performance_tracking_excluded_areas'] ?? ['adminhtml', 'crontab'];
+        return $this->collectModuleConfig()['performance_tracking_excluded_areas'] ?? ['adminhtml', 'crontab'];
     }
 
     /**
