@@ -12,8 +12,6 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\State;
-use Magento\Framework\DB\Adapter\TableNotFoundException;
-use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\RuntimeException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
@@ -210,20 +208,19 @@ class Data extends AbstractHelper
         if (isset($this->config[$storeId]['enabled'])) {
             return $this->config[$storeId];
         }
+        $this->config[$storeId]['enabled'] = $this->deploymentConfig->get('sentry') !== null;
 
-        try {
-            $this->config[$storeId]['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled', ScopeInterface::SCOPE_STORE)
-                ?? $this->deploymentConfig->get('sentry') !== null;
-        } catch (TableNotFoundException|FileSystemException|RuntimeException $e) {
-            $this->config[$storeId]['enabled'] = null;
+        foreach ($this->configKeys as $key) {
+            $this->config[$storeId][$key] = $this->deploymentConfig->get('sentry/'.$key);
         }
 
-        foreach ($this->configKeys as $value) {
-            try {
-                $this->config[$storeId][$value] = $this->scopeConfig->getValue('sentry/environment/'.$value, ScopeInterface::SCOPE_STORE)
-                    ?? $this->deploymentConfig->get('sentry/'.$value);
-            } catch (TableNotFoundException|FileSystemException|RuntimeException $e) {
-                $this->config[$storeId][$value] = null;
+        if ($this->scopeConfig->isSetFlag('sentry/environment/override', ScopeInterface::SCOPE_STORE, $storeId)) {
+            $allowedConfigKeys = array_merge(['enabled'], $this->configKeys);
+            $scopeConfig = $this->scopeConfig->getValue('sentry/environment', ScopeInterface::SCOPE_STORE, $storeId);
+            foreach ($scopeConfig as $key => $value) {
+                if ($value !== null && in_array($key, $allowedConfigKeys, true)) {
+                    $this->config[$storeId][$key] = $value;
+                }
             }
         }
 
