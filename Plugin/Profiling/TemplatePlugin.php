@@ -10,6 +10,15 @@ use Sentry\Tracing\SpanContext;
 
 class TemplatePlugin
 {
+    /**
+     * Method creates a Sentry span for php profiling to profile block rendering.
+     *
+     * @param Template $subject
+     * @param callable $callable
+     * @param string   $fileName
+     *
+     * @return mixed
+     */
     public function aroundFetchView(Template $subject, callable $callable, $fileName): mixed
     {
         $tags = [];

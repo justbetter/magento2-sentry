@@ -90,6 +90,11 @@ class Data extends AbstractHelper
         return $this->collectModuleConfig()['dsn'];
     }
 
+    /**
+     * Get sample rate for php profiling.
+     *
+     * @return float
+     */
     public function getPhpProfileSampleRate(): float
     {
         return (float) ($this->collectModuleConfig()['profiles_sample_rate'] ?? 0);
@@ -338,11 +343,21 @@ class Data extends AbstractHelper
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_php_tracking', ScopeInterface::SCOPE_STORE);
     }
 
+    /**
+     * Is php performance tracking enabled?
+     *
+     * @return bool
+     */
     public function isPerformanceTrackingEnabled(): bool
     {
         return $this->isTracingEnabled() && ($this->collectModuleConfig()['performance_tracking_enabled'] ?? false);
     }
 
+    /**
+     * Get excluded Magento areas which should be not profiled.
+     *
+     * @return string[]
+     */
     public function getPerformanceTrackingExcludedAreas(): array
     {
         return $this->collectModuleConfig()['performance_tracking_excluded_areas'] ?? ['adminhtml', 'crontab'];

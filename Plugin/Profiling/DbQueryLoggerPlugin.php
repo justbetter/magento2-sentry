@@ -11,8 +11,18 @@ use Sentry\Tracing\SpanContext;
 
 class DbQueryLoggerPlugin
 {
+    /**
+     * @var PerformanceTracingDto|null
+     */
     private ?PerformanceTracingDto $tracingDto = null;
 
+    /**
+     * Starts a Sentry span.
+     *
+     * @param LoggerInterface $subject
+     *
+     * @return void
+     */
     public function beforeStartTimer(LoggerInterface $subject): void
     {
         $this->tracingDto = SentryPerformance::traceStart(
@@ -22,6 +32,17 @@ class DbQueryLoggerPlugin
         );
     }
 
+    /**
+     * Stops the previously create span (span created in `beforeStartTimer`).
+     *
+     * @param LoggerInterface $subject
+     * @param string          $type
+     * @param string          $sql
+     * @param array           $bind
+     * @param mixed           $result
+     *
+     * @return void
+     */
     public function beforeLogStats(LoggerInterface $subject, $type, $sql, $bind = [], $result = null): void
     {
         if ($this->tracingDto === null) {

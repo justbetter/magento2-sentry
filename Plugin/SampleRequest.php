@@ -6,10 +6,15 @@ use JustBetter\Sentry\Model\SentryPerformance;
 use Magento\Framework\App\ResponseInterface;
 
 /**
- * Plugin to sample request and send them to Sentry
+ * Plugin to sample request and send them to Sentry.
  */
 class SampleRequest
 {
+    /**
+     * SampleRequest constructor.
+     *
+     * @param SentryPerformance $sentryPerformance
+     */
     public function __construct(
         private SentryPerformance $sentryPerformance
     ) {

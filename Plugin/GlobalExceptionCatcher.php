@@ -17,6 +17,16 @@ use Throwable;
 
 class GlobalExceptionCatcher
 {
+    /**
+     * GlobalExceptionCatcher constructor.
+     *
+     * @param SentryHelper          $sentryHelper
+     * @param ReleaseIdentifier     $releaseIdentifier
+     * @param SentryInteraction     $sentryInteraction
+     * @param EventManagerInterface $eventManager
+     * @param DataObjectFactory     $dataObjectFactory
+     * @param SentryPerformance     $sentryPerformance
+     */
     public function __construct(
         private SentryHelper $sentryHelper,
         private ReleaseIdentifier $releaseIdentifier,

@@ -26,8 +26,18 @@ use function Sentry\startTransaction;
 
 class SentryPerformance
 {
+    /**
+     * @var Transaction|null
+     */
     private ?Transaction $transaction = null;
 
+    /**
+     * SentryPerformance constructor.
+     *
+     * @param HttpRequest            $request
+     * @param ObjectManagerInterface $objectManager
+     * @param Data                   $helper
+     */
     public function __construct(
         private HttpRequest $request,
         private ObjectManagerInterface $objectManager,
@@ -35,6 +45,13 @@ class SentryPerformance
     ) {
     }
 
+    /**
+     * Starts a new transaction.
+     *
+     * @param AppInterface $app
+     *
+     * @return void
+     */
     public function startTransaction(AppInterface $app): void
     {
         if (!$app instanceof Http) {
@@ -72,6 +89,15 @@ class SentryPerformance
         SentrySdk::getCurrentHub()->setSpan($transaction);
     }
 
+    /**
+     * Finish the transaction. this will send the transaction (and the profile) to Sentry.
+     *
+     * @param ResponseInterface|int $statusCode
+     *
+     * @throws LocalizedException
+     *
+     * @return void
+     */
     public function finishTransaction(ResponseInterface|int $statusCode): void
     {
         if ($this->transaction === null) {
@@ -100,7 +126,7 @@ class SentryPerformance
 
         if (in_array($state->getAreaCode(), ['frontend', 'webapi_rest', 'adminhtml'])) {
             if (!empty($this->request->getFullActionName())) {
-                $this->transaction->setName(strtoupper($this->request->getMethod()). ' ' .$this->request->getFullActionName());
+                $this->transaction->setName(strtoupper($this->request->getMethod()).' '.$this->request->getFullActionName());
             }
 
             $this->transaction->setOp('http');
@@ -120,13 +146,20 @@ class SentryPerformance
         try {
             // Finish the transaction, this submits the transaction and it's span to Sentry
             $this->transaction->finish();
-        } catch (Throwable) {
+        } catch (Throwable) { // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
         }
 
         $this->transaction = null;
     }
 
-    public static function traceStart(SpanContext $context): PerformanceTracingDto
+    /**
+     * Helper function to create a new span. returns a DTO which holds the important information about the span, and the span itself.
+     *
+     * @param SpanContext $context
+     *
+     * @return PerformanceTracingDto
+     */
+    public static function traceStart(SpanContext $context): PerformanceTracingDto // phpcs:ignore Magento2.Functions.StaticFunction.StaticFunction
     {
         $scope = SentrySdk::getCurrentHub()->pushScope();
         $span = null;
@@ -140,7 +173,14 @@ class SentryPerformance
         return new PerformanceTracingDto($scope, $parentSpan, $span);
     }
 
-    public static function traceEnd(PerformanceTracingDto $context): void
+    /**
+     * Method close the given span. a DTO object, which has been created by `::traceStart` must be passed.
+     *
+     * @param PerformanceTracingDto $context
+     *
+     * @return void
+     */
+    public static function traceEnd(PerformanceTracingDto $context): void // phpcs:ignore Magento2.Functions.StaticFunction.StaticFunction
     {
         if ($context->getSpan()) {
             $context->getSpan()->finish();

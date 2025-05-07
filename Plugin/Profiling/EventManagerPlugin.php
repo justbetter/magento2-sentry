@@ -11,6 +11,12 @@ use Sentry\Tracing\SpanContext;
 
 class EventManagerPlugin
 {
+    /**
+     * EventManagerPlugin constructor.
+     *
+     * @param ConfigInterface $config
+     * @param array           $excludePatterns
+     */
     public function __construct(
         private ConfigInterface $config,
         private array $excludePatterns = []
@@ -25,7 +31,14 @@ class EventManagerPlugin
         ], $excludePatterns);
     }
 
-    private function _canTrace(string|null $eventName): bool
+    /**
+     * Method checks if the block is excluded for php profiling.
+     *
+     * @param string|null $eventName
+     *
+     * @return bool
+     */
+    private function _canTrace(?string $eventName): bool
     {
         if ($eventName === null) {
             return false;
@@ -44,6 +57,16 @@ class EventManagerPlugin
         return true;
     }
 
+    /**
+     * Method creates a Sentry span for php profiling to profile event handling.
+     *
+     * @param ManagerInterface $subject
+     * @param callable         $callable
+     * @param string           $eventName
+     * @param array            $data
+     *
+     * @return mixed
+     */
     public function aroundDispatch(ManagerInterface $subject, callable $callable, string $eventName, array $data = []): mixed
     {
         if (!$this->_canTrace($eventName)) {

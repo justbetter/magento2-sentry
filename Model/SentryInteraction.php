@@ -6,6 +6,7 @@ namespace JustBetter\Sentry\Model;
 
 // phpcs:disable Magento2.Functions.DiscouragedFunction
 
+use JustBetter\Sentry\Helper\Data;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Backend\Model\Auth\Session as AdminSession;
 use Magento\Customer\Model\Session as CustomerSession;
@@ -15,7 +16,6 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManager\ConfigInterface;
 use ReflectionClass;
 use Sentry\State\Scope;
-use JustBetter\Sentry\Helper\Data;
 use Throwable;
 
 use function Sentry\captureException;
@@ -34,6 +34,7 @@ class SentryInteraction
      *
      * @param State           $appState
      * @param ConfigInterface $omConfigInterface
+     * @param Data            $sentryHelper
      */
     public function __construct(
         private State $appState,
@@ -226,7 +227,7 @@ class SentryInteraction
 
         try {
             captureException($ex);
-        } catch (Throwable) {
+        } catch (Throwable) { // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
         }
         ob_end_clean();
     }
