@@ -3,7 +3,6 @@
 namespace JustBetter\Sentry\Plugin;
 
 use JustBetter\Sentry\Model\SentryPerformance;
-use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\ResponseInterface;
 
 /**
@@ -11,16 +10,10 @@ use Magento\Framework\App\ResponseInterface;
  */
 class SampleRequest
 {
-    /** @var SentryPerformance */
-    private $sentryPerformance;
-
-    /** @var Http */
-    private $request;
-
-    public function __construct(SentryPerformance $sentryPerformance, Http $request)
-    {
+    public function __construct(
+        private SentryPerformance $sentryPerformance
+    ) {
         $this->sentryPerformance = $sentryPerformance;
-        $this->request = $request;
     }
 
     /**
