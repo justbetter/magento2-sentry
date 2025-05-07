@@ -4,32 +4,36 @@ namespace JustBetter\Sentry\Plugin;
 
 // phpcs:disable Magento2.CodeAnalysis.EmptyBlock
 
-use JustBetter\Sentry\Helper\Data as SenteryHelper;
+use JustBetter\Sentry\Helper\Data as SentryHelper;
 use JustBetter\Sentry\Model\ReleaseIdentifier;
 use JustBetter\Sentry\Model\SentryInteraction;
+use JustBetter\Sentry\Model\SentryPerformance;
 use Magento\Framework\AppInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Sentry\Integration\IntegrationInterface;
+use Throwable;
 
 class GlobalExceptionCatcher
 {
     /**
-     * ExceptionCatcher constructor.
+     * GlobalExceptionCatcher constructor.
      *
-     * @param SenteryHelper         $sentryHelper
+     * @param SentryHelper          $sentryHelper
      * @param ReleaseIdentifier     $releaseIdentifier
      * @param SentryInteraction     $sentryInteraction
      * @param EventManagerInterface $eventManager
      * @param DataObjectFactory     $dataObjectFactory
+     * @param SentryPerformance     $sentryPerformance
      */
     public function __construct(
-        protected SenteryHelper $sentryHelper,
+        private SentryHelper $sentryHelper,
         private ReleaseIdentifier $releaseIdentifier,
         private SentryInteraction $sentryInteraction,
         private EventManagerInterface $eventManager,
-        private DataObjectFactory $dataObjectFactory
+        private DataObjectFactory $dataObjectFactory,
+        private SentryPerformance $sentryPerformance
     ) {
     }
 
@@ -76,25 +80,29 @@ class GlobalExceptionCatcher
             static fn (IntegrationInterface $integration) => !in_array(get_class($integration), $disabledDefaultIntegrations)
         ));
 
+        if ($this->sentryHelper->isPerformanceTrackingEnabled()) {
+            $config->setTracesSampleRate($this->sentryHelper->getTracingSampleRate());
+        }
+
+        if ($rate = $this->sentryHelper->getPhpProfileSampleRate()) {
+            $config->setData('profiles_sample_rate', $rate);
+        }
+
         $this->eventManager->dispatch('sentry_before_init', [
             'config' => $config,
         ]);
 
         $this->sentryInteraction->initialize($config->getData());
+        $this->sentryPerformance->startTransaction($subject);
 
         try {
-            return $proceed();
-        } catch (\Throwable $ex) {
-            try {
-                if ($this->sentryHelper->shouldCaptureException($ex)) {
-                    $this->sentryInteraction->addUserContext();
-                    $this->sentryInteraction->captureException($ex);
-                }
-            } catch (\Throwable $bigProblem) {
-                // do nothing if sentry fails
-            }
+            return $response = $proceed();
+        } catch (Throwable $exception) {
+            $this->sentryInteraction->captureException($exception);
 
-            throw $ex;
+            throw $exception;
+        } finally {
+            $this->sentryPerformance->finishTransaction($response ?? 500);
         }
     }
 }
