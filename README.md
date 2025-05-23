@@ -56,34 +56,40 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
 Next to that there are some configuration options under Stores > Configuration > JustBetter > Sentry.
 
 ### Configuration values
-* `dsn`: Please enter here the DSN you got from Sentry for your project. You can find the DSN in the project settings under "Client Key (DSN)"
-* `environment`: Here you can specify the environment under which the deployed version is running. Common used environments are production, staging, and development. With this option you can differentiate between errors which happen on the staging and i.e. on the production system
-* `log_level`: With this configuration you can specify from which logging level on Sentry should get the messages
-* `errorexception_reporting`: If the Exception being thrown is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php) send the error to sentry if it matches the error reporting. This uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php) eg. `E_ERROR | E_WARNING` to only log Errors and Warnings.
-* `ignore_exceptions`: If the class being thrown matches any in this list do not send it to Sentry e.g. `[\Magento\Framework\Exception\NoSuchEntityException::class]`
-* `mage_mode_development`: If this option is set to true you will receive issues in Sentry even if you're Magento is running in develop mode.
-* `js_sdk_version`: if this option is set, it will load the explicit version of the javascript SDK of Sentry.
-* `tracing_enabled` if this option is set to true, tracing got enabled (bundle file got loaded automatically). Default: `false`
-* `tracing_sample_rate` if tracing is enabled, you should also set the sample rate. Default: `0.2`
-* `ignore_js_errors` array of javascript error messages, which should be not send to Sentry. (see also `ignoreErrors` in [Sentry documentation](https://docs.sentry.io/clients/javascript/config/))
-* `disable_default_integrations` provide a list of FQCN of default integrations, which you do not want to use. [List of default integrations](https://github.com/getsentry/sentry-php/tree/master/src/Integration). Default: `[]`
+| Name | Default | Description |
+|---|---|---|
+| `dsn`                       | — | The DSN you got from Sentry for your project. You can find the DSN in the project settings under "Client Key (DSN)" |
+| `environment`               | — | Specify the environment under which the deployed version is running. Common values: production, staging, development. Helps differentiate errors between environments. |
+| `log_level`                 | `\Monolog\Logger::WARNING` | Specify from which logging level on Sentry should get the messages. |
+| `errorexception_reporting`  | `E_ALL` | If the Exception is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php), send the error to Sentry if it matches the error reporting. Uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php), e.g., `E_ERROR` | E_WARNING`. |
+| `ignore_exceptions`         | `[]` | If the class being thrown matches any in this list, do not send it to Sentry, e.g., `[\Magento\Framework\Exception\NoSuchEntityException::class]` |
+| `clean_stacktrace`          | `true` | Whether unnecessary files (like Interceptor.php, Proxy.php, and Factory.php) should be removed from the stacktrace. (They will not be removed if they threw the error.) |
+| `mage_mode_development`     | `false` | If set to true, you will receive issues in Sentry even if Magento is running in develop mode. |
+| `js_sdk_version`            | `\JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION` | If set, loads the explicit version of the JavaScript SDK of Sentry. |
+| `tracing_enabled`           | `false` | If set to true, tracing is enabled (bundle file is loaded automatically). |
+| `tracing_sample_rate`       | `0.2` | If tracing is enabled, set the sample rate. |
+| `ignore_js_errors`          | `[]` | Array of JavaScript error messages which should not be sent to Sentry. (See also `ignoreErrors` in [Sentry documentation](https://docs.sentry.io/clients/javascript/config/)) |
+| `disable_default_integrations` | `[]` | Provide a list of FQCN of default integrations you do not want to use. [List of default integrations](https://github.com/getsentry/sentry-php/tree/master/src/Integration).|
 
 ### Configuration for Adobe Cloud
 Since Adobe Cloud doesn't allow you to add manually add content to the `env.php` file, the configuration can be done
 using the "Variables" in Adobe Commerce using the following variables:
 
-* `CONFIG__SENTRY__ENVIRONMENT__ENABLED`: boolean
-* `CONFIG__SENTRY__ENVIRONMENT__DSN`: string
-* `CONFIG__SENTRY__ENVIRONMENT__LOGROCKET_KEY`: string
-* `CONFIG__SENTRY__ENVIRONMENT__ENVIRONMENT`: string
-* `CONFIG__SENTRY__ENVIRONMENT__LOG_LEVEL`: integer
-* `CONFIG__SENTRY__ENVIRONMENT__ERROREXCEPTION_REPORTING`: integer
-* `CONFIG__SENTRY__ENVIRONMENT__IGNORE_EXCEPTIONS`: A JSON encoded array of classes
-* `CONFIG__SENTRY__ENVIRONMENT__MAGE_MODE_DEVELOPMENT`: string
-* `CONFIG__SENTRY__ENVIRONMENT__JS_SDK_VERSION`: string
-* `CONFIG__SENTRY__ENVIRONMENT__TRACING_ENABLED`: boolean
-* `CONFIG__SENTRY__ENVIRONMENT__TRACING_SAMPLE_RATE`: float
-* `CONFIG__SENTRY__ENVIRONMENT__IGNORE_JS_ERRORS`: A JSON encoded array of error messages
+| Name                                             | Type    |
+|--------------------------------------------------|---------|
+| `CONFIG__SENTRY__ENVIRONMENT__ENABLED`           | boolean |
+| `CONFIG__SENTRY__ENVIRONMENT__DSN`               | string  |
+| `CONFIG__SENTRY__ENVIRONMENT__LOGROCKET_KEY`     | string  |
+| `CONFIG__SENTRY__ENVIRONMENT__ENVIRONMENT`       | string  |
+| `CONFIG__SENTRY__ENVIRONMENT__LOG_LEVEL`         | integer |
+| `CONFIG__SENTRY__ENVIRONMENT__ERROREXCEPTION_REPORTING` | integer |
+| `CONFIG__SENTRY__ENVIRONMENT__IGNORE_EXCEPTIONS` | JSON array of classes |
+| `CONFIG__SENTRY__ENVIRONMENT__CLEAN_STACKTRACE` | boolean |
+| `CONFIG__SENTRY__ENVIRONMENT__MAGE_MODE_DEVELOPMENT` | string  |
+| `CONFIG__SENTRY__ENVIRONMENT__JS_SDK_VERSION`    | string  |
+| `CONFIG__SENTRY__ENVIRONMENT__TRACING_ENABLED`   | boolean |
+| `CONFIG__SENTRY__ENVIRONMENT__TRACING_SAMPLE_RATE` | float   |
+| `CONFIG__SENTRY__ENVIRONMENT__IGNORE_JS_ERRORS`  | JSON array of error messages |
 
 The following configuration settings can be overridden in the Magento admin. This is limited to ensure that changes to
 particular config settings can only be done on server level and can't be broken by changes in the admin.
