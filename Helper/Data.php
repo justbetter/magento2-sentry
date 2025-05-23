@@ -328,7 +328,7 @@ class Data extends AbstractHelper
      */
     public function getCleanStacktrace(): bool
     {
-        return ($this->collectModuleConfig()['clean_stacktrace'] ?? true);
+        return $this->collectModuleConfig()['clean_stacktrace'] ?? true;
     }
 
     /**
