@@ -14,11 +14,12 @@ class StripUnnecessaryFrames implements ObserverInterface
         private readonly Data $sentryHelper
     ) {
     }
-    
+
     /**
      * Remove useless frames like Interceptors and Proxies from the stacktrace.
      *
      * @param Observer $observer
+     *
      * @return void
      */
     public function execute(Observer $observer): void
@@ -58,6 +59,7 @@ class StripUnnecessaryFrames implements ObserverInterface
      * Check if the frame should be skipped.
      *
      * @param Frame $frame
+     *
      * @return bool
      */
     public function shouldSkipFrame(Frame $frame): bool
