@@ -10,11 +10,14 @@ use Sentry\Frame;
 
 class StripUnnecessaryFrames implements ObserverInterface
 {
+    /**
+     * @param Data $sentryHelper
+     */
     public function __construct(
         private readonly Data $sentryHelper
     ) {
     }
-    
+
     /**
      * Remove useless frames like Interceptors and Proxies from the stacktrace.
      *
