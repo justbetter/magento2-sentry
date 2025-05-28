@@ -33,6 +33,7 @@ class SentryInteraction
      *
      * @param State           $appState
      * @param ConfigInterface $omConfigInterface
+     * @param RemoteAddress   $remoteAddress
      */
     public function __construct(
         private State $appState,
