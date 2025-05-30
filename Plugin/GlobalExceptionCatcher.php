@@ -76,6 +76,9 @@ class GlobalExceptionCatcher
             static fn (IntegrationInterface $integration) => !in_array(get_class($integration), $disabledDefaultIntegrations)
         ));
 
+        $config->setIgnoreExceptions($this->sentryHelper->getIgnoreExceptions());
+        $config->setErrorTypes($this->sentryHelper->getErrorExceptionReporting());
+
         $this->eventManager->dispatch('sentry_before_init', [
             'config' => $config,
         ]);
