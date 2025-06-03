@@ -479,7 +479,7 @@ class Data extends AbstractHelper
      */
     public function getErrorExceptionReporting(): int
     {
-        return (int) ($this->collectModuleConfig()['errorexception_reporting'] ?? E_ALL);
+        return (int) ($this->collectModuleConfig()['errorexception_reporting'] ?? error_reporting());
     }
 
     /**
