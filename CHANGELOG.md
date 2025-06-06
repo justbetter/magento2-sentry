@@ -1,4 +1,10 @@
 # Changelog
+## [4.1.0] - 2025-06-04
+### Added
+    * Clean up the Magento stacktrace before sending it to Sentry (https://github.com/justbetter/magento2-sentry/pull/171)
+    * Pass config also relevant to sentry (https://github.com/justbetter/magento2-sentry/pull/172)
+### Fixed 
+    * Gather ip from Magento instead of server variable (https://github.com/justbetter/magento2-sentry/pull/174)
 ## [4.0.1] - 2025-05-06
 ### Fixed 
     * Load customerSession in SentryLog via proxy (Fixing https://github.com/justbetter/magento2-sentry/issues/160) (https://github.com/justbetter/magento2-sentry/pull/169) thanks to https://github.com/brosenberger

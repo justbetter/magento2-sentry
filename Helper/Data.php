@@ -54,6 +54,7 @@ class Data extends AbstractHelper
         'profiles_sample_rate',
         'ignore_js_errors',
         'disable_default_integrations',
+        'clean_stacktrace',
     ];
 
     /**
@@ -334,6 +335,16 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Should the stacktrace get cleaned up?
+     *
+     * @return bool
+     */
+    public function getCleanStacktrace(): bool
+    {
+        return $this->collectModuleConfig()['clean_stacktrace'] ?? true;
+    }
+
+    /**
      * Is php tracking enabled?
      *
      * @return bool
@@ -501,7 +512,7 @@ class Data extends AbstractHelper
      */
     public function getErrorExceptionReporting(): int
     {
-        return (int) ($this->collectModuleConfig()['errorexception_reporting'] ?? E_ALL);
+        return (int) ($this->collectModuleConfig()['errorexception_reporting'] ?? error_reporting());
     }
 
     /**

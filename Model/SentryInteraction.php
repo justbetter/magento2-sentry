@@ -13,6 +13,7 @@ use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\ObjectManager\ConfigInterface;
 use ReflectionClass;
 use Sentry\State\Scope;
@@ -35,11 +36,13 @@ class SentryInteraction
      * @param State           $appState
      * @param ConfigInterface $omConfigInterface
      * @param Data            $sentryHelper
+     * @param RemoteAddress   $remoteAddress
      */
     public function __construct(
         private State $appState,
         private ConfigInterface $omConfigInterface,
-        private Data $sentryHelper
+        private Data $sentryHelper,
+        private RemoteAddress $remoteAddress
     ) {
     }
 
@@ -169,6 +172,15 @@ class SentryInteraction
         \Magento\Framework\Profiler::start('SENTRY::add_user_context');
 
         try {
+            $ip = $this->remoteAddress->getRemoteAddress();
+            if ($ip) {
+                configureScope(function (Scope $scope) use ($ip) {
+                    $scope->setUser([
+                        'ip_address' => $ip,
+                    ]);
+                });
+            }
+
             if ($this->canGetUserContext()) {
                 $userId = $this->getUserContext()->getUserId();
                 if ($userId) {
