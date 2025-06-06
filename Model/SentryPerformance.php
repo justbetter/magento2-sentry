@@ -8,10 +8,10 @@ namespace JustBetter\Sentry\Model;
 
 use JustBetter\Sentry\Helper\Data;
 use Laminas\Http\Response;
+use Magento\Framework\App\Area;
 use Magento\Framework\App\Http;
 use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\App\ResponseInterface;
-use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\AppInterface;
 use Magento\Framework\Exception\LocalizedException;
