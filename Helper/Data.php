@@ -243,12 +243,14 @@ class Data extends AbstractHelper
     /**
      * Parse the config value to the type defined in the config.
      *
-     * @param mixed               $value
-     * @param array{type: string} $config
+     * @param mixed $value
+     * @param array $config
+     *
+     * @return mixed
      */
     public function processConfigValue(mixed $value, array $config): mixed
     {
-        if (is_null($value)) {
+        if ($value === null) {
             return null;
         }
 
