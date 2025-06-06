@@ -53,7 +53,7 @@ class GlobalExceptionCatcher
 
         /** @var DataObject $config */
         $config = $this->dataObjectFactory->create();
-        $config->setData(array_intersect_key($this->sentryHelper->collectModuleConfig(), SenteryHelper::NATIVE_SENTRY_CONFIG_KEYS));
+        $config->setData(array_intersect_key($this->sentryHelper->collectModuleConfig(), SentryHelper::NATIVE_SENTRY_CONFIG_KEYS));
 
         $config->setDsn($this->sentryHelper->getDSN());
         if ($release = $this->releaseIdentifier->getReleaseId()) {
