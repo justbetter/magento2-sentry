@@ -3,7 +3,6 @@
 namespace JustBetter\Sentry\Helper;
 
 use ErrorException;
-use InvalidArgumentException;
 use JustBetter\Sentry\Block\SentryScript;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -27,28 +26,28 @@ class Data extends AbstractHelper
 
     public const NATIVE_SENTRY_CONFIG_KEYS = [
         // https://docs.sentry.io/platforms/php/configuration/options/#core-options
-        'dsn' => ['type' => 'string'],
-        'max_breadcrumbs' => ['type' => 'int'],
-        'attach_stacktrace' => ['type' => 'bool'],
-        'send_default_pii' => ['type' => 'bool'],
-        'server_name' => ['type' => 'string'],
-        'in_app_include' => ['type' => 'array'],
-        'in_app_exclude' => ['type' => 'array'],
+        'dsn'                   => ['type' => 'string'],
+        'max_breadcrumbs'       => ['type' => 'int'],
+        'attach_stacktrace'     => ['type' => 'bool'],
+        'send_default_pii'      => ['type' => 'bool'],
+        'server_name'           => ['type' => 'string'],
+        'in_app_include'        => ['type' => 'array'],
+        'in_app_exclude'        => ['type' => 'array'],
         'max_request_body_size' => ['type' => 'string'],
-        'max_value_length' => ['type' => 'int'],
+        'max_value_length'      => ['type' => 'int'],
         // https://docs.sentry.io/platforms/php/configuration/options/#error-monitoring-options
-        'sample_rate' => ['type' => 'float'],
+        'sample_rate'       => ['type' => 'float'],
         'ignore_exceptions' => ['type' => 'array'],
-        'error_types' => ['type' => 'int'],
-        'context_lines' => ['type' => 'int'],
+        'error_types'       => ['type' => 'int'],
+        'context_lines'     => ['type' => 'int'],
         // https://docs.sentry.io/platforms/php/configuration/options/#tracing-options
-        'traces_sample_rate' => ['type' => 'float'],
-        'ignore_transactions' => ['type' => 'array'],
+        'traces_sample_rate'        => ['type' => 'float'],
+        'ignore_transactions'       => ['type' => 'array'],
         'trace_propagation_targets' => ['type' => 'array'],
         // https://docs.sentry.io/platforms/php/configuration/options/#transport-options
-        'http_proxy' => ['type' => 'string'],
+        'http_proxy'           => ['type' => 'string'],
         'http_connect_timeout' => ['type' => 'int'],
-        'http_timeout' => ['type' => 'int'],
+        'http_timeout'         => ['type' => 'int'],
     ];
 
     /**
@@ -66,17 +65,17 @@ class Data extends AbstractHelper
      */
     protected $configKeys = [
         ...self::NATIVE_SENTRY_CONFIG_KEYS,
-        'logrocket_key' => ['type' => 'array'],
-        'log_level' => ['type' => 'int'],
-        'errorexception_reporting' => ['type' => 'int'], // Deprecated by error_types https://docs.sentry.io/platforms/php/configuration/options/#error_types
-        'mage_mode_development' => ['type' => 'bool'],
-        'environment' => ['type' => 'string'],
-        'js_sdk_version' => ['type' => 'string'],
-        'tracing_enabled' => ['type' => 'bool'],
-        'tracing_sample_rate' => ['type' => 'float'],
-        'ignore_js_errors' => ['type' => 'array'],
+        'logrocket_key'                => ['type' => 'array'],
+        'log_level'                    => ['type' => 'int'],
+        'errorexception_reporting'     => ['type' => 'int'], // Deprecated by error_types https://docs.sentry.io/platforms/php/configuration/options/#error_types
+        'mage_mode_development'        => ['type' => 'bool'],
+        'environment'                  => ['type' => 'string'],
+        'js_sdk_version'               => ['type' => 'string'],
+        'tracing_enabled'              => ['type' => 'bool'],
+        'tracing_sample_rate'          => ['type' => 'float'],
+        'ignore_js_errors'             => ['type' => 'array'],
         'disable_default_integrations' => ['type' => 'array'],
-        'clean_stacktrace' => ['type' => 'bool'],
+        'clean_stacktrace'             => ['type' => 'bool'],
     ];
 
     /**
@@ -242,23 +241,24 @@ class Data extends AbstractHelper
     }
 
     /**
-     * Parse the config value to the type defined in the config
+     * Parse the config value to the type defined in the config.
      *
-     * @param mixed $value
+     * @param mixed               $value
      * @param array{type: string} $config
      */
-    public function processConfigValue(mixed $value, array $config): mixed {
+    public function processConfigValue(mixed $value, array $config): mixed
+    {
         if (is_null($value)) {
             return null;
         }
 
         return match ($config['type']) {
-            'array' => is_array($value) ? $value : $this->serializer->unserialize($value),
-            'int' => (int) $value,
-            'float' => (float) $value,
-            'bool' => (bool) $value,
+            'array'  => is_array($value) ? $value : $this->serializer->unserialize($value),
+            'int'    => (int) $value,
+            'float'  => (float) $value,
+            'bool'   => (bool) $value,
             'string' => (string) $value,
-            default => $value,
+            default  => $value,
         };
     }
 
