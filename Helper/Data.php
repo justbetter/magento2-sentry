@@ -27,6 +27,7 @@ class Data extends AbstractHelper
     public const NATIVE_SENTRY_CONFIG_KEYS = [
         // https://docs.sentry.io/platforms/php/configuration/options/#core-options
         'dsn'                   => ['type' => 'string'],
+        'environment'           => ['type' => 'string'],
         'max_breadcrumbs'       => ['type' => 'int'],
         'attach_stacktrace'     => ['type' => 'bool'],
         'send_default_pii'      => ['type' => 'bool'],
@@ -71,7 +72,6 @@ class Data extends AbstractHelper
         'log_level'                           => ['type' => 'int'],
         'errorexception_reporting'            => ['type' => 'int'], /* @deprecated by @see: error_types https://docs.sentry.io/platforms/php/configuration/options/#error_types */
         'mage_mode_development'               => ['type' => 'bool'],
-        'environment'                         => ['type' => 'string'],
         'js_sdk_version'                      => ['type' => 'string'],
         'tracing_enabled'                     => ['type' => 'bool'],
         'tracing_sample_rate'                 => ['type' => 'float'], /* @deprecated by @see: traces_sample_rate https://docs.sentry.io/platforms/php/configuration/options/#error_types */

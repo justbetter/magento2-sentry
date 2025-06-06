@@ -122,6 +122,12 @@ public function execute(\Magento\Framework\Event\Observer $observer)
 
 Example: https://github.com/justbetter/magento2-sentry-filter-events
 
+This same thing is the case for
+| sentry_before_send | https://docs.sentry.io/platforms/php/configuration/options/#before_send |
+| sentry_before_send_transaction | https://docs.sentry.io/platforms/php/configuration/options/#before_send_transaction |
+| sentry_before_send_check_in | https://docs.sentry.io/platforms/php/configuration/options/#before_send_check_in |
+| sentry_before_breadcrumb | https://docs.sentry.io/platforms/php/configuration/options/#before_breadcrumb |
+
 ## Compatibility
 The module is tested on Magento version 2.4.x with sentry sdk version 3.x. feel free to fork this project or make a pull request.
 
