@@ -49,6 +49,9 @@ class Data extends AbstractHelper
         'js_sdk_version',
         'tracing_enabled',
         'tracing_sample_rate',
+        'performance_tracking_enabled',
+        'performance_tracking_excluded_areas',
+        'profiles_sample_rate',
         'ignore_js_errors',
         'disable_default_integrations',
         'clean_stacktrace',
@@ -86,6 +89,16 @@ class Data extends AbstractHelper
     public function getDSN()
     {
         return $this->collectModuleConfig()['dsn'];
+    }
+
+    /**
+     * Get sample rate for php profiling.
+     *
+     * @return float
+     */
+    public function getPhpProfileSampleRate(): float
+    {
+        return (float) ($this->collectModuleConfig()['profiles_sample_rate'] ?? 0);
     }
 
     /**
@@ -342,11 +355,31 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Is php performance tracking enabled?
+     *
+     * @return bool
+     */
+    public function isPerformanceTrackingEnabled(): bool
+    {
+        return $this->isTracingEnabled() && ($this->collectModuleConfig()['performance_tracking_enabled'] ?? false);
+    }
+
+    /**
+     * Get excluded Magento areas which should be not profiled.
+     *
+     * @return string[]
+     */
+    public function getPerformanceTrackingExcludedAreas(): array
+    {
+        return $this->collectModuleConfig()['performance_tracking_excluded_areas'] ?? ['adminhtml', 'crontab'];
+    }
+
+    /**
      * Is the script tag enabled?
      *
      * @return bool
      */
-    public function useScriptTag(): bool
+    public function useScriptTag()
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag', ScopeInterface::SCOPE_STORE);
     }

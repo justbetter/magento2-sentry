@@ -46,10 +46,13 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'js_sdk_version' => \JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION,
     'tracing_enabled' => true,
     'tracing_sample_rate' => 0.5,
-    'ignore_js_errors' => [],
     'disable_default_integrations' => [
         \Sentry\Integration\ModulesIntegration::class,
     ]
+    'performance_tracking_enabled' => true,
+    'performance_tracking_excluded_areas' => [\Magento\Framework\App::AREA_ADMINHTML, \Magento\Framework\App::AREA_CRONTAB],
+    'profiles_sample_rate' => 0.5,
+    'ignore_js_errors' => []
 ]
 ```
 
@@ -68,6 +71,9 @@ Next to that there are some configuration options under Stores > Configuration >
 | `js_sdk_version`            | `\JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION` | If set, loads the explicit version of the JavaScript SDK of Sentry. |
 | `tracing_enabled`           | `false` | If set to true, tracing is enabled (bundle file is loaded automatically). |
 | `tracing_sample_rate`       | `0.2` | If tracing is enabled, set the sample rate. |
+| `performance_tracking_enabled` | `false` | if performance tracking is enabled, a performance report got generated for the request. |
+| `performance_tracking_excluded_areas` | `['adminhtml', 'crontab']` | if `performance_tracking_enabled` is enabled, we recommend to exclude the `adminhtml` & `crontab` area. |
+| `profiles_sample_rate` | `0` (disabled) | if this option is larger than 0 (zero), the module will create a profile of the request. Please note that you have to install [Excimer](https://www.mediawiki.org/wiki/Excimer) on your server to use profiling. [Sentry documentation](https://docs.sentry.io/platforms/php/profiling/). You have to enable tracing too. |
 | `ignore_js_errors`          | `[]` | Array of JavaScript error messages which should not be sent to Sentry. (See also `ignoreErrors` in [Sentry documentation](https://docs.sentry.io/clients/javascript/config/)) |
 | `disable_default_integrations` | `[]` | Provide a list of FQCN of default integrations you do not want to use. [List of default integrations](https://github.com/getsentry/sentry-php/tree/master/src/Integration).|
 
@@ -89,10 +95,14 @@ using the "Variables" in Adobe Commerce using the following variables:
 | `CONFIG__SENTRY__ENVIRONMENT__JS_SDK_VERSION`    | string  |
 | `CONFIG__SENTRY__ENVIRONMENT__TRACING_ENABLED`   | boolean |
 | `CONFIG__SENTRY__ENVIRONMENT__TRACING_SAMPLE_RATE` | float   |
+| `CONFIG__SENTRY__ENVIRONMENT__TRACING_PERFORMANCE_TRACKING_ENABLED` | boolean |
+| `CONFIG__SENTRY__ENVIRONMENT__TRACING_PERFORMANCE_TRACKING_EXCLUDED_AREAS` | boolean |
 | `CONFIG__SENTRY__ENVIRONMENT__IGNORE_JS_ERRORS`  | JSON array of error messages |
 
 The following configuration settings can be overridden in the Magento admin. This is limited to ensure that changes to
 particular config settings can only be done on server level and can't be broken by changes in the admin.
+
+Please note, that it is not possible to use profiling within the Adobe Cloud.
 
 ## Optional error page configuration
 - Optional you can configure custom error pages in pub/errors. You can use the sentry feedback form and insert here the sentry log ID. The Sentry Log Id is captured in de customer session and can be retrieved in `processor.php`.
