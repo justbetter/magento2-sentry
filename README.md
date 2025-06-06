@@ -50,7 +50,7 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
         \Sentry\Integration\ModulesIntegration::class,
     ]
     'performance_tracking_enabled' => true,
-    'performance_tracking_excluded_areas' => ['adminhtml', 'crontab'],
+    'performance_tracking_excluded_areas' => [\Magento\Framework\App::AREA_ADMINHTML, \Magento\Framework\App::AREA_CRONTAB],
     'profiles_sample_rate' => 0.5,
     'ignore_js_errors' => []
 ]

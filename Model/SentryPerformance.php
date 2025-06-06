@@ -11,6 +11,7 @@ use Laminas\Http\Response;
 use Magento\Framework\App\Http;
 use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\AppInterface;
 use Magento\Framework\Exception\LocalizedException;
@@ -55,7 +56,7 @@ class SentryPerformance
     public function startTransaction(AppInterface $app): void
     {
         if (!$app instanceof Http) {
-            // actually, we only support profiling of http requests.
+            // We only support profiling of http requests right now.
             return;
         }
 
@@ -124,7 +125,7 @@ class SentryPerformance
             $this->transaction->setHttpStatus($statusCode);
         }
 
-        if (in_array($state->getAreaCode(), ['frontend', 'webapi_rest', 'adminhtml'])) {
+        if (in_array($state->getAreaCode(), [Area::AREA_FRONTEND, Area::AREA_ADMINHTML, Area::AREA_WEBAPI_REST])) {
             if (!empty($this->request->getFullActionName())) {
                 $this->transaction->setName(strtoupper($this->request->getMethod()).' '.$this->request->getFullActionName());
             }

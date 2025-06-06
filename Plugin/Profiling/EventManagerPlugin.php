@@ -38,7 +38,7 @@ class EventManagerPlugin
      *
      * @return bool
      */
-    private function _canTrace(?string $eventName): bool
+    public function canTrace(?string $eventName): bool
     {
         if ($eventName === null) {
             return false;
@@ -69,7 +69,7 @@ class EventManagerPlugin
      */
     public function aroundDispatch(ManagerInterface $subject, callable $callable, string $eventName, array $data = []): mixed
     {
-        if (!$this->_canTrace($eventName)) {
+        if (!$this->canTrace($eventName)) {
             return $callable($eventName, $data);
         }
 

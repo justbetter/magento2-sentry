@@ -217,18 +217,17 @@ class SentryInteraction
      */
     public function captureException(\Throwable $ex): void
     {
-        if (!$this->sentryHelper->shouldCaptureException($ex)) {
-            return;
-        }
-
-        $this->addUserContext();
-
-        ob_start();
-
         try {
+            if (!$this->sentryHelper->shouldCaptureException($ex)) {
+                return;
+            }
+
+            $this->addUserContext();
+
+            ob_start();
             captureException($ex);
+            ob_end_clean();
         } catch (Throwable) { // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
         }
-        ob_end_clean();
     }
 }
