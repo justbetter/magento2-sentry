@@ -49,6 +49,7 @@ class GlobalExceptionCatcher
 
         /** @var DataObject $config */
         $config = $this->dataObjectFactory->create();
+        $config->setData(array_filter(array_intersect_key($this->sentryHelper->collectModuleConfig(), SenteryHelper::NATIVE_SENTRY_CONFIG_KEYS)));
 
         $config->setDsn($this->sentryHelper->getDSN());
         if ($release = $this->releaseIdentifier->getReleaseId()) {
@@ -76,8 +77,7 @@ class GlobalExceptionCatcher
             static fn (IntegrationInterface $integration) => !in_array(get_class($integration), $disabledDefaultIntegrations)
         ));
 
-        $config->setIgnoreExceptions($this->sentryHelper->getIgnoreExceptions());
-        $config->setErrorTypes($this->sentryHelper->getErrorExceptionReporting());
+        $config->setErrorTypes($this->sentryHelper->getErrorTypes());
 
         $this->eventManager->dispatch('sentry_before_init', [
             'config' => $config,

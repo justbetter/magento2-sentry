@@ -40,7 +40,7 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'logrocket_key' => 'example/example',
     'environment' => null,
     'log_level' => \Monolog\Logger::WARNING,
-    'errorexception_reporting' => E_ALL,
+    'error_types' => E_ALL,
     'ignore_exceptions' => [],
     'mage_mode_development' => false,
     'js_sdk_version' => \JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION,
@@ -61,7 +61,7 @@ Next to that there are some configuration options under Stores > Configuration >
 | `dsn`                       | — | The DSN you got from Sentry for your project. You can find the DSN in the project settings under "Client Key (DSN)" |
 | `environment`               | — | Specify the environment under which the deployed version is running. Common values: production, staging, development. Helps differentiate errors between environments. |
 | `log_level`                 | `\Monolog\Logger::WARNING` | Specify from which logging level on Sentry should get the messages. |
-| `errorexception_reporting`  | `E_ALL` | If the Exception is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php), send the error to Sentry if it matches the error reporting. Uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php), e.g., `E_ERROR` | E_WARNING`. |
+| `error_types`  | `E_ALL` | If the Exception is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php), send the error to Sentry if it matches the error reporting. Uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php), e.g., `E_ERROR` | E_WARNING`. |
 | `ignore_exceptions`         | `[]` | If the class being thrown matches any in this list, do not send it to Sentry, e.g., `[\Magento\Framework\Exception\NoSuchEntityException::class]` |
 | `clean_stacktrace`          | `true` | Whether unnecessary files (like Interceptor.php, Proxy.php, and Factory.php) should be removed from the stacktrace. (They will not be removed if they threw the error.) |
 | `mage_mode_development`     | `false` | If set to true, you will receive issues in Sentry even if Magento is running in develop mode. |
@@ -82,9 +82,9 @@ using the "Variables" in Adobe Commerce using the following variables:
 | `CONFIG__SENTRY__ENVIRONMENT__LOGROCKET_KEY`     | string  |
 | `CONFIG__SENTRY__ENVIRONMENT__ENVIRONMENT`       | string  |
 | `CONFIG__SENTRY__ENVIRONMENT__LOG_LEVEL`         | integer |
-| `CONFIG__SENTRY__ENVIRONMENT__ERROREXCEPTION_REPORTING` | integer |
+| `CONFIG__SENTRY__ENVIRONMENT__ERROR_TYPES`       | integer |
 | `CONFIG__SENTRY__ENVIRONMENT__IGNORE_EXCEPTIONS` | JSON array of classes |
-| `CONFIG__SENTRY__ENVIRONMENT__CLEAN_STACKTRACE` | boolean |
+| `CONFIG__SENTRY__ENVIRONMENT__CLEAN_STACKTRACE`  | boolean |
 | `CONFIG__SENTRY__ENVIRONMENT__MAGE_MODE_DEVELOPMENT` | string  |
 | `CONFIG__SENTRY__ENVIRONMENT__JS_SDK_VERSION`    | string  |
 | `CONFIG__SENTRY__ENVIRONMENT__TRACING_ENABLED`   | boolean |

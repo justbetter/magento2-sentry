@@ -25,6 +25,32 @@ class Data extends AbstractHelper
     public const XML_PATH_SRS = 'sentry/general/';
     public const XML_PATH_SRS_ISSUE_GROUPING = 'sentry/issue_grouping/';
 
+    public const NATIVE_SENTRY_CONFIG_KEYS = [
+        // https://docs.sentry.io/platforms/php/configuration/options/#core-options
+        'dsn' => ['type' => 'string'],
+        'max_breadcrumbs' => ['type' => 'int'],
+        'attach_stacktrace' => ['type' => 'bool'],
+        'send_default_pii' => ['type' => 'bool'],
+        'server_name' => ['type' => 'string'],
+        'in_app_include' => ['type' => 'array'],
+        'in_app_exclude' => ['type' => 'array'],
+        'max_request_body_size' => ['type' => 'string'],
+        'max_value_length' => ['type' => 'int'],
+        // https://docs.sentry.io/platforms/php/configuration/options/#error-monitoring-options
+        'sample_rate' => ['type' => 'float'],
+        'ignore_exceptions' => ['type' => 'array'],
+        'error_types' => ['type' => 'int'],
+        'context_lines' => ['type' => 'int'],
+        // https://docs.sentry.io/platforms/php/configuration/options/#tracing-options
+        'traces_sample_rate' => ['type' => 'float'],
+        'ignore_transactions' => ['type' => 'array'],
+        'trace_propagation_targets' => ['type' => 'array'],
+        // https://docs.sentry.io/platforms/php/configuration/options/#transport-options
+        'http_proxy' => ['type' => 'string'],
+        'http_connect_timeout' => ['type' => 'int'],
+        'http_timeout' => ['type' => 'int'],
+    ];
+
     /**
      * @var ScopeConfigInterface
      */
@@ -39,19 +65,18 @@ class Data extends AbstractHelper
      * @var array
      */
     protected $configKeys = [
-        'dsn',
-        'logrocket_key',
-        'log_level',
-        'errorexception_reporting',
-        'ignore_exceptions',
-        'mage_mode_development',
-        'environment',
-        'js_sdk_version',
-        'tracing_enabled',
-        'tracing_sample_rate',
-        'ignore_js_errors',
-        'disable_default_integrations',
-        'clean_stacktrace',
+        ...self::NATIVE_SENTRY_CONFIG_KEYS,
+        'logrocket_key' => ['type' => 'array'],
+        'log_level' => ['type' => 'int'],
+        'errorexception_reporting' => ['type' => 'int'], // Deprecated by error_types https://docs.sentry.io/platforms/php/configuration/options/#error_types
+        'mage_mode_development' => ['type' => 'bool'],
+        'environment' => ['type' => 'string'],
+        'js_sdk_version' => ['type' => 'string'],
+        'tracing_enabled' => ['type' => 'bool'],
+        'tracing_sample_rate' => ['type' => 'float'],
+        'ignore_js_errors' => ['type' => 'array'],
+        'disable_default_integrations' => ['type' => 'array'],
+        'clean_stacktrace' => ['type' => 'bool'],
     ];
 
     /**
@@ -119,25 +144,7 @@ class Data extends AbstractHelper
      */
     public function getIgnoreJsErrors()
     {
-        $list = $this->collectModuleConfig()['ignore_js_errors'];
-
-        if ($list === null) {
-            return null;
-        }
-
-        try {
-            $config = $this->collectModuleConfig();
-            $list = is_array($config['ignore_js_errors'])
-                ? $config['ignore_js_errors']
-                : $this->serializer->unserialize($config['ignore_js_errors']);
-        } catch (InvalidArgumentException $e) {
-            throw new RuntimeException(
-                __('Sentry configuration error: `ignore_js_errors` has to be an array or `null`. Given type: %s', gettype($list)), // phpcs:ignore
-                $e
-            );
-        }
-
-        return $list;
+        return $this->collectModuleConfig()['ignore_js_errors'];
     }
 
     /**
@@ -216,19 +223,43 @@ class Data extends AbstractHelper
             $this->config[$storeId]['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled', ScopeInterface::SCOPE_STORE)
                 ?? $this->deploymentConfig->get('sentry') !== null;
         } catch (TableNotFoundException|FileSystemException|RuntimeException $e) {
-            $this->config[$storeId]['enabled'] = null;
+            $this->config[$storeId]['enabled'] = $this->deploymentConfig->get('sentry') !== null;
         }
 
-        foreach ($this->configKeys as $value) {
+        foreach ($this->configKeys as $value => $config) {
             try {
-                $this->config[$storeId][$value] = $this->scopeConfig->getValue('sentry/environment/'.$value, ScopeInterface::SCOPE_STORE)
-                    ?? $this->deploymentConfig->get('sentry/'.$value);
+                $this->config[$storeId][$value] = $this->processConfigValue(
+                    $this->scopeConfig->getValue('sentry/environment/'.$value, ScopeInterface::SCOPE_STORE)
+                        ?? $this->deploymentConfig->get('sentry/'.$value),
+                    $config
+                );
             } catch (TableNotFoundException|FileSystemException|RuntimeException $e) {
                 $this->config[$storeId][$value] = null;
             }
         }
 
         return $this->config[$storeId];
+    }
+
+    /**
+     * Parse the config value to the type defined in the config
+     *
+     * @param mixed $value
+     * @param array{type: string} $config
+     */
+    public function processConfigValue(mixed $value, array $config): mixed {
+        if (is_null($value)) {
+            return null;
+        }
+
+        return match ($config['type']) {
+            'array' => is_array($value) ? $value : $this->serializer->unserialize($value),
+            'int' => (int) $value,
+            'float' => (float) $value,
+            'bool' => (bool) $value,
+            'string' => (string) $value,
+            default => $value,
+        };
     }
 
     /**
@@ -477,9 +508,9 @@ class Data extends AbstractHelper
      *
      * @return int
      */
-    public function getErrorExceptionReporting(): int
+    public function getErrorTypes(): int
     {
-        return (int) ($this->collectModuleConfig()['errorexception_reporting'] ?? error_reporting());
+        return (int) ($this->collectModuleConfig()['error_types'] ?? $this->collectModuleConfig()['errorexception_reporting'] ?? error_reporting());
     }
 
     /**
@@ -489,16 +520,7 @@ class Data extends AbstractHelper
      */
     public function getIgnoreExceptions(): array
     {
-        $config = $this->collectModuleConfig();
-        if (is_array($config['ignore_exceptions'])) {
-            return $config['ignore_exceptions'];
-        }
-
-        try {
-            return $this->serializer->unserialize($config['ignore_exceptions']);
-        } catch (InvalidArgumentException $e) {
-            return [];
-        }
+        return $this->collectModuleConfig()['ignore_exceptions'] ?? [];
     }
 
     /**
@@ -510,7 +532,7 @@ class Data extends AbstractHelper
      */
     public function shouldCaptureException(Throwable $ex): bool
     {
-        if ($ex instanceof ErrorException && !($ex->getSeverity() & $this->getErrorExceptionReporting())) {
+        if ($ex instanceof ErrorException && !($ex->getSeverity() & $this->getErrorTypes())) {
             return false;
         }
 

@@ -18,7 +18,7 @@
                 <logrocket_key/>
                 <environment/>
                 <log_level/>
-                <errorexception_reporting/>
+                <error_types/>
                 <ignore_exceptions/>
                 <mage_mode_development/>
                 <js_sdk_version/>
