@@ -25,12 +25,12 @@
   "license": "MIT",
   "require": {
     "php": ">=8.0",
-    "sentry/sdk": "^4.0",
+    "sentry/sentry": "^4.4",
     "monolog/monolog": ">=2.7.0|^3.0",
-    "magento/framework": "*",
+    "magento/framework": ">=103.0.7",
     "magento/module-csp": "*",
     "nyholm/psr7": "^1.2",
-    "magento/module-config": "^101.2"
+    "magento/module-config": ">=101.2"
   },
   "repositories": {
     "magento": {
