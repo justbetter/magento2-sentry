@@ -44,6 +44,7 @@ class Data extends AbstractHelper
         'traces_sample_rate'        => ['type' => 'float'],
         'ignore_transactions'       => ['type' => 'array'],
         'trace_propagation_targets' => ['type' => 'array'],
+        'profiles_sample_rate',     => ['type' => 'float'],
         // https://docs.sentry.io/platforms/php/configuration/options/#transport-options
         'http_proxy'           => ['type' => 'string'],
         'http_connect_timeout' => ['type' => 'int'],
@@ -73,6 +74,8 @@ class Data extends AbstractHelper
         'js_sdk_version'               => ['type' => 'string'],
         'tracing_enabled'              => ['type' => 'bool'],
         'tracing_sample_rate'          => ['type' => 'float'],
+        'performance_tracking_enabled' => ['type' => 'bool'],
+        'performance_tracking_excluded_areas' => ['type' => 'array'],
         'ignore_js_errors'             => ['type' => 'array'],
         'disable_default_integrations' => ['type' => 'array'],
         'clean_stacktrace'             => ['type' => 'bool'],
@@ -110,6 +113,16 @@ class Data extends AbstractHelper
     public function getDSN()
     {
         return $this->collectModuleConfig()['dsn'];
+    }
+
+    /**
+     * Get sample rate for php profiling.
+     *
+     * @return float
+     */
+    public function getPhpProfileSampleRate(): float
+    {
+        return (float) ($this->collectModuleConfig()['profiles_sample_rate'] ?? 0);
     }
 
     /**
@@ -375,11 +388,31 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Is php performance tracking enabled?
+     *
+     * @return bool
+     */
+    public function isPerformanceTrackingEnabled(): bool
+    {
+        return $this->isTracingEnabled() && ($this->collectModuleConfig()['performance_tracking_enabled'] ?? false);
+    }
+
+    /**
+     * Get excluded Magento areas which should be not profiled.
+     *
+     * @return string[]
+     */
+    public function getPerformanceTrackingExcludedAreas(): array
+    {
+        return $this->collectModuleConfig()['performance_tracking_excluded_areas'] ?? ['adminhtml', 'crontab'];
+    }
+
+    /**
      * Is the script tag enabled?
      *
      * @return bool
      */
-    public function useScriptTag(): bool
+    public function useScriptTag()
     {
         return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_script_tag', ScopeInterface::SCOPE_STORE);
     }
