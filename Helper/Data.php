@@ -44,7 +44,8 @@ class Data extends AbstractHelper
         'traces_sample_rate'        => ['type' => 'float'],
         'ignore_transactions'       => ['type' => 'array'],
         'trace_propagation_targets' => ['type' => 'array'],
-        'profiles_sample_rate',     => ['type' => 'float'],
+        // https://docs.sentry.io/platforms/php/profiling/#enabling-profiling
+        'profiles_sample_rate'      => ['type' => 'float'],
         // https://docs.sentry.io/platforms/php/configuration/options/#transport-options
         'http_proxy'           => ['type' => 'string'],
         'http_connect_timeout' => ['type' => 'int'],
@@ -68,12 +69,12 @@ class Data extends AbstractHelper
         ...self::NATIVE_SENTRY_CONFIG_KEYS,
         'logrocket_key'                => ['type' => 'array'],
         'log_level'                    => ['type' => 'int'],
-        'errorexception_reporting'     => ['type' => 'int'], // Deprecated by error_types https://docs.sentry.io/platforms/php/configuration/options/#error_types
+        'errorexception_reporting'     => ['type' => 'int'], /* @deprecated by @see: error_types https://docs.sentry.io/platforms/php/configuration/options/#error_types */
         'mage_mode_development'        => ['type' => 'bool'],
         'environment'                  => ['type' => 'string'],
         'js_sdk_version'               => ['type' => 'string'],
         'tracing_enabled'              => ['type' => 'bool'],
-        'tracing_sample_rate'          => ['type' => 'float'],
+        'tracing_sample_rate'          => ['type' => 'float'], /* @deprecated by @see: traces_sample_rate https://docs.sentry.io/platforms/php/configuration/options/#error_types */
         'performance_tracking_enabled' => ['type' => 'bool'],
         'performance_tracking_excluded_areas' => ['type' => 'array'],
         'ignore_js_errors'             => ['type' => 'array'],
@@ -116,16 +117,6 @@ class Data extends AbstractHelper
     }
 
     /**
-     * Get sample rate for php profiling.
-     *
-     * @return float
-     */
-    public function getPhpProfileSampleRate(): float
-    {
-        return (float) ($this->collectModuleConfig()['profiles_sample_rate'] ?? 0);
-    }
-
-    /**
      * Whether tracing is enabled.
      */
     public function isTracingEnabled(): bool
@@ -138,7 +129,7 @@ class Data extends AbstractHelper
      */
     public function getTracingSampleRate(): float
     {
-        return (float) ($this->collectModuleConfig()['tracing_sample_rate'] ?? 0.2);
+        return (float) ($this->collectModuleConfig()['traces_sample_rate'] ?? $this->collectModuleConfig()['tracing_sample_rate'] ?? 0.2);
     }
 
     /**

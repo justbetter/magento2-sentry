@@ -125,7 +125,7 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="tracing_sample_rate" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
+                <field id="traces_sample_rate" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Tracing Sample Rate</label>
                     <validate>validate-not-negative-number validate-number</validate>
                     <depends>

@@ -53,7 +53,7 @@ class GlobalExceptionCatcher
 
         /** @var DataObject $config */
         $config = $this->dataObjectFactory->create();
-        $config->setData(array_filter(array_intersect_key($this->sentryHelper->collectModuleConfig(), SenteryHelper::NATIVE_SENTRY_CONFIG_KEYS)));
+        $config->setData(array_intersect_key($this->sentryHelper->collectModuleConfig(), SenteryHelper::NATIVE_SENTRY_CONFIG_KEYS));
 
         $config->setDsn($this->sentryHelper->getDSN());
         if ($release = $this->releaseIdentifier->getReleaseId()) {
@@ -85,17 +85,15 @@ class GlobalExceptionCatcher
 
         if ($this->sentryHelper->isPerformanceTrackingEnabled()) {
             $config->setTracesSampleRate($this->sentryHelper->getTracingSampleRate());
-        }
-
-        if ($rate = $this->sentryHelper->getPhpProfileSampleRate()) {
-            $config->setData('profiles_sample_rate', $rate);
+        } else {
+            $config->unsetTracesSampleRate(null);
         }
 
         $this->eventManager->dispatch('sentry_before_init', [
             'config' => $config,
         ]);
 
-        $this->sentryInteraction->initialize($config->getData());
+        $this->sentryInteraction->initialize(array_filter($config->getData()));
         $this->sentryPerformance->startTransaction($subject);
 
         try {
