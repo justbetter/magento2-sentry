@@ -40,12 +40,12 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'logrocket_key' => 'example/example',
     'environment' => null,
     'log_level' => \Monolog\Logger::WARNING,
-    'errorexception_reporting' => E_ALL,
+    'error_types' => E_ALL,
     'ignore_exceptions' => [],
     'mage_mode_development' => false,
     'js_sdk_version' => \JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION,
     'tracing_enabled' => true,
-    'tracing_sample_rate' => 0.5,
+    'traces_sample_rate' => 0.5,
     'disable_default_integrations' => [
         \Sentry\Integration\ModulesIntegration::class,
     ]
@@ -64,13 +64,13 @@ Next to that there are some configuration options under Stores > Configuration >
 | `dsn`                       | — | The DSN you got from Sentry for your project. You can find the DSN in the project settings under "Client Key (DSN)" |
 | `environment`               | — | Specify the environment under which the deployed version is running. Common values: production, staging, development. Helps differentiate errors between environments. |
 | `log_level`                 | `\Monolog\Logger::WARNING` | Specify from which logging level on Sentry should get the messages. |
-| `errorexception_reporting`  | `E_ALL` | If the Exception is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php), send the error to Sentry if it matches the error reporting. Uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php), e.g., `E_ERROR` | E_WARNING`. |
+| `error_types`  | `E_ALL` | If the Exception is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php), send the error to Sentry if it matches the error reporting. Uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php), e.g., `E_ERROR` | E_WARNING`. |
 | `ignore_exceptions`         | `[]` | If the class being thrown matches any in this list, do not send it to Sentry, e.g., `[\Magento\Framework\Exception\NoSuchEntityException::class]` |
 | `clean_stacktrace`          | `true` | Whether unnecessary files (like Interceptor.php, Proxy.php, and Factory.php) should be removed from the stacktrace. (They will not be removed if they threw the error.) |
 | `mage_mode_development`     | `false` | If set to true, you will receive issues in Sentry even if Magento is running in develop mode. |
 | `js_sdk_version`            | `\JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION` | If set, loads the explicit version of the JavaScript SDK of Sentry. |
 | `tracing_enabled`           | `false` | If set to true, tracing is enabled (bundle file is loaded automatically). |
-| `tracing_sample_rate`       | `0.2` | If tracing is enabled, set the sample rate. |
+| `traces_sample_rate`        | `0.2` | If tracing is enabled, set the sample rate. |
 | `performance_tracking_enabled` | `false` | if performance tracking is enabled, a performance report got generated for the request. |
 | `performance_tracking_excluded_areas` | `['adminhtml', 'crontab']` | if `performance_tracking_enabled` is enabled, we recommend to exclude the `adminhtml` & `crontab` area. |
 | `profiles_sample_rate` | `0` (disabled) | if this option is larger than 0 (zero), the module will create a profile of the request. Please note that you have to install [Excimer](https://www.mediawiki.org/wiki/Excimer) on your server to use profiling. [Sentry documentation](https://docs.sentry.io/platforms/php/profiling/). You have to enable tracing too. |
@@ -88,9 +88,9 @@ using the "Variables" in Adobe Commerce using the following variables:
 | `CONFIG__SENTRY__ENVIRONMENT__LOGROCKET_KEY`     | string  |
 | `CONFIG__SENTRY__ENVIRONMENT__ENVIRONMENT`       | string  |
 | `CONFIG__SENTRY__ENVIRONMENT__LOG_LEVEL`         | integer |
-| `CONFIG__SENTRY__ENVIRONMENT__ERROREXCEPTION_REPORTING` | integer |
+| `CONFIG__SENTRY__ENVIRONMENT__ERROR_TYPES`       | integer |
 | `CONFIG__SENTRY__ENVIRONMENT__IGNORE_EXCEPTIONS` | JSON array of classes |
-| `CONFIG__SENTRY__ENVIRONMENT__CLEAN_STACKTRACE` | boolean |
+| `CONFIG__SENTRY__ENVIRONMENT__CLEAN_STACKTRACE`  | boolean |
 | `CONFIG__SENTRY__ENVIRONMENT__MAGE_MODE_DEVELOPMENT` | string  |
 | `CONFIG__SENTRY__ENVIRONMENT__JS_SDK_VERSION`    | string  |
 | `CONFIG__SENTRY__ENVIRONMENT__TRACING_ENABLED`   | boolean |
@@ -121,6 +121,12 @@ public function execute(\Magento\Framework\Event\Observer $observer)
 ```
 
 Example: https://github.com/justbetter/magento2-sentry-filter-events
+
+This same thing is the case for
+| sentry_before_send | https://docs.sentry.io/platforms/php/configuration/options/#before_send |
+| sentry_before_send_transaction | https://docs.sentry.io/platforms/php/configuration/options/#before_send_transaction |
+| sentry_before_send_check_in | https://docs.sentry.io/platforms/php/configuration/options/#before_send_check_in |
+| sentry_before_breadcrumb | https://docs.sentry.io/platforms/php/configuration/options/#before_breadcrumb |
 
 ## Compatibility
 The module is tested on Magento version 2.4.x with sentry sdk version 3.x. feel free to fork this project or make a pull request.

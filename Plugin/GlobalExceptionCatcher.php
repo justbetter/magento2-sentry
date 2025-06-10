@@ -51,8 +51,32 @@ class GlobalExceptionCatcher
             return $proceed();
         }
 
+        $config = $this->prepareConfig();
+
+        $this->sentryInteraction->initialize(array_filter($config->getData()));
+        $this->sentryPerformance->startTransaction($subject);
+
+        try {
+            return $response = $proceed();
+        } catch (Throwable $exception) {
+            $this->sentryInteraction->captureException($exception);
+
+            throw $exception;
+        } finally {
+            $this->sentryPerformance->finishTransaction($response ?? 500);
+        }
+    }
+
+    /**
+     * Prepare all the config passed to sentry.
+     *
+     * @return DataObject
+     */
+    public function prepareConfig(): DataObject
+    {
         /** @var DataObject $config */
         $config = $this->dataObjectFactory->create();
+        $config->setData(array_intersect_key($this->sentryHelper->collectModuleConfig(), SentryHelper::NATIVE_SENTRY_CONFIG_KEYS));
 
         $config->setDsn($this->sentryHelper->getDSN());
         if ($release = $this->releaseIdentifier->getReleaseId()) {
@@ -62,6 +86,36 @@ class GlobalExceptionCatcher
         if ($environment = $this->sentryHelper->getEnvironment()) {
             $config->setEnvironment($environment);
         }
+
+        $config->setBeforeBreadcrumb(function (\Sentry\Breadcrumb $breadcrumb): ?\Sentry\Breadcrumb {
+            $data = $this->dataObjectFactory->create();
+            $data->setBreadcrumb($breadcrumb);
+            $this->eventManager->dispatch('sentry_before_breadcrumb', [
+                'sentry_breadcrumb' => $data,
+            ]);
+
+            return $data->getBreadcrumb();
+        });
+
+        $config->setBeforeSendTransaction(function (\Sentry\Event $transaction): ?\Sentry\Event {
+            $data = $this->dataObjectFactory->create();
+            $data->setTransaction($transaction);
+            $this->eventManager->dispatch('sentry_before_send_transaction', [
+                'sentry_transaction' => $data,
+            ]);
+
+            return $data->getTransaction();
+        });
+
+        $config->setBeforeSendCheckIn(function (\Sentry\Event $checkIn): ?\Sentry\Event {
+            $data = $this->dataObjectFactory->create();
+            $data->setCheckIn($checkIn);
+            $this->eventManager->dispatch('sentry_before_send_check_in', [
+                'sentry_check_in' => $data,
+            ]);
+
+            return $data->getCheckIn();
+        });
 
         $config->setBeforeSend(function (\Sentry\Event $event, ?\Sentry\EventHint $hint): ?\Sentry\Event {
             $data = $this->dataObjectFactory->create();
@@ -80,32 +134,18 @@ class GlobalExceptionCatcher
             static fn (IntegrationInterface $integration) => !in_array(get_class($integration), $disabledDefaultIntegrations)
         ));
 
-        $config->setIgnoreExceptions($this->sentryHelper->getIgnoreExceptions());
-        $config->setErrorTypes($this->sentryHelper->getErrorExceptionReporting());
+        $config->setErrorTypes($this->sentryHelper->getErrorTypes());
 
         if ($this->sentryHelper->isPerformanceTrackingEnabled()) {
             $config->setTracesSampleRate($this->sentryHelper->getTracingSampleRate());
-        }
-
-        if ($rate = $this->sentryHelper->getPhpProfileSampleRate()) {
-            $config->setData('profiles_sample_rate', $rate);
+        } else {
+            $config->unsetTracesSampleRate(null);
         }
 
         $this->eventManager->dispatch('sentry_before_init', [
             'config' => $config,
         ]);
 
-        $this->sentryInteraction->initialize($config->getData());
-        $this->sentryPerformance->startTransaction($subject);
-
-        try {
-            return $response = $proceed();
-        } catch (Throwable $exception) {
-            $this->sentryInteraction->captureException($exception);
-
-            throw $exception;
-        } finally {
-            $this->sentryPerformance->finishTransaction($response ?? 500);
-        }
+        return $config;
     }
 }
