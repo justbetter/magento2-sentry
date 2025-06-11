@@ -10,12 +10,11 @@ use JustBetter\Sentry\Model\SentryPerformance;
 use Magento\Cron\Model\Schedule;
 use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
-use Sentry\MonitorConfig;
-use Sentry\MonitorSchedule;
 
 class CronScheduleCheckIn
 {
     protected array $runningCheckins = [];
+
     /**
      * GlobalExceptionCatcher constructor.
      *
@@ -36,7 +35,7 @@ class CronScheduleCheckIn
      * Wrap launch, start watching for exceptions.
      *
      * @param Schedule $subject
-     * @param callable     $proceed
+     * @param callable $proceed
      *
      * @return \Magento\Framework\App\ResponseInterface
      */
