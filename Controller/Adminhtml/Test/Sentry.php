@@ -3,9 +3,9 @@
 namespace JustBetter\Sentry\Controller\Adminhtml\Test;
 
 use JustBetter\Sentry\Helper\Data;
-use Magento\Framework\Logger\Monolog;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\Logger\Monolog;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Result\PageFactory;
 use Psr\Log\LoggerInterface;
