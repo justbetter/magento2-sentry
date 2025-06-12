@@ -20,7 +20,7 @@
             </argument>
         </arguments>
     </type>
-        
+
     <type name="JustBetter\Sentry\Model\SentryLog">
         <arguments>
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
@@ -36,5 +36,10 @@
     </type>
     <type name="Magento\Framework\DB\Logger\LoggerProxy">
         <plugin name="sentry-profiling" type="JustBetter\Sentry\Plugin\Profiling\DbQueryLoggerPlugin" disabled="false" />
+    </type>
+
+    <!-- Cron Check-Ins -->
+    <type name="Magento\Cron\Model\Schedule">
+        <plugin name="sentry-cron-checkin" type="JustBetter\Sentry\Plugin\CronScheduleCheckIn" disabled="false"/>
     </type>
 </config>
