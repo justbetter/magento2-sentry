@@ -6,6 +6,7 @@ namespace JustBetter\Sentry\Model;
 
 // phpcs:disable Magento2.Functions.DiscouragedFunction
 
+use function Sentry\startTransaction;
 use JustBetter\Sentry\Helper\Data;
 use Laminas\Http\Response;
 use Magento\Framework\App\Area;
@@ -21,9 +22,9 @@ use Sentry\Tracing\SpanContext;
 use Sentry\Tracing\Transaction;
 use Sentry\Tracing\TransactionContext;
 use Sentry\Tracing\TransactionSource;
-use Throwable;
 
-use function Sentry\startTransaction;
+use Symfony\Component\Console\Command\Command;
+use Throwable;
 
 class SentryPerformance
 {
@@ -49,11 +50,11 @@ class SentryPerformance
     /**
      * Starts a new transaction.
      *
-     * @param AppInterface $app
+     * @param Command|AppInterface $app
      *
      * @return void
      */
-    public function startTransaction(AppInterface $app): void
+    public function startTransaction(Command|AppInterface $app): void
     {
         if (!$app instanceof Http) {
             // We only support profiling of http requests right now.

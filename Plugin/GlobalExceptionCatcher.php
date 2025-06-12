@@ -13,10 +13,18 @@ use Magento\Framework\DataObject;
 use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Sentry\Integration\IntegrationInterface;
+use Symfony\Component\Console\Command\Command;
 use Throwable;
 
+/**
+ * Catch all uncaught exceptions globally, and send them to Sentry.
+ *
+ * It wraps the launch and run methods of the application and command classes.
+ */
 class GlobalExceptionCatcher
 {
+    private bool $booted = false;
+
     /**
      * GlobalExceptionCatcher constructor.
      *
@@ -40,15 +48,58 @@ class GlobalExceptionCatcher
     /**
      * Wrap launch, start watching for exceptions.
      *
-     * @param AppInterface $subject
-     * @param callable     $proceed
+     * @param AppInterface  $subject
+     * @param callable      $proceed
+     * @param mixed         $args
      *
      * @return \Magento\Framework\App\ResponseInterface
      */
-    public function aroundLaunch(AppInterface $subject, callable $proceed)
+    public function aroundLaunch(AppInterface $subject, callable $proceed, ...$args)
     {
+        return $this->globalCatcher(
+            $subject,
+            $proceed,
+            ...$args
+        );
+    }
+
+    /**
+     * Wrap command run, start watching for exceptions.
+     *
+     * @param Command  $subject
+     * @param callable $proceed
+     * @param mixed    $args
+     *
+     * @return int
+     */
+    public function aroundRun(Command $subject, callable $proceed, ...$args)
+    {
+        return $this->globalCatcher(
+            $subject,
+            $proceed,
+            ...$args
+        );
+    }
+
+    /**
+     * Catch anything coming out of the proceed function.
+     *
+     * @param mixed    $subject
+     * @param callable $proceed
+     * @param mixed    $args
+     *
+     * @return mixed
+     */
+    public function globalCatcher($subject, $proceed, ...$args)
+    {
+        if ($this->booted) {
+            return $proceed(...$args);
+        }
+
+        $this->booted = true;
+
         if ((!$this->sentryHelper->isActive()) || (!$this->sentryHelper->isPhpTrackingEnabled())) {
-            return $proceed();
+            return $proceed(...$args);
         }
 
         $config = $this->prepareConfig();
@@ -57,7 +108,7 @@ class GlobalExceptionCatcher
         $this->sentryPerformance->startTransaction($subject);
 
         try {
-            return $response = $proceed();
+            return $response = $proceed(...$args);
         } catch (Throwable $exception) {
             $this->sentryInteraction->captureException($exception);
 

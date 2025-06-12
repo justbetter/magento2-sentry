@@ -7,6 +7,10 @@
         <plugin disabled="false" name="GlobalExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher"
                 sortOrder="0"/>
     </type>
+    <type name="Symfony\Component\Console\Command\Command">
+        <plugin disabled="false" name="CliExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher"
+                sortOrder="0"/>
+    </type>
 
     <type name="Magento\Customer\CustomerData\Customer">
         <plugin name="LogrocketCustomerInfo" type="JustBetter\Sentry\Plugin\LogrocketCustomerInfo"
@@ -20,7 +24,7 @@
             </argument>
         </arguments>
     </type>
-        
+
     <type name="JustBetter\Sentry\Model\SentryLog">
         <arguments>
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
