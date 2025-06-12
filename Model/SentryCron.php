@@ -19,8 +19,8 @@ class SentryCron
     /**
      * SentryLog constructor.
      *
-     * @param Data              $data
-     * @param Session           $customerSession
+     * @param Data    $data
+     * @param Session $customerSession
      */
     public function __construct(
         protected Data $data,
