@@ -1,8 +1,16 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <!-- Cannot use plugin https://github.com/magento/magento2/issues/14950 -->
-    <preference for="Magento\Framework\Logger\Monolog" type="JustBetter\Sentry\Plugin\MonologPlugin"/>
+    <type name="Monolog\Logger">
+        <plugin disabled="false" name="SentryMonologPlugin" type="JustBetter\Sentry\Plugin\MonologPlugin" sortOrder="10"/>
+    </type>
+
+    <type name="JustBetter\Sentry\Plugin\MonologPlugin">
+        <arguments>
+            <argument name="sentryHandler" xsi:type="object">JustBetter\Sentry\Logger\Handler\Sentry\Proxy</argument>
+        </arguments>
+    </type>
+
     <type name="Magento\Framework\AppInterface">
         <plugin disabled="false" name="GlobalExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher"
                 sortOrder="0"/>
