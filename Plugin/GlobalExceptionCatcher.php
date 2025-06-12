@@ -48,9 +48,9 @@ class GlobalExceptionCatcher
     /**
      * Wrap launch, start watching for exceptions.
      *
-     * @param AppInterface  $subject
-     * @param callable      $proceed
-     * @param mixed         $args
+     * @param AppInterface $subject
+     * @param callable     $proceed
+     * @param mixed        $args
      *
      * @return \Magento\Framework\App\ResponseInterface
      */

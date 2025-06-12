@@ -6,7 +6,6 @@ namespace JustBetter\Sentry\Model;
 
 // phpcs:disable Magento2.Functions.DiscouragedFunction
 
-use function Sentry\startTransaction;
 use JustBetter\Sentry\Helper\Data;
 use Laminas\Http\Response;
 use Magento\Framework\App\Area;
@@ -22,9 +21,10 @@ use Sentry\Tracing\SpanContext;
 use Sentry\Tracing\Transaction;
 use Sentry\Tracing\TransactionContext;
 use Sentry\Tracing\TransactionSource;
-
 use Symfony\Component\Console\Command\Command;
 use Throwable;
+
+use function Sentry\startTransaction;
 
 class SentryPerformance
 {
