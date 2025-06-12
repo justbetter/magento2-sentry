@@ -66,6 +66,7 @@ class SentryCron
             if (!isset($this->runningCheckins[$schedule->getId()])) {
                 $this->startCheckin($schedule, $monitorConfig);
             }
+
             return;
         } else {
             $this->finishCheckin($schedule, $monitorConfig);
@@ -81,12 +82,12 @@ class SentryCron
     public function startCheckin(Schedule $schedule, ?MonitorConfig $monitorConfig = null)
     {
         $this->runningCheckins[$schedule->getId()] = [
-            'started_at' => microtime(true),
+            'started_at'  => microtime(true),
             'check_in_id' => \Sentry\captureCheckIn(
                 slug: $schedule->getJobCode(),
                 status: CheckInStatus::inProgress(),
                 monitorConfig: $monitorConfig,
-            )
+            ),
         ];
     }
 
