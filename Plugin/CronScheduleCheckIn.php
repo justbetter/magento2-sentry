@@ -10,7 +10,7 @@ class CronScheduleCheckIn
     /**
      * CronScheduleCheckIn constructor.
      *
-     * @param SentryCron   $sentryCron
+     * @param SentryCron $sentryCron
      */
     public function __construct(
         private SentryCron $sentryCron
