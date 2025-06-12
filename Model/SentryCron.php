@@ -5,7 +5,6 @@ namespace JustBetter\Sentry\Model;
 use JustBetter\Sentry\Helper\Data;
 use Magento\Cron\Model\Schedule;
 use Magento\Customer\Model\Session;
-use Magento\Framework\App\State;
 use Sentry\CheckInStatus;
 use Sentry\MonitorConfig;
 use Sentry\MonitorSchedule;
@@ -22,21 +21,21 @@ class SentryCron
      *
      * @param Data              $data
      * @param Session           $customerSession
-     * @param State             $appState
-     * @param SentryInteraction $sentryInteraction
      */
     public function __construct(
         protected Data $data,
         protected Session $customerSession,
-        private State $appState,
-        private SentryInteraction $sentryInteraction,
     ) {
     }
 
+    /**
+     * Send the status of a cron schedule to Sentry.
+     *
+     * @param Schedule $schedule
+     */
     public function sendScheduleStatus(Schedule $schedule)
     {
-        if (
-            !$this->data->isActive() ||
+        if (!$this->data->isActive() ||
             !$this->data->isCronMonitoringEnabled() ||
             !in_array(
                 $schedule->getJobCode(),
@@ -55,9 +54,10 @@ class SentryCron
             return;
         }
 
+        /** @var array|null $cronExpressionArr */
         $cronExpressionArr = $schedule->getCronExprArr();
         $monitorConfig = null;
-        if (!empty($cronExpression)) {
+        if (!empty($cronExpressionArr)) {
             $cronExpression = implode(' ', $cronExpressionArr);
             $monitorConfig = new MonitorConfig(MonitorSchedule::crontab($cronExpression));
         }
@@ -72,6 +72,12 @@ class SentryCron
         }
     }
 
+    /**
+     * Start the check-in for a given schedule.
+     *
+     * @param Schedule           $schedule
+     * @param MonitorConfig|null $monitorConfig
+     */
     public function startCheckin(Schedule $schedule, ?MonitorConfig $monitorConfig = null)
     {
         $this->runningCheckins[$schedule->getId()] = [
@@ -84,6 +90,12 @@ class SentryCron
         ];
     }
 
+    /**
+     * Finish the check-in for a given schedule.
+     *
+     * @param Schedule           $schedule
+     * @param MonitorConfig|null $monitorConfig
+     */
     public function finishCheckin(Schedule $schedule, ?MonitorConfig $monitorConfig = null)
     {
         if (!isset($this->runningCheckins[$schedule->getId()])) {

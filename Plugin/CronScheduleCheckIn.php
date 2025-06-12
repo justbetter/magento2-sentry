@@ -2,32 +2,17 @@
 
 namespace JustBetter\Sentry\Plugin;
 
-use JustBetter\Sentry\Helper\Data as SentryHelper;
-use JustBetter\Sentry\Model\ReleaseIdentifier;
 use JustBetter\Sentry\Model\SentryCron;
-use JustBetter\Sentry\Model\SentryInteraction;
-use JustBetter\Sentry\Model\SentryPerformance;
 use Magento\Cron\Model\Schedule;
-use Magento\Framework\DataObjectFactory;
-use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
-use Sentry\MonitorConfig;
-use Sentry\MonitorSchedule;
 
 class CronScheduleCheckIn
 {
-    protected array $runningCheckins = [];
     /**
-     * GlobalExceptionCatcher constructor.
+     * CronScheduleCheckIn constructor.
      *
-     * @param SentryHelper          $sentryHelper
-     * @param ReleaseIdentifier     $releaseIdentifier
-     * @param SentryInteraction     $sentryInteraction
-     * @param EventManagerInterface $eventManager
-     * @param DataObjectFactory     $dataObjectFactory
-     * @param SentryPerformance     $sentryPerformance
+     * @param SentryCron   $sentryCron
      */
     public function __construct(
-        private SentryHelper $sentryHelper,
         private SentryCron $sentryCron
     ) {
     }
@@ -36,7 +21,9 @@ class CronScheduleCheckIn
      * Wrap launch, start watching for exceptions.
      *
      * @param Schedule $subject
-     * @param callable     $proceed
+     * @param callable $proceed
+     * @param mixed    $field
+     * @param mixed    $value
      *
      * @return \Magento\Framework\App\ResponseInterface
      */

@@ -118,11 +118,17 @@ class Data extends AbstractHelper
         return $this->collectModuleConfig()['dsn'];
     }
 
+    /**
+     * Whether cron monitoring (check-in events) is enabled.
+     */
     public function isCronMonitoringEnabled(): bool
     {
         return $this->collectModuleConfig()['cron_monitoring_enabled'] ?? false;
     }
 
+    /**
+     * Get a list of crons to track.
+     */
     public function getTrackCrons(): array
     {
         return $this->collectModuleConfig()['track_crons'] ?? [];
