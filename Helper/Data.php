@@ -2,6 +2,7 @@
 
 namespace JustBetter\Sentry\Helper;
 
+use DomainException;
 use ErrorException;
 use JustBetter\Sentry\Block\SentryScript;
 use Magento\Framework\App\Area;
@@ -13,6 +14,7 @@ use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\State;
 use Magento\Framework\DB\Adapter\TableNotFoundException;
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\RuntimeException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
@@ -353,9 +355,14 @@ class Data extends AbstractHelper
     /**
      * Get the current store.
      */
-    public function getStore()
+    public function getStore(): ?\Magento\Store\Api\Data\StoreInterface
     {
-        return $this->storeManager->getStore();
+        try {
+            return $this->storeManager->getStore();
+        } catch (DomainException|NoSuchEntityException $e) {
+            // If the store is not available, return null
+            return null;
+        }
     }
 
     /**
