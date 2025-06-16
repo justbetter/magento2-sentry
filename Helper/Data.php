@@ -227,20 +227,22 @@ class Data extends AbstractHelper
         try {
             $this->config[$storeId]['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled', ScopeInterface::SCOPE_STORE)
                 ?? $this->deploymentConfig->get('sentry') !== null;
-        } catch (TableNotFoundException|FileSystemException|RuntimeException $e) {
+        } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException $e) {
             $this->config[$storeId]['enabled'] = $this->deploymentConfig->get('sentry') !== null;
         }
 
-        foreach ($this->configKeys as $value => $config) {
+        foreach ($this->configKeys as $key => $config) {
             try {
-                $this->config[$storeId][$value] = $this->processConfigValue(
-                    $this->scopeConfig->getValue('sentry/environment/'.$value, ScopeInterface::SCOPE_STORE)
-                        ?? $this->deploymentConfig->get('sentry/'.$value),
-                    $config
-                );
-            } catch (TableNotFoundException|FileSystemException|RuntimeException $e) {
-                $this->config[$storeId][$value] = null;
+                $value = $this->scopeConfig->getValue('sentry/environment/'.$key, ScopeInterface::SCOPE_STORE) 
+                    ?? $this->deploymentConfig->get('sentry/'.$key);
+            } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException $e) {
+                $value = $this->deploymentConfig->get('sentry/'.$key);
             }
+
+            $this->config[$storeId][$key] = $this->processConfigValue(
+                $value,
+                $config
+            );
         }
 
         return $this->config[$storeId];
