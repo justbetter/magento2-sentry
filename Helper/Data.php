@@ -233,7 +233,7 @@ class Data extends AbstractHelper
 
         foreach ($this->configKeys as $key => $config) {
             try {
-                $value = $this->scopeConfig->getValue('sentry/environment/'.$key, ScopeInterface::SCOPE_STORE) 
+                $value = $this->scopeConfig->getValue('sentry/environment/'.$key, ScopeInterface::SCOPE_STORE)
                     ?? $this->deploymentConfig->get('sentry/'.$key);
             } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException $e) {
                 $value = $this->deploymentConfig->get('sentry/'.$key);
