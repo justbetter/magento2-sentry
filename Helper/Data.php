@@ -2,6 +2,7 @@
 
 namespace JustBetter\Sentry\Helper;
 
+use DomainException;
 use ErrorException;
 use JustBetter\Sentry\Block\SentryScript;
 use Magento\Framework\App\Area;
@@ -13,6 +14,7 @@ use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\State;
 use Magento\Framework\DB\Adapter\TableNotFoundException;
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\RuntimeException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
@@ -225,20 +227,22 @@ class Data extends AbstractHelper
         try {
             $this->config[$storeId]['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled', ScopeInterface::SCOPE_STORE)
                 ?? $this->deploymentConfig->get('sentry') !== null;
-        } catch (TableNotFoundException|FileSystemException|RuntimeException $e) {
+        } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException $e) {
             $this->config[$storeId]['enabled'] = $this->deploymentConfig->get('sentry') !== null;
         }
 
-        foreach ($this->configKeys as $value => $config) {
+        foreach ($this->configKeys as $key => $config) {
             try {
-                $this->config[$storeId][$value] = $this->processConfigValue(
-                    $this->scopeConfig->getValue('sentry/environment/'.$value, ScopeInterface::SCOPE_STORE)
-                        ?? $this->deploymentConfig->get('sentry/'.$value),
-                    $config
-                );
-            } catch (TableNotFoundException|FileSystemException|RuntimeException $e) {
-                $this->config[$storeId][$value] = null;
+                $value = $this->scopeConfig->getValue('sentry/environment/'.$key, ScopeInterface::SCOPE_STORE)
+                    ?? $this->deploymentConfig->get('sentry/'.$key);
+            } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException $e) {
+                $value = $this->deploymentConfig->get('sentry/'.$key);
             }
+
+            $this->config[$storeId][$key] = $this->processConfigValue(
+                $value,
+                $config
+            );
         }
 
         return $this->config[$storeId];
@@ -353,9 +357,14 @@ class Data extends AbstractHelper
     /**
      * Get the current store.
      */
-    public function getStore()
+    public function getStore(): ?\Magento\Store\Api\Data\StoreInterface
     {
-        return $this->storeManager->getStore();
+        try {
+            return $this->storeManager->getStore();
+        } catch (DomainException|NoSuchEntityException $e) {
+            // If the store is not available, return null
+            return null;
+        }
     }
 
     /**

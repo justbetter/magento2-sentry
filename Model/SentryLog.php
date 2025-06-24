@@ -137,9 +137,9 @@ class SentryLog
 
         $scope->setTag('mage_mode', $this->data->getAppState());
         $scope->setTag('version', $this->data->getMagentoVersion());
-        $scope->setTag('website_id', $store ? $store->getWebsiteId() : null);
-        $scope->setTag('store_id', $store ? $store->getStoreId() : null);
-        $scope->setTag('store_code', $store ? $store->getCode() : null);
+        $scope->setTag('website_id', (string) $store?->getWebsiteId());
+        $scope->setTag('store_id', (string) $store?->getId());
+        $scope->setTag('store_code', (string) $store?->getCode());
 
         if (false === empty($customTags)) {
             foreach ($customTags as $tag => $value) {
