@@ -276,7 +276,7 @@ class Data extends AbstractHelper
      */
     public function processConfigValue(mixed $value, array $config): mixed
     {
-        if ($value === null) {
+        if (empty($value)) {
             return null;
         }
 
