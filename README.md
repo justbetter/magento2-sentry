@@ -18,6 +18,8 @@ Depending on the log level configured in the backend of magento 2, notifications
 - Show detailed context on thrown exceptions (Like Magento user/api consumer id)
 - Easily control which events get sent to Sentry
 - Backend and frontend error reporting
+- Performance sampling
+- Cron Monitoring
 - Session replay
 - Logrocket support
 - Sentry feedback form after an error
