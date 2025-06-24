@@ -194,6 +194,19 @@ class GlobalExceptionCatcher
             $config->unsetTracesSampleRate(null);
         }
 
+        $config->setInAppExclude([
+            ...($config->getInAppExclude() ?? []),
+            'cron.php',
+            'get.php',
+            'health_check.php',
+            'index.php',
+            'static.php',
+            'bin/magento',
+            'app/autoload.php',
+            'app/bootstrap.php',
+            'app/functions.php',
+        ]);
+
         $this->eventManager->dispatch('sentry_before_init', [
             'config' => $config,
         ]);
