@@ -1,4 +1,14 @@
 # Changelog
+## [4.3.0] - 2025-06-24
+### Fixed
+    * Catch The default website isnt defined when getting store (https://github.com/justbetter/magento2-sentry/pull/188)
+### Added
+    * Add sentry logger by hooking into monolog setHandlers (https://github.com/justbetter/magento2-sentry/pull/184)
+    * Added support for cron check-ins (https://github.com/justbetter/magento2-sentry/pull/182)
+## [4.2.0] - 2025-06-11
+### Added
+    * Add performance sampling by (https://github.com/justbetter/magento2-sentry/pull/178) thanks to https://github.com/indykoning, https://github.com/barryvdh and https://github.com/rommelfreddy
+    * Automatically pass all supported sentry config (https://github.com/justbetter/magento2-sentry/pull/177)
 ## [4.1.0] - 2025-06-04
 ### Added
     * Clean up the Magento stacktrace before sending it to Sentry (https://github.com/justbetter/magento2-sentry/pull/171)
