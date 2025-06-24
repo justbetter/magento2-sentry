@@ -23,7 +23,7 @@ use Throwable;
  */
 class GlobalExceptionCatcher
 {
-    /** @var bool Wether the globalExceptionHandler is already attached */
+    /** @var bool Whether the globalExceptionHandler is already attached */
     private bool $booted = false;
 
     /**
