@@ -82,6 +82,8 @@ class Data extends AbstractHelper
         'ignore_js_errors'                    => ['type' => 'array'],
         'disable_default_integrations'        => ['type' => 'array'],
         'clean_stacktrace'                    => ['type' => 'bool'],
+        'cron_monitoring_enabled'             => ['type' => 'bool'],
+        'track_crons'                         => ['type' => 'array'],
     ];
 
     /**
@@ -116,6 +118,22 @@ class Data extends AbstractHelper
     public function getDSN()
     {
         return $this->collectModuleConfig()['dsn'];
+    }
+
+    /**
+     * Whether cron monitoring (check-in events) is enabled.
+     */
+    public function isCronMonitoringEnabled(): bool
+    {
+        return $this->collectModuleConfig()['cron_monitoring_enabled'] ?? false;
+    }
+
+    /**
+     * Get a list of crons to track.
+     */
+    public function getTrackCrons(): array
+    {
+        return $this->collectModuleConfig()['track_crons'] ?? [];
     }
 
     /**
