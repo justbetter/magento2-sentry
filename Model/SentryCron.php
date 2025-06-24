@@ -14,7 +14,7 @@ class SentryCron
     /**
      * @var array
      */
-    protected $runningCheckins = [];
+    protected array $runningCheckins = [];
 
     /**
      * SentryLog constructor.
