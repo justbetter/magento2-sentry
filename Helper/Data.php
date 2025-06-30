@@ -20,6 +20,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Throwable;
+use Zend_Db_Adapter_Exception;
 
 class Data extends AbstractHelper
 {
@@ -245,7 +246,7 @@ class Data extends AbstractHelper
         try {
             $this->config[$storeId]['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled', ScopeInterface::SCOPE_STORE)
                 ?? $this->deploymentConfig->get('sentry') !== null;
-        } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException $e) {
+        } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException|Zend_Db_Adapter_Exception $e) {
             $this->config[$storeId]['enabled'] = $this->deploymentConfig->get('sentry') !== null;
         }
 
@@ -253,7 +254,7 @@ class Data extends AbstractHelper
             try {
                 $value = $this->scopeConfig->getValue('sentry/environment/'.$key, ScopeInterface::SCOPE_STORE)
                     ?? $this->deploymentConfig->get('sentry/'.$key);
-            } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException $e) {
+            } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException|Zend_Db_Adapter_Exception $e) {
                 $value = $this->deploymentConfig->get('sentry/'.$key);
             }
 
@@ -379,7 +380,7 @@ class Data extends AbstractHelper
     {
         try {
             return $this->storeManager->getStore();
-        } catch (DomainException|NoSuchEntityException $e) {
+        } catch (DomainException|Zend_Db_Adapter_Exception|NoSuchEntityException $e) {
             // If the store is not available, return null
             return null;
         }
