@@ -5,31 +5,33 @@
 if (!$block->canUseScriptTag($block->getNameInLayout())) {
     return;
 }
-
-$bundleFile = 'bundle';
-
-if ($block->isTracingEnabled()) {
-    $bundleFile .= '.tracing';
-}
-
-if ($block->useSessionReplay()) {
-    $bundleFile .= '.replay';
-}
-
-$bundleFile .= '.min.js';
-
-$remoteFile = sprintf(
-    'https://browser.sentry-cdn.com/%s/%s',
-    $escaper->escapeHtmlAttr($block->getJsSdkVersion()),
-    $bundleFile
-);
 ?>
 
-<?= /* @noEscape */ $secureRenderer->renderTag('script', ['src' => $remoteFile, 'crossorigin' => 'anonymous']) ?>
-<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $block->getLayout()->createBlock(\JustBetter\Sentry\Block\SentryScript::class)
-    ->setTemplate('JustBetter_Sentry::script/sentry_init.phtml')
-    ->toHtml(), false); ?>
+<?php if ($this->useScriptTag()): ?>
+    <?php
+        $bundleFile = 'bundle';
 
+    if ($block->isTracingEnabled()) {
+        $bundleFile .= '.tracing';
+    }
+
+    if ($block->useSessionReplay()) {
+        $bundleFile .= '.replay';
+    }
+
+        $bundleFile .= '.min.js';
+
+        $remoteFile = sprintf(
+            'https://browser.sentry-cdn.com/%s/%s',
+            $escaper->escapeHtmlAttr($block->getJsSdkVersion()),
+            $bundleFile
+        );
+    ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', ['src' => $remoteFile, 'crossorigin' => 'anonymous']) ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $block->getLayout()->createBlock(\JustBetter\Sentry\Block\SentryScript::class)
+        ->setTemplate('JustBetter_Sentry::script/sentry_init.phtml')
+        ->toHtml(), false); ?>
+<?php endif; ?>
 <?php if ($block->useLogRocket()): ?>
     <?= /* @noEscape */ $secureRenderer->renderTag('script', ['src' => 'https://cdn.lr-ingest.io/LogRocket.min.js', 'crossorigin' => 'anonymous']) ?>
     <?= /* @noEscape */ $secureRenderer->renderTag(
@@ -51,4 +53,8 @@ $remoteFile = sprintf(
     <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $block->getLayout()->createBlock(\JustBetter\Sentry\Block\SentryScript::class)
         ->setTemplate('JustBetter_Sentry::script/logrocket_init.phtml')
         ->toHtml(), false); ?>
+<?php endif; ?>
+
+<?php if ($block->isSpotlightEnabled()): ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', ['src' => 'https://unpkg.com/@spotlightjs/overlay@latest/dist/sentry-spotlight.iife.js', 'crossorigin' => 'anonymous']) ?>
 <?php endif; ?>

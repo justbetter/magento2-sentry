@@ -39,6 +39,14 @@ class SentryRelatedCspCollector implements PolicyCollectorInterface
             );
         }
 
+        if ($this->dataHelper->isSpotlightEnabled()) {
+            $policies[] = new FetchPolicy(
+                'script-src',
+                false,
+                ['https://unpkg.com/@spotlightjs/']
+            );
+        }
+
         if ($this->dataHelper->useLogrocket()) {
             $policies[] = new FetchPolicy(
                 'script-src',

@@ -80,6 +80,8 @@ Next to that there are some configuration options under Stores > Configuration >
 | `disable_default_integrations` | `[]` | Provide a list of FQCN of default integrations you do not want to use. [List of default integrations](https://github.com/getsentry/sentry-php/tree/master/src/Integration).|
 | `cron_monitoring_enabled` | `false` | Wether to enable [cron check ins](https://docs.sentry.io/platforms/php/crons/#upserting-cron-monitors) |
 | `track_crons` | `[]` | Cron handles of crons to track with cron monitoring, [Sentry only supports 6 check-ins per minute](https://docs.sentry.io/platforms/php/crons/#rate-limits) Magento does many more. |
+| `spotlight` | `false` | Enable [Spotlight](https://spotlightjs.com/) on the page |
+| `spotlight_url` | - | Override the [Sidecar url](https://spotlightjs.com/sidecar/) |
 
 ### Configuration for Adobe Cloud
 Since Adobe Cloud doesn't allow you to add manually add content to the `env.php` file, the configuration can be done
