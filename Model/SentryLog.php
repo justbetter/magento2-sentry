@@ -12,7 +12,6 @@ use Sentry\EventHint;
 use Sentry\ExceptionMechanism;
 use Sentry\Stacktrace;
 use Sentry\State\Scope as SentryScope;
-use function Sentry\logger;
 
 class SentryLog
 {
