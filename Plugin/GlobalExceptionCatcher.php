@@ -130,6 +130,7 @@ class GlobalExceptionCatcher
         $config = $this->dataObjectFactory->create();
         $config->setData(array_intersect_key($this->sentryHelper->collectModuleConfig(), SentryHelper::NATIVE_SENTRY_CONFIG_KEYS));
 
+        $config->setSpotlight($this->sentryHelper->isSpotlightEnabled());
         $config->setDsn($this->sentryHelper->getDSN());
         if ($release = $this->releaseIdentifier->getReleaseId()) {
             $config->setRelease((string) $release);

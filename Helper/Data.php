@@ -53,6 +53,9 @@ class Data extends AbstractHelper
         'http_proxy'           => ['type' => 'string'],
         'http_connect_timeout' => ['type' => 'int'],
         'http_timeout'         => ['type' => 'int'],
+        // https://spotlightjs.com/
+        'spotlight'            => ['type' => 'bool'],
+        'spotlight_url'        => ['type' => 'string'],
     ];
 
     /**
@@ -142,6 +145,16 @@ class Data extends AbstractHelper
     public function isTracingEnabled(): bool
     {
         return $this->collectModuleConfig()['tracing_enabled'] ?? false;
+    }
+
+    /**
+     * Whether spotlight is enabled.
+     *
+     * Enabling spotlight will implicitly enable override production mode.
+     */
+    public function isSpotlightEnabled(): bool
+    {
+        return ($this->collectModuleConfig()['spotlight'] ?? false) && !$this->isProductionMode();
     }
 
     /**
@@ -320,7 +333,7 @@ class Data extends AbstractHelper
         if (!$configEnabled) {
             $reasons[] = __('Module is not enabled in config.');
         }
-        if (!$dsnNotEmpty) {
+        if (!$dsnNotEmpty && !$this->isSpotlightEnabled()) {
             $reasons[] = __('DSN is empty.');
         }
         if (!$productionMode) {
@@ -359,7 +372,7 @@ class Data extends AbstractHelper
     {
         $config = $this->collectModuleConfig();
 
-        return isset($config['mage_mode_development']) && $config['mage_mode_development'];
+        return (isset($config['mage_mode_development']) && $config['mage_mode_development']) || $this->isSpotlightEnabled();
     }
 
     /**
