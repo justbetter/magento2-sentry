@@ -74,7 +74,7 @@ class Data extends AbstractHelper
      */
     protected $configKeys = [
         ...self::NATIVE_SENTRY_CONFIG_KEYS,
-        'logrocket_key'                       => ['type' => 'array'],
+        'logrocket_key'                       => ['type' => 'string'],
         'log_level'                           => ['type' => 'int'],
         'errorexception_reporting'            => ['type' => 'int'], /* @deprecated by @see: error_types https://docs.sentry.io/platforms/php/configuration/options/#error_types */
         'mage_mode_development'               => ['type' => 'bool'],
