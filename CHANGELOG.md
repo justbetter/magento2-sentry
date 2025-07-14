@@ -1,4 +1,11 @@
 # Changelog
+## [4.4.0] - 2025-07-14
+### Fixed
+    * Catch zend db adapter errors when database is missing (https://github.com/justbetter/magento2-sentry/pull/193)
+    * Fix logrocket key type
+### Added
+    * Add the ability to select job codes using regex (https://github.com/justbetter/magento2-sentry/pull/197)
+    * Added support for [spotlight](https://spotlightjs.com/) (https://github.com/justbetter/magento2-sentry/pull/195)
 ## [4.3.0] - 2025-06-24
 ### Fixed
     * Catch The default website isnt defined when getting store (https://github.com/justbetter/magento2-sentry/pull/188)
