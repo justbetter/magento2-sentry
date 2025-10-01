@@ -19,7 +19,7 @@
                     <label>Enable PHP Tracking</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="enable_performance_tracking" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="performance_tracking_enabled" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Enable Performance Tracking</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
@@ -37,6 +37,9 @@
                 <field id="enable_session_replay" translate="label" type="select" sortOrder="40" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Enable Session Replay</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enable_script_tag">1</field>
+                    </depends>
                 </field>
                 <field id="replay_session_sample_rate" translate="label" type="text" sortOrder="50" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Session Sample Rate</label>
@@ -80,7 +83,7 @@
                         <field id="use_logrocket">1</field>
                     </depends>
                 </field>
-                <field id="sent_sentry" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="send_sentry_test" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <button_label>Send Sentry test event</button_label>
                     <button_url>justbetter_sentry/test/sentry</button_url>
                     <frontend_model>JustBetter\Sentry\Block\Adminhtml\System\Config\Button</frontend_model>
@@ -118,7 +121,7 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="tracing_enabled" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
+                <field id="tracing_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Tracing Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>

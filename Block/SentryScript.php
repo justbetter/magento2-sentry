@@ -47,10 +47,6 @@ class SentryScript extends Template
             return true;
         }
 
-        if ($this->useSessionReplay()) {
-            return true;
-        }
-
         if ($this->isSpotlightEnabled()) {
             return true;
         }

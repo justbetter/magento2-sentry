@@ -64,24 +64,31 @@ Next to that there are some configuration options under Stores > Configuration >
 | Name | Default | Description |
 |---|---|---|
 | `dsn`                       | — | The DSN you got from Sentry for your project. You can find the DSN in the project settings under "Client Key (DSN)" |
-| `environment`               | — | Specify the environment under which the deployed version is running. Common values: production, staging, development. Helps differentiate errors between environments. |
-| `log_level`                 | `\Monolog\Logger::WARNING` | Specify from which logging level on Sentry should get the messages. |
-| `error_types`  | `E_ALL` | If the Exception is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php), send the error to Sentry if it matches the error reporting. Uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php), e.g., `E_ERROR` | E_WARNING`. |
-| `ignore_exceptions`         | `[]` | If the class being thrown matches any in this list, do not send it to Sentry, e.g., `[\Magento\Framework\Exception\NoSuchEntityException::class]` |
-| `clean_stacktrace`          | `true` | Whether unnecessary files (like Interceptor.php, Proxy.php, and Factory.php) should be removed from the stacktrace. (They will not be removed if they threw the error.) |
 | `mage_mode_development`     | `false` | If set to true, you will receive issues in Sentry even if Magento is running in develop mode. |
-| `js_sdk_version`            | `\JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION` | If set, loads the explicit version of the JavaScript SDK of Sentry. |
+| `environment`               | — | Specify the environment under which the deployed version is running. Common values: production, staging, development. Helps differentiate errors between environments. |
+| `max_breadcrumbs`           | `100` | This variable controls the total amount of breadcrumbs that should be captured. |
+| `attach_stacktrace`         | `false` | When enabled, stack traces are automatically attached to all messages logged. Even if they are not exceptions. |
+| `prefixes`                  | - | A list of prefixes that should be stripped from the filenames of captured stacktraces to make them relative. |
+| `sample_rate`               | `1.0` | Configures the sample rate for error events, in the range of 0.0 to 1.0. |
+| `ignore_exceptions`         | `[]` | If the class being thrown matches any in this list, do not send it to Sentry, e.g., `[\Magento\Framework\Exception\NoSuchEntityException::class]` |
+| `error_types`               | `E_ALL` | If the Exception is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php), send the error to Sentry if it matches the error reporting. Uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php), e.g., `E_ERROR` | E_WARNING`. |
+| `log_level`                 | `\Monolog\Logger::WARNING` | Specify from which logging level on Sentry should get the [messages](https://docs.sentry.io/platforms/php/usage/#capturing-messages). |
+| `clean_stacktrace`          | `true` | Whether unnecessary files (like Interceptor.php, Proxy.php, and Factory.php) should be removed from the stacktrace. (They will not be removed if they threw the error.) |
 | `tracing_enabled`           | `false` | If set to true, tracing is enabled (bundle file is loaded automatically). |
-| `traces_sample_rate`        | `0.2` | If tracing is enabled, set the sample rate. |
-| `performance_tracking_enabled` | `false` | if performance tracking is enabled, a performance report got generated for the request. |
+| `traces_sample_rate`        | `0.2` | If tracing is enabled, set the sample rate. A number between 0 and 1, controlling the percentage chance a given transaction will be sent to Sentry. |
+| `profiles_sample_rate`      | `0` (disabled) | if this option is larger than 0 (zero), the module will create a profile of the request. Please note that you have to install [Excimer](https://www.mediawiki.org/wiki/Excimer) on your server to use profiling. [Sentry documentation](https://docs.sentry.io/platforms/php/profiling/). You have to enable tracing too. |
+| `performance_tracking_enabled` | `false` | if performance tracking is enabled, a performance report gets generated for the request. |
 | `performance_tracking_excluded_areas` | `['adminhtml', 'crontab']` | if `performance_tracking_enabled` is enabled, we recommend to exclude the `adminhtml` & `crontab` area. |
-| `profiles_sample_rate` | `0` (disabled) | if this option is larger than 0 (zero), the module will create a profile of the request. Please note that you have to install [Excimer](https://www.mediawiki.org/wiki/Excimer) on your server to use profiling. [Sentry documentation](https://docs.sentry.io/platforms/php/profiling/). You have to enable tracing too. |
+| `enable_logs`               | `false` | This option enables the [logging integration](https://sentry.io/product/logs/), which allows the SDK to capture logs and send them to Sentry. |
+| `logger_log_level`          | `\Monolog\Logger::NOTICE` | If the logging integration is enabled, specify from which logging level the logger should log |
+| `js_sdk_version`            | `\JustBetter\Sentry\Block\SentryScript::CURRENT_VERSION` | If set, loads the explicit version of the JavaScript SDK of Sentry. |
 | `ignore_js_errors`          | `[]` | Array of JavaScript error messages which should not be sent to Sentry. (See also `ignoreErrors` in [Sentry documentation](https://docs.sentry.io/clients/javascript/config/)) |
 | `disable_default_integrations` | `[]` | Provide a list of FQCN of default integrations you do not want to use. [List of default integrations](https://github.com/getsentry/sentry-php/tree/master/src/Integration).|
 | `cron_monitoring_enabled` | `false` | Wether to enable [cron check ins](https://docs.sentry.io/platforms/php/crons/#upserting-cron-monitors) |
 | `track_crons` | `[]` | Cron handles of crons to track with cron monitoring, [Sentry only supports 6 check-ins per minute](https://docs.sentry.io/platforms/php/crons/#rate-limits) Magento does many more. |
 | `spotlight` | `false` | Enable [Spotlight](https://spotlightjs.com/) on the page |
-| `spotlight_url` | - | Override the [Sidecar url](https://spotlightjs.com/sidecar/) |
+| `spotlight_url` | - | Override the [Sidecar url](https://spotlightjs.com/sidecar/) |         
+                   
 
 ### Configuration for Adobe Cloud
 Since Adobe Cloud doesn't allow you to add manually add content to the `env.php` file, the configuration can be done
@@ -91,18 +98,23 @@ using the "Variables" in Adobe Commerce using the following variables:
 |--------------------------------------------------|---------|
 | `CONFIG__SENTRY__ENVIRONMENT__ENABLED`           | boolean |
 | `CONFIG__SENTRY__ENVIRONMENT__DSN`               | string  |
-| `CONFIG__SENTRY__ENVIRONMENT__LOGROCKET_KEY`     | string  |
-| `CONFIG__SENTRY__ENVIRONMENT__ENVIRONMENT`       | string  |
-| `CONFIG__SENTRY__ENVIRONMENT__LOG_LEVEL`         | integer |
-| `CONFIG__SENTRY__ENVIRONMENT__ERROR_TYPES`       | integer |
-| `CONFIG__SENTRY__ENVIRONMENT__IGNORE_EXCEPTIONS` | JSON array of classes |
-| `CONFIG__SENTRY__ENVIRONMENT__CLEAN_STACKTRACE`  | boolean |
 | `CONFIG__SENTRY__ENVIRONMENT__MAGE_MODE_DEVELOPMENT` | string  |
-| `CONFIG__SENTRY__ENVIRONMENT__JS_SDK_VERSION`    | string  |
+| `CONFIG__SENTRY__ENVIRONMENT__ENVIRONMENT`       | string  |
+| `CONFIG__SENTRY__ENVIRONMENT__MAX_BREADCRUMBS`   | integer  |
+| `CONFIG__SENTRY__ENVIRONMENT__ATTACH_STACKTRACE` | boolean  |
+| `CONFIG__SENTRY__ENVIRONMENT__SAMPLE_RATE`       | float  |
+| `CONFIG__SENTRY__ENVIRONMENT__IGNORE_EXCEPTIONS` | JSON array of classes |
+| `CONFIG__SENTRY__ENVIRONMENT__ERROR_TYPES`       | integer |
+| `CONFIG__SENTRY__ENVIRONMENT__LOG_LEVEL`         | integer |
+| `CONFIG__SENTRY__ENVIRONMENT__CLEAN_STACKTRACE`  | boolean |
 | `CONFIG__SENTRY__ENVIRONMENT__TRACING_ENABLED`   | boolean |
-| `CONFIG__SENTRY__ENVIRONMENT__TRACING_SAMPLE_RATE` | float   |
-| `CONFIG__SENTRY__ENVIRONMENT__TRACING_PERFORMANCE_TRACKING_ENABLED` | boolean |
-| `CONFIG__SENTRY__ENVIRONMENT__TRACING_PERFORMANCE_TRACKING_EXCLUDED_AREAS` | boolean |
+| `CONFIG__SENTRY__ENVIRONMENT__TRACES_SAMPLE_RATE`| float |
+| `CONFIG__SENTRY__ENVIRONMENT__PROFILES_SAMPLE_RATE`| float |
+| `CONFIG__SENTRY__ENVIRONMENT__PERFORMANCE_TRACKING_ENABLED` | boolean |
+| `CONFIG__SENTRY__ENVIRONMENT__PERFORMANCE_TRACKING_EXCLUDED_AREAS` | boolean |
+| `CONFIG__SENTRY__ENVIRONMENT__ENABLE_LOGS`       | boolean |
+| `CONFIG__SENTRY__ENVIRONMENT__LOGGER_LOG_LEVEL`  | boolean |
+| `CONFIG__SENTRY__ENVIRONMENT__JS_SDK_VERSION`    | string  |
 | `CONFIG__SENTRY__ENVIRONMENT__IGNORE_JS_ERRORS`  | JSON array of error messages |
 
 The following configuration settings can be overridden in the Magento admin. This is limited to ensure that changes to
@@ -135,9 +147,10 @@ This same thing is the case for
 | sentry_before_send_transaction | https://docs.sentry.io/platforms/php/configuration/options/#before_send_transaction |
 | sentry_before_send_check_in    | https://docs.sentry.io/platforms/php/configuration/options/#before_send_check_in    |
 | sentry_before_breadcrumb       | https://docs.sentry.io/platforms/php/configuration/options/#before_breadcrumb       |
+| sentry_before_send_log         | https://docs.sentry.io/platforms/php/configuration/options/#before_send_log         |
 
 ## Compatibility
-The module is tested on Magento version 2.4.x with sentry sdk version 3.x. feel free to fork this project or make a pull request.
+The module is tested on Magento version 2.4.x with sentry sdk version 4.x. feel free to fork this project or make a pull request.
 
 ## Ideas, bugs or suggestions?
 Please create a [issue](https://github.com/justbetter/magento2-sentry/issues) or a [pull request](https://github.com/justbetter/magento2-sentry/pulls).
