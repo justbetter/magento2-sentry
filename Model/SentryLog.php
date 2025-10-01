@@ -51,8 +51,8 @@ class SentryLog
 
         if ($config['enable_logs'] && $logLevel >= $config['logger_log_level']) {
             match ($logLevel) {
-                Monolog::DEBUG => \Sentry\Logger()->debug($message, $context),
-                Monolog::INFO => \Sentry\Logger()->info($message, $context),
+                Monolog::DEBUG   => \Sentry\Logger()->debug($message, $context),
+                Monolog::INFO    => \Sentry\Logger()->info($message, $context),
                 Monolog::WARNING => \Sentry\Logger()->warn($message, $context),
                 Monolog::ERROR, MONOLOG::CRITICAL => \Sentry\Logger()->error($message, $context),
                 Monolog::ALERT, MONOLOG::EMERGENCY => \Sentry\Logger()->fatal($message, $context),
