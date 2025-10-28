@@ -2,6 +2,7 @@
 
 namespace JustBetter\Sentry\Helper;
 
+use JustBetter\Sentry\Helper\Data;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\ObjectManager;
@@ -36,6 +37,7 @@ class Version extends AbstractHelper
     public function __construct(
         private \Magento\Framework\App\State $appState,
         private \Magento\Framework\App\View\Deployment\Version\StorageInterface $versionStorage,
+        private Data $sentryHelper,
         ?DeploymentConfig $deploymentConfig = null
     ) {
         $this->deploymentConfig = $deploymentConfig ?: ObjectManager::getInstance()->get(DeploymentConfig::class);
@@ -44,9 +46,9 @@ class Version extends AbstractHelper
     /**
      * Retrieve deployment version of static files.
      *
-     * @return string
+     * @return string|null
      */
-    public function getValue()
+    public function getValue(): ?string
     {
         if (!$this->cachedValue) {
             $this->cachedValue = $this->readValue($this->appState->getMode());
@@ -60,10 +62,14 @@ class Version extends AbstractHelper
      *
      * @param string $appMode
      *
-     * @return string
+     * @return string|null
      */
-    protected function readValue($appMode)
+    protected function readValue($appMode): ?string
     {
+        if($version = $this->sentryHelper->getRelease()) {
+            return $version;
+        }
+
         $result = $this->versionStorage->load();
         if (!$result) {
             if ($appMode == \Magento\Framework\App\State::MODE_PRODUCTION
@@ -73,9 +79,7 @@ class Version extends AbstractHelper
             ) {
                 $this->getLogger()->critical('Can not load static content version.');
 
-                throw new \UnexpectedValueException(
-                    'Unable to retrieve deployment version of static files from the file system.'
-                );
+                return null;
             }
             $result = $this->generateVersion();
             $this->versionStorage->save((string) $result);

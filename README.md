@@ -64,6 +64,7 @@ Next to that there are some configuration options under Stores > Configuration >
 | Name | Default | Description |
 |---|---|---|
 | `dsn`                       | — | The DSN you got from Sentry for your project. You can find the DSN in the project settings under "Client Key (DSN)" |
+| `release`                   | the current deployed version in `deployed_version.txt` | Specify the current release version. Example with dynamic git hash: `trim(exec('git --git-dir ' . base_path('.git') . ' log --pretty="%h" -n1 HEAD'))` |
 | `environment`               | — | Specify the environment under which the deployed version is running. Common values: production, staging, development. Helps differentiate errors between environments. |
 | `log_level`                 | `\Monolog\Logger::WARNING` | Specify from which logging level on Sentry should get the messages. |
 | `error_types`  | `E_ALL` | If the Exception is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php), send the error to Sentry if it matches the error reporting. Uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php), e.g., `E_ERROR` | E_WARNING`. |
