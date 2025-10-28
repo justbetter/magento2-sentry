@@ -2,7 +2,6 @@
 
 namespace JustBetter\Sentry\Helper;
 
-use JustBetter\Sentry\Helper\Data;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\ObjectManager;
