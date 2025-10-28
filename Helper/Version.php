@@ -2,7 +2,6 @@
 
 namespace JustBetter\Sentry\Helper;
 
-use JustBetter\Sentry\Helper\Data;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\ObjectManager;
@@ -66,7 +65,7 @@ class Version extends AbstractHelper
      */
     protected function readValue($appMode): ?string
     {
-        if($version = $this->sentryHelper->getRelease()) {
+        if ($version = $this->sentryHelper->getRelease()) {
             return $version;
         }
 
