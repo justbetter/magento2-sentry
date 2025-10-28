@@ -32,6 +32,7 @@ class Version extends AbstractHelper
     /**
      * @param \Magento\Framework\App\State                                    $appState
      * @param \Magento\Framework\App\View\Deployment\Version\StorageInterface $versionStorage
+     * @param Data                                                            $sentryHelper
      * @param DeploymentConfig|null                                           $deploymentConfig
      */
     public function __construct(
@@ -66,7 +67,7 @@ class Version extends AbstractHelper
      */
     protected function readValue($appMode): ?string
     {
-        if($version = $this->sentryHelper->getRelease()) {
+        if ($version = $this->sentryHelper->getRelease()) {
             return $version;
         }
 
