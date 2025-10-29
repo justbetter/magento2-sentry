@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace JustBetter\Sentry\Plugin\Profiling;
 
 /**
- * Auto instrument cache retrieval, saving and removing
+ * Auto instrument cache retrieval, saving and removing.
  */
 class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
 {
     /**
-     * Instrument the cache.get operation around the load
+     * Instrument the cache.get operation around the load.
      *
      * @param string $identifier
      *
@@ -41,11 +41,11 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
             ]);
         } else {
             $span->setData([
-                'cache.hit' => true,
+                'cache.hit'       => true,
                 'cache.item_size' => is_string($result) ? strlen($result) : null,
             ]);
         }
-        
+
         $span->finish();
         \Sentry\SentrySdk::getCurrentHub()->setSpan($parentSpan);
 
@@ -53,11 +53,11 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
     }
 
     /**
-     * Instrument the cache.put operation around the save
+     * Instrument the cache.put operation around the save.
      *
-     * @param string $data
-     * @param string $identifier
-     * @param array $tags
+     * @param string        $data
+     * @param string        $identifier
+     * @param array         $tags
      * @param int|bool|null $lifeTime
      *
      * @return bool
@@ -72,9 +72,9 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
         $context = \Sentry\Tracing\SpanContext::make()
             ->setOp('cache.put')
             ->setData([
-                'cache.key' => $identifier,
+                'cache.key'  => $identifier,
                 'cache.tags' => $tags,
-                'cache.ttl' => $lifeTime
+                'cache.ttl'  => $lifeTime,
             ])
             ->setDescription($identifier)
             ->setOrigin('auto.cache');
@@ -91,7 +91,7 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
     }
 
     /**
-     * Instrument the cache.remove operation around the remove
+     * Instrument the cache.remove operation around the remove.
      *
      * @param string $identifier
      *
@@ -124,10 +124,11 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
     }
 
     /**
-     * Instrument the cache.remove operation around the clean
+     * Instrument the cache.remove operation around the clean.
      *
      * @param string $mode
-     * @param array $tags
+     * @param array  $tags
+     *
      * @return bool
      */
     public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, array $tags = [])
@@ -136,14 +137,14 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
         if ($parentSpan === null) {
             return parent::clean($mode, $tags);
         }
-        
+
         $context = \Sentry\Tracing\SpanContext::make()
             ->setOp('cache.remove')
             ->setData([
                 'cache.mode' => $mode,
                 'cache.tags' => $tags,
             ])
-            ->setDescription($mode . ' ' . implode(',', $tags))
+            ->setDescription($mode.' '.implode(',', $tags))
             ->setOrigin('auto.cache');
 
         $span = $parentSpan->startChild($context);

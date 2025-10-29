@@ -10,10 +10,10 @@ class Factory extends \Magento\Framework\App\Cache\Frontend\Factory
 {
     /**
      * @param ObjectManagerInterface $objectManager
-     * @param Filesystem $filesystem
-     * @param ResourceConnection $resource
-     * @param array $enforcedOptions
-     * @param array $decorators
+     * @param Filesystem             $filesystem
+     * @param ResourceConnection     $resource
+     * @param array                  $enforcedOptions
+     * @param array                  $decorators
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
