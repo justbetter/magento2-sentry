@@ -64,6 +64,7 @@ Next to that there are some configuration options under Stores > Configuration >
 | Name | Default | Description |
 |---|---|---|
 | `dsn`                       | — | The DSN you got from Sentry for your project. You can find the DSN in the project settings under "Client Key (DSN)" |
+| `release`                   | the current deployed version in `deployed_version.txt` | Specify the current release version. Example with dynamic git hash: `trim(exec('git --git-dir ' . BP . '/.git' . ' log --pretty="%h" -n1 HEAD'))` |
 | `mage_mode_development`     | `false` | If set to true, you will receive issues in Sentry even if Magento is running in develop mode. |
 | `environment`               | — | Specify the environment under which the deployed version is running. Common values: production, staging, development. Helps differentiate errors between environments. |
 | `max_breadcrumbs`           | `100` | This variable controls the total amount of breadcrumbs that should be captured. |

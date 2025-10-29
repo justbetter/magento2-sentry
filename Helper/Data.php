@@ -30,6 +30,7 @@ class Data extends AbstractHelper
     public const NATIVE_SENTRY_CONFIG_KEYS = [
         // https://docs.sentry.io/platforms/php/configuration/options/#core-options
         'dsn'                   => ['type' => 'string'],
+        'release'               => ['type' => 'string'],
         'environment'           => ['type' => 'string'],
         'max_breadcrumbs'       => ['type' => 'int'],
         'attach_stacktrace'     => ['type' => 'bool'],
@@ -126,6 +127,16 @@ class Data extends AbstractHelper
     public function getDSN()
     {
         return $this->collectModuleConfig()['dsn'];
+    }
+
+    /**
+     * Get the sentry release.
+     *
+     * @return string|null
+     */
+    public function getRelease(): ?string
+    {
+        return $this->collectModuleConfig()['release'];
     }
 
     /**
