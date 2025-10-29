@@ -37,6 +37,7 @@ class Data extends AbstractHelper
         'server_name'           => ['type' => 'string'],
         'in_app_include'        => ['type' => 'array'],
         'in_app_exclude'        => ['type' => 'array'],
+        'prefixes'              => ['type' => 'array'],
         'max_request_body_size' => ['type' => 'string'],
         'max_value_length'      => ['type' => 'int'],
         // https://docs.sentry.io/platforms/php/configuration/options/#error-monitoring-options
@@ -50,6 +51,8 @@ class Data extends AbstractHelper
         'trace_propagation_targets' => ['type' => 'array'],
         // https://docs.sentry.io/platforms/php/profiling/#enabling-profiling
         'profiles_sample_rate'      => ['type' => 'float'],
+        // https://docs.sentry.io/platforms/php/configuration/options/#logs-options
+        'enable_logs'               => ['type' => 'bool'],
         // https://docs.sentry.io/platforms/php/configuration/options/#transport-options
         'http_proxy'           => ['type' => 'string'],
         'http_connect_timeout' => ['type' => 'int'],
@@ -76,6 +79,7 @@ class Data extends AbstractHelper
         ...self::NATIVE_SENTRY_CONFIG_KEYS,
         'logrocket_key'                       => ['type' => 'string'],
         'log_level'                           => ['type' => 'int'],
+        'logger_log_level'                    => ['type' => 'int', 'default' => \Monolog\Logger::WARNING],
         'errorexception_reporting'            => ['type' => 'int'], /* @deprecated by @see: error_types https://docs.sentry.io/platforms/php/configuration/options/#error_types */
         'mage_mode_development'               => ['type' => 'bool'],
         'js_sdk_version'                      => ['type' => 'string'],
@@ -291,7 +295,7 @@ class Data extends AbstractHelper
     public function processConfigValue(mixed $value, array $config): mixed
     {
         if ($value === null) {
-            return null;
+            return $config['default'] ?? null;
         }
 
         return match ($config['type']) {

@@ -33,7 +33,7 @@ class SentryCron
      *
      * @param Schedule $schedule
      */
-    public function sendScheduleStatus(Schedule $schedule)
+    public function sendScheduleStatus(Schedule $schedule): void
     {
         if (!$this->data->isActive() ||
             !$this->data->isCronMonitoringEnabled() ||
@@ -84,7 +84,7 @@ class SentryCron
      * @param Schedule           $schedule
      * @param MonitorConfig|null $monitorConfig
      */
-    public function startCheckin(Schedule $schedule, ?MonitorConfig $monitorConfig = null)
+    public function startCheckin(Schedule $schedule, ?MonitorConfig $monitorConfig = null): void
     {
         $this->runningCheckins[$schedule->getId()] = [
             'started_at'  => microtime(true),
@@ -102,7 +102,7 @@ class SentryCron
      * @param Schedule           $schedule
      * @param MonitorConfig|null $monitorConfig
      */
-    public function finishCheckin(Schedule $schedule, ?MonitorConfig $monitorConfig = null)
+    public function finishCheckin(Schedule $schedule, ?MonitorConfig $monitorConfig = null): void
     {
         if (!isset($this->runningCheckins[$schedule->getId()])) {
             return;
