@@ -8,6 +8,7 @@ use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\SessionException;
+use Magento\Framework\Logger\Monolog;
 use Sentry\EventHint;
 use Sentry\ExceptionMechanism;
 use Sentry\Stacktrace;
@@ -43,10 +44,21 @@ class SentryLog
      * @param int               $logLevel
      * @param array             $context
      */
-    public function send($message, $logLevel, $context = [])
+    public function send($message, $logLevel, $context = []): void
     {
         $config = $this->data->collectModuleConfig();
         $customTags = [];
+
+        if ($config['enable_logs'] && $logLevel >= $config['logger_log_level']) {
+            match ($logLevel) {
+                Monolog::DEBUG   => \Sentry\Logger()->debug($message, $context),
+                Monolog::INFO    => \Sentry\Logger()->info($message, $context),
+                Monolog::WARNING => \Sentry\Logger()->warn($message, $context),
+                Monolog::ERROR, MONOLOG::CRITICAL => \Sentry\Logger()->error($message, $context),
+                Monolog::ALERT, MONOLOG::EMERGENCY => \Sentry\Logger()->fatal($message, $context),
+                default => \Sentry\Logger()->info($message, $context)
+            };
+        }
 
         if ($logLevel < (int) $config['log_level']) {
             return;
@@ -146,5 +158,13 @@ class SentryLog
                 $scope->setTag($tag, $value);
             }
         }
+    }
+
+    /**
+     * Send the logs to Sentry if there are any.
+     */
+    public function __destruct()
+    {
+        \Sentry\Logger()->flush();
     }
 }

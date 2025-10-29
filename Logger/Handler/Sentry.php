@@ -34,12 +34,7 @@ if (Logger::API < 3) {
          */
         public function isHandling(array $record): bool
         {
-            $config = $this->sentryHelper->collectModuleConfig();
-            if ($config['log_level']) {
-                $this->setLevel($config['log_level']);
-            }
-
-            return parent::isHandling($record) && $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
+            return $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
         }
 
         /**
@@ -79,12 +74,7 @@ if (Logger::API < 3) {
          */
         public function isHandling(LogRecord $record): bool
         {
-            $config = $this->sentryHelper->collectModuleConfig();
-            if ($config['log_level']) {
-                $this->setLevel($config['log_level']);
-            }
-
-            return parent::isHandling($record) && $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
+            return $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
         }
 
         /**

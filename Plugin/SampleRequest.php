@@ -26,7 +26,7 @@ class SampleRequest
      *
      * @param ResponseInterface $response
      */
-    public function beforeSendResponse(ResponseInterface $response)
+    public function beforeSendResponse(ResponseInterface $response): void
     {
         $this->sentryPerformance->finishTransaction($response);
     }
