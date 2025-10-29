@@ -8,3 +8,4 @@ parameters:
         - Test/*
         - Logger/Handler/Sentry.php
     level: 5
+    treatPhpDocTypesAsCertain: false
