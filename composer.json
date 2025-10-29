@@ -24,7 +24,7 @@
   "license": "MIT",
   "require": {
     "php": ">=8.0",
-    "sentry/sentry": "^4.4",
+    "sentry/sentry": "^4.9",
     "monolog/monolog": ">=2.7.0|^3.0",
     "magento/framework": ">=103.0.7",
     "magento/module-csp": "*",

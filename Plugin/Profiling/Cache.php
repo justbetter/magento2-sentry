@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace JustBetter\Sentry\Plugin\Profiling;
 
+use Sentry\SentrySdk;
+use Sentry\Tracing\SpanContext;
+
 /**
  * Auto instrument cache retrieval, saving and removing.
  */
@@ -18,12 +21,12 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
      */
     public function load($identifier)
     {
-        $parentSpan = \Sentry\SentrySdk::getCurrentHub()->getSpan();
+        $parentSpan = SentrySdk::getCurrentHub()->getSpan();
         if ($parentSpan === null) {
             return parent::load($identifier);
         }
 
-        $context = \Sentry\Tracing\SpanContext::make()
+        $context = SpanContext::make()
             ->setOp('cache.get')
             ->setData([
                 'cache.key' => $identifier,
@@ -31,7 +34,7 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
             ->setDescription($identifier)
             ->setOrigin('auto.cache');
         $span = $parentSpan->startChild($context);
-        \Sentry\SentrySdk::getCurrentHub()->setSpan($span);
+        SentrySdk::getCurrentHub()->setSpan($span);
 
         $result = parent::load($identifier);
 
@@ -47,7 +50,7 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
         }
 
         $span->finish();
-        \Sentry\SentrySdk::getCurrentHub()->setSpan($parentSpan);
+        SentrySdk::getCurrentHub()->setSpan($parentSpan);
 
         return $result;
     }
@@ -64,12 +67,12 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
      */
     public function save($data, $identifier, array $tags = [], $lifeTime = null)
     {
-        $parentSpan = \Sentry\SentrySdk::getCurrentHub()->getSpan();
+        $parentSpan = SentrySdk::getCurrentHub()->getSpan();
         if ($parentSpan === null) {
             return parent::save($data, $identifier, $tags, $lifeTime);
         }
 
-        $context = \Sentry\Tracing\SpanContext::make()
+        $context = SpanContext::make()
             ->setOp('cache.put')
             ->setData([
                 'cache.key'  => $identifier,
@@ -80,12 +83,12 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
             ->setOrigin('auto.cache');
 
         $span = $parentSpan->startChild($context);
-        \Sentry\SentrySdk::getCurrentHub()->setSpan($span);
+        SentrySdk::getCurrentHub()->setSpan($span);
 
         $result = parent::save($data, $identifier, $tags, $lifeTime);
 
         $span->finish();
-        \Sentry\SentrySdk::getCurrentHub()->setSpan($parentSpan);
+        SentrySdk::getCurrentHub()->setSpan($parentSpan);
 
         return $result;
     }
@@ -99,12 +102,12 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
      */
     public function remove($identifier)
     {
-        $parentSpan = \Sentry\SentrySdk::getCurrentHub()->getSpan();
+        $parentSpan = SentrySdk::getCurrentHub()->getSpan();
         if ($parentSpan === null) {
             return parent::remove($identifier);
         }
 
-        $context = \Sentry\Tracing\SpanContext::make()
+        $context = SpanContext::make()
             ->setOp('cache.remove')
             ->setData([
                 'cache.key' => $identifier,
@@ -113,12 +116,12 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
             ->setOrigin('auto.cache');
 
         $span = $parentSpan->startChild($context);
-        \Sentry\SentrySdk::getCurrentHub()->setSpan($span);
+        SentrySdk::getCurrentHub()->setSpan($span);
 
         $result = parent::remove($identifier);
 
         $span->finish();
-        \Sentry\SentrySdk::getCurrentHub()->setSpan($parentSpan);
+        SentrySdk::getCurrentHub()->setSpan($parentSpan);
 
         return $result;
     }
@@ -133,12 +136,12 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
      */
     public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, array $tags = [])
     {
-        $parentSpan = \Sentry\SentrySdk::getCurrentHub()->getSpan();
+        $parentSpan = SentrySdk::getCurrentHub()->getSpan();
         if ($parentSpan === null) {
             return parent::clean($mode, $tags);
         }
 
-        $context = \Sentry\Tracing\SpanContext::make()
+        $context = SpanContext::make()
             ->setOp('cache.remove')
             ->setData([
                 'cache.mode' => $mode,
@@ -148,12 +151,12 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
             ->setOrigin('auto.cache');
 
         $span = $parentSpan->startChild($context);
-        \Sentry\SentrySdk::getCurrentHub()->setSpan($span);
+        SentrySdk::getCurrentHub()->setSpan($span);
 
         $result = parent::clean($mode, $tags);
 
         $span->finish();
-        \Sentry\SentrySdk::getCurrentHub()->setSpan($parentSpan);
+        SentrySdk::getCurrentHub()->setSpan($parentSpan);
 
         return $result;
     }
