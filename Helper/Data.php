@@ -86,6 +86,7 @@ class Data extends AbstractHelper
         'js_sdk_version'                      => ['type' => 'string'],
         'tracing_enabled'                     => ['type' => 'bool'],
         'tracing_sample_rate'                 => ['type' => 'float'], /* @deprecated by @see: traces_sample_rate https://docs.sentry.io/platforms/php/configuration/options/#error_types */
+        'traces_sample_rate_cli'              => ['type' => 'float'],
         'performance_tracking_enabled'        => ['type' => 'bool'],
         'performance_tracking_excluded_areas' => ['type' => 'array'],
         'ignore_js_errors'                    => ['type' => 'array'],
@@ -179,6 +180,14 @@ class Data extends AbstractHelper
     public function getTracingSampleRate(): float
     {
         return (float) ($this->collectModuleConfig()['traces_sample_rate'] ?? $this->collectModuleConfig()['tracing_sample_rate'] ?? 0.2);
+    }
+
+    /**
+     * Get sample rate for tracing in CLI.
+     */
+    public function getTracingSampleRateCli(): float
+    {
+        return (float) ($this->collectModuleConfig()['traces_sample_rate_cli'] ?? $this->getTracingSampleRate());
     }
 
     /**
@@ -451,7 +460,7 @@ class Data extends AbstractHelper
      */
     public function getPerformanceTrackingExcludedAreas(): array
     {
-        return $this->collectModuleConfig()['performance_tracking_excluded_areas'] ?? ['adminhtml', 'crontab'];
+        return $this->collectModuleConfig()['performance_tracking_excluded_areas'] ?? [Area::AREA_ADMINHTML, Area::AREA_CRONTAB];
     }
 
     /**

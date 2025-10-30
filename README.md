@@ -77,6 +77,7 @@ Next to that there are some configuration options under Stores > Configuration >
 | `clean_stacktrace`          | `true` | Whether unnecessary files (like Interceptor.php, Proxy.php, and Factory.php) should be removed from the stacktrace. (They will not be removed if they threw the error.) |
 | `tracing_enabled`           | `false` | If set to true, tracing is enabled (bundle file is loaded automatically). |
 | `traces_sample_rate`        | `0.2` | If tracing is enabled, set the sample rate. A number between 0 and 1, controlling the percentage chance a given transaction will be sent to Sentry. |
+| `traces_sample_rate_cli`    | The value of `traces_sample_rate` | If tracing is enabled, set the sample rate for CLI. A number between 0 and 1, controlling the percentage chance a given transaction will be sent to Sentry. |
 | `profiles_sample_rate`      | `0` (disabled) | if this option is larger than 0 (zero), the module will create a profile of the request. Please note that you have to install [Excimer](https://www.mediawiki.org/wiki/Excimer) on your server to use profiling. [Sentry documentation](https://docs.sentry.io/platforms/php/profiling/). You have to enable tracing too. |
 | `performance_tracking_enabled` | `false` | if performance tracking is enabled, a performance report gets generated for the request. |
 | `performance_tracking_excluded_areas` | `['adminhtml', 'crontab']` | if `performance_tracking_enabled` is enabled, we recommend to exclude the `adminhtml` & `crontab` area. |

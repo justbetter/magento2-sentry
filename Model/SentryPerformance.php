@@ -22,6 +22,8 @@ use Sentry\Tracing\Transaction;
 use Sentry\Tracing\TransactionContext;
 use Sentry\Tracing\TransactionSource;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
 use function Sentry\startTransaction;
@@ -51,16 +53,38 @@ class SentryPerformance
      * Starts a new transaction.
      *
      * @param Command|AppInterface $app
+     * @param mixed                $args
      *
      * @return void
      */
-    public function startTransaction(Command|AppInterface $app): void
+    public function startTransaction(Command|AppInterface $app, ...$args): void
     {
-        if (!$app instanceof Http) {
-            // We only support profiling of http requests right now.
+        if ($this->transaction !== null) {
+            // Do not start a transaction if one is already runnning.
             return;
         }
 
+        if ($app instanceof Http) {
+            $this->startHttpTransaction($app, ...$args);
+
+            return;
+        }
+        if ($app instanceof Command) {
+            $this->startCommandTransaction($app, ...$args);
+
+            return;
+        }
+    }
+
+    /**
+     * Starts a new HTTP transaction.
+     *
+     * @param Http $app
+     *
+     * @return void
+     */
+    public function startHttpTransaction(Http $app): void
+    {
         $requestStartTime = $this->request->getServer('REQUEST_TIME_FLOAT', microtime(true));
 
         $context = TransactionContext::fromHeaders(
@@ -94,15 +118,55 @@ class SentryPerformance
     }
 
     /**
+     * Starts a new Command transaction.
+     *
+     * @param Command         $command
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return void
+     */
+    public function startCommandTransaction(Command $command, InputInterface $input, OutputInterface $output): void
+    {
+        $requestStartTime = microtime(true);
+        $context = TransactionContext::make();
+        $context->setName('bin/magento '.($input->__toString() ?: $command->getName()));
+        $context->setSource(TransactionSource::task());
+        $context->setStartTimestamp($requestStartTime);
+
+        $context->setData([
+            'command'   => $command->getName(),
+            'arguments' => $input->getArguments(),
+            'options'   => $input->getOptions(),
+        ]);
+
+        // Start the transaction
+        $transaction = startTransaction($context);
+
+        // Do not sample long running tasks, individual jobs are sampled if the initiator was sampled.
+        if (in_array($command->getName(), ['queue:consumers:start'])) {
+            $transaction->setSampled(false);
+        }
+
+        // If this transaction is not sampled, don't set it either and stop doing work from this point on
+        if (!$transaction->getSampled()) {
+            return;
+        }
+
+        $this->transaction = $transaction;
+        SentrySdk::getCurrentHub()->setSpan($transaction);
+    }
+
+    /**
      * Finish the transaction. this will send the transaction (and the profile) to Sentry.
      *
-     * @param ResponseInterface|int $statusCode
+     * @param ResponseInterface|int|null $statusCode
      *
      * @throws LocalizedException
      *
      * @return void
      */
-    public function finishTransaction(ResponseInterface|int $statusCode): void
+    public function finishTransaction(ResponseInterface|int|null $statusCode = null): void
     {
         if ($this->transaction === null) {
             return;
@@ -111,9 +175,9 @@ class SentryPerformance
         try {
             $state = $this->objectManager->get(State::class);
             $areaCode = $state->getAreaCode();
-        } catch (LocalizedException) {
-            // we wont track transaction without an area
-            return;
+        } catch (LocalizedException $e) {
+            // Default area is global.
+            $areaCode = Area::AREA_GLOBAL;
         }
 
         if (in_array($areaCode, $this->helper->getPerformanceTrackingExcludedAreas())) {
@@ -128,7 +192,7 @@ class SentryPerformance
             $this->transaction->setHttpStatus($statusCode);
         }
 
-        if (in_array($state->getAreaCode(), [Area::AREA_FRONTEND, Area::AREA_ADMINHTML, Area::AREA_WEBAPI_REST])) {
+        if (in_array($areaCode, [Area::AREA_FRONTEND, Area::AREA_ADMINHTML, Area::AREA_WEBAPI_REST, Area::AREA_WEBAPI_SOAP, Area::AREA_GRAPHQL])) {
             if (!empty($this->request->getFullActionName())) {
                 $this->transaction->setName(strtoupper($this->request->getMethod()).' '.$this->request->getFullActionName('/'));
             }
@@ -144,7 +208,7 @@ class SentryPerformance
                 ]
             ));
         } else {
-            $this->transaction->setOp($state->getAreaCode());
+            $this->transaction->setOp($areaCode);
         }
 
         try {
