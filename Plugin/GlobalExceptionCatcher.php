@@ -170,6 +170,16 @@ class GlobalExceptionCatcher
             return $data->getCheckIn();
         });
 
+        $config->setBeforeSendLog(function (\Sentry\Logs\Log $log): ?\Sentry\Logs\Log {
+            $data = $this->dataObjectFactory->create();
+            $data->setLog($log);
+            $this->eventManager->dispatch('sentry_before_send_log', [
+                'sentry_log' => $data,
+            ]);
+
+            return $data->getLog();
+        });
+
         $config->setBeforeSend(function (\Sentry\Event $event, ?\Sentry\EventHint $hint): ?\Sentry\Event {
             $data = $this->dataObjectFactory->create();
             $data->setEvent($event);

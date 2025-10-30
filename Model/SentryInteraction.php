@@ -16,15 +16,18 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\ObjectManager\ConfigInterface;
 use ReflectionClass;
+use Sentry\ClientBuilder;
+use Sentry\SentrySdk;
 use Sentry\State\Scope;
 use Throwable;
 
 use function Sentry\captureException;
 use function Sentry\configureScope;
-use function Sentry\init;
 
 class SentryInteraction
 {
+    public const SDK_IDENTIFIER = 'sentry.php.magento';
+
     /**
      * @var ?UserContextInterface
      */
@@ -55,7 +58,10 @@ class SentryInteraction
      */
     public function initialize($config): void
     {
-        init($config);
+        $client = ClientBuilder::create($config)
+            ->setSdkIdentifier(static::SDK_IDENTIFIER);
+
+        SentrySdk::init()->bindClient($client->getClient());
     }
 
     /**

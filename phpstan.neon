@@ -7,5 +7,8 @@ parameters:
         - vendor
         - Test/*
         - Logger/Handler/Sentry.php
-    level: 5
+    level: 6
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue
     treatPhpDocTypesAsCertain: false

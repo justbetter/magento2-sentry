@@ -24,7 +24,7 @@
   "license": "MIT",
   "require": {
     "php": ">=8.0",
-    "sentry/sentry": "^4.9",
+    "sentry/sentry": "^4.13",
     "monolog/monolog": ">=2.7.0|^3.0",
     "magento/framework": ">=103.0.7",
     "magento/module-csp": "*",
@@ -79,7 +79,6 @@
   },
   "require-dev": {
     "bitexpert/phpstan-magento": "^0.32.0",
-    "magento/magento-coding-standard": "^34",
-    "phpstan/phpstan": "^1.12"
+    "magento/magento-coding-standard": "^34"
   }
 }

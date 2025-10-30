@@ -26,7 +26,7 @@ class SentryRelatedCspCollector implements PolicyCollectorInterface
             return $policies;
         }
 
-        if ($this->dataHelper->useScriptTag() || $this->dataHelper->useSessionReplay()) {
+        if ($this->dataHelper->useScriptTag()) {
             $policies[] = new FetchPolicy(
                 'script-src',
                 false,
