@@ -106,6 +106,8 @@ class QueuePlugin
             return [$envelope];
         }
 
+        $transaction->setStatus(\Sentry\Tracing\SpanStatus::ok());
+
         $transaction->finish();
         unset($this->transactions[$properties['message_id']]);
         if ($this->parentSpan) {
