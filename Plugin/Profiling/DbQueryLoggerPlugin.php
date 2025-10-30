@@ -29,6 +29,7 @@ class DbQueryLoggerPlugin
             SpanContext::make()
                 ->setOp('db.sql.query')
                 ->setStartTimestamp(microtime(true))
+                ->setOrigin('auto.db')
         );
     }
 

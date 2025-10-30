@@ -35,7 +35,8 @@ class TemplatePlugin
                 'block_class' => get_class($subject),
                 'module'      => $subject->getModuleName(),
                 'template'    => $fileName,
-            ]);
+            ])
+            ->setOrigin('auto.template');
 
         $tracingDto = SentryPerformance::traceStart($context);
 
