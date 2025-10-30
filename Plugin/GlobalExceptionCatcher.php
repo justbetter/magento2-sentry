@@ -106,7 +106,7 @@ class GlobalExceptionCatcher
         $config = $this->prepareConfig();
 
         $this->sentryInteraction->initialize(array_filter($config->getData()));
-        $this->sentryPerformance->startTransaction($subject);
+        $this->sentryPerformance->startTransaction($subject, ...$args);
 
         try {
             return $response = $proceed(...$args);
@@ -200,7 +200,11 @@ class GlobalExceptionCatcher
         $config->setErrorTypes($this->sentryHelper->getErrorTypes());
 
         if ($this->sentryHelper->isPerformanceTrackingEnabled()) {
-            $config->setTracesSampleRate($this->sentryHelper->getTracingSampleRate());
+            $config->setTracesSampleRate(
+                php_sapi_name() === 'cli' ?
+                    $this->sentryHelper->getTracingSampleRateCli() :
+                    $this->sentryHelper->getTracingSampleRate()
+            );
         } else {
             $config->unsetTracesSampleRate(null);
         }
@@ -223,5 +227,13 @@ class GlobalExceptionCatcher
         ]);
 
         return $config;
+    }
+
+    /**
+     * Ensure transactions are finished and cleaned up when unexpectedly exiting.
+     */
+    public function __destruct()
+    {
+        $this->sentryPerformance->finishTransaction();
     }
 }
