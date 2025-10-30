@@ -10,16 +10,16 @@ use Sentry\Tracing\Span;
 
 class QueuePlugin
 {
-    /** @var ?Span $parentSpan */
+    /** @var ?Span */
     private ?Span $parentSpan = null;
 
-    /** @var \Sentry\Tracing\Transaction[] $transactions */
+    /** @var \Sentry\Tracing\Transaction[] */
     private array $transactions = [];
 
     /**
      * Start transaction for job.
      *
-     * @param QueueInterface $queue
+     * @param QueueInterface     $queue
      * @param ?EnvelopeInterface $envelope
      *
      * @return ?EnvelopeInterface
@@ -48,26 +48,27 @@ class QueuePlugin
         $this->transactions[$properties['message_id']] = \Sentry\startTransaction($context);
         $this->transactions[$properties['message_id']]
             ->setData([
-                'messaging.message.id' => $properties['message_id'],
-                'messaging.destination.name' => $properties['topic_name'],
-                'messaging.queue.name' => $properties['queue_name'],
-                'messaging.message.body.size' => strlen($envelope->getBody()),
-                'messaging.message.retry.count' => $properties['retries']
+                'messaging.message.id'          => $properties['message_id'],
+                'messaging.destination.name'    => $properties['topic_name'],
+                'messaging.queue.name'          => $properties['queue_name'],
+                'messaging.message.body.size'   => strlen($envelope->getBody()),
+                'messaging.message.retry.count' => $properties['retries'],
             ]);
         \Sentry\SentrySdk::getCurrentHub()->setSpan($this->transactions[$properties['message_id']]);
-        
+
         unset($body['sentry_trace']);
         unset($body['sentry_baggage']);
+
         return $this->setBody($envelope, json_encode($body));
     }
 
     /**
      * Finish transaction for failed job.
      *
-     * @param QueueInterface $queue
+     * @param QueueInterface    $queue
      * @param EnvelopeInterface $envelope
-     * @param bool $requeue
-     * @param string $rejectionMessage
+     * @param bool              $requeue
+     * @param string            $rejectionMessage
      *
      * @return array
      */
@@ -86,14 +87,14 @@ class QueuePlugin
         if ($this->parentSpan) {
             \Sentry\SentrySdk::getCurrentHub()->setSpan($this->parentSpan);
         }
-        
+
         return [$envelope, $requeue, $rejectionMessage];
     }
 
     /**
      * Finish transaction for successfully executed job.
      *
-     * @param QueueInterface $queue
+     * @param QueueInterface    $queue
      * @param EnvelopeInterface $envelope
      *
      * @return array
@@ -121,7 +122,7 @@ class QueuePlugin
      * Attempt to set the body to the private body variable.
      *
      * @param EnvelopeInterface $envelope
-     * @param string $body
+     * @param string            $body
      *
      * @return EnvelopeInterface
      */

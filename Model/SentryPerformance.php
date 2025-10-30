@@ -6,7 +6,6 @@ namespace JustBetter\Sentry\Model;
 
 // phpcs:disable Magento2.Functions.DiscouragedFunction
 
-use function Sentry\startTransaction;
 use JustBetter\Sentry\Helper\Data;
 use Laminas\Http\Response;
 use Magento\Framework\App\Area;
@@ -23,10 +22,11 @@ use Sentry\Tracing\Transaction;
 use Sentry\Tracing\TransactionContext;
 use Sentry\Tracing\TransactionSource;
 use Symfony\Component\Console\Command\Command;
-
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
+
+use function Sentry\startTransaction;
 
 class SentryPerformance
 {
@@ -53,7 +53,7 @@ class SentryPerformance
      * Starts a new transaction.
      *
      * @param Command|AppInterface $app
-     * @param mixed $args
+     * @param mixed                $args
      *
      * @return void
      */
@@ -66,10 +66,12 @@ class SentryPerformance
 
         if ($app instanceof Http) {
             $this->startHttpTransaction($app, ...$args);
+
             return;
         }
         if ($app instanceof Command) {
             $this->startCommandTransaction($app, ...$args);
+
             return;
         }
     }
@@ -116,8 +118,8 @@ class SentryPerformance
     /**
      * Starts a new Command transaction.
      *
-     * @param Command $command
-     * @param InputInterface $input
+     * @param Command         $command
+     * @param InputInterface  $input
      * @param OutputInterface $output
      *
      * @return void
@@ -126,14 +128,14 @@ class SentryPerformance
     {
         $requestStartTime = microtime(true);
         $context = TransactionContext::make();
-        $context->setName('bin/magento ' . ($input->__toString() ?: $command->getName()));
+        $context->setName('bin/magento '.($input->__toString() ?: $command->getName()));
         $context->setSource(TransactionSource::task());
         $context->setStartTimestamp($requestStartTime);
 
         $context->setData([
-            'command' => $command->getName(),
+            'command'   => $command->getName(),
             'arguments' => $input->getArguments(),
-            'options' => $input->getOptions(),
+            'options'   => $input->getOptions(),
         ]);
 
         // Start the transaction
