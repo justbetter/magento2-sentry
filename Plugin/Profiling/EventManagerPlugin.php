@@ -78,7 +78,8 @@ class EventManagerPlugin
             ->setDescription($eventName)
             ->setData([
                 'event.name' => $eventName,
-            ]);
+            ])
+            ->setOrigin('auto.event');
 
         $tracingDto = SentryPerformance::traceStart($context);
 

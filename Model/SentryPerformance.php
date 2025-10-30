@@ -111,6 +111,8 @@ class SentryPerformance
             return;
         }
 
+        $transaction->setOrigin('auto.http.server');
+
         $this->transaction = $transaction;
         SentrySdk::getCurrentHub()->setSpan($transaction);
     }
@@ -192,7 +194,7 @@ class SentryPerformance
 
         if (in_array($areaCode, [Area::AREA_FRONTEND, Area::AREA_ADMINHTML, Area::AREA_WEBAPI_REST, Area::AREA_WEBAPI_SOAP, Area::AREA_GRAPHQL])) {
             if (!empty($this->request->getFullActionName())) {
-                $this->transaction->setName(strtoupper($this->request->getMethod()).' '.$this->request->getFullActionName());
+                $this->transaction->setName(strtoupper($this->request->getMethod()).' '.$this->request->getFullActionName('/'));
             }
 
             $this->transaction->setOp('http');

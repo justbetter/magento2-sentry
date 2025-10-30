@@ -41,13 +41,13 @@
 
     <!-- Tracing / Profiling -->
     <type name="Magento\Framework\Event\ManagerInterface">
-        <plugin name="sentry-profiling" type="JustBetter\Sentry\Plugin\Profiling\EventManagerPlugin" disabled="false" />
+        <plugin name="sentry-profiling-events" type="JustBetter\Sentry\Plugin\Profiling\EventManagerPlugin" disabled="false" />
     </type>
     <type name="Magento\Framework\View\Element\Template">
-        <plugin name="sentry-profiling" type="JustBetter\Sentry\Plugin\Profiling\TemplatePlugin" disabled="false" />
+        <plugin name="sentry-profiling-templates" type="JustBetter\Sentry\Plugin\Profiling\TemplatePlugin" disabled="false" />
     </type>
     <type name="Magento\Framework\DB\Logger\LoggerProxy">
-        <plugin name="sentry-profiling" type="JustBetter\Sentry\Plugin\Profiling\DbQueryLoggerPlugin" disabled="false" />
+        <plugin name="sentry-profiling-db-queries" type="JustBetter\Sentry\Plugin\Profiling\DbQueryLoggerPlugin" disabled="false" />
     </type>
     <type name="Magento\Framework\MessageQueue\ExchangeInterface">
         <plugin name="sentry-profiling-enqueue" type="JustBetter\Sentry\Plugin\Profiling\ExchangePlugin" disabled="false" />
@@ -58,6 +58,7 @@
     <type name="Magento\Framework\MessageQueue\QueueInterface">
         <plugin name="sentry-profiling-queue-runner" type="JustBetter\Sentry\Plugin\Profiling\QueuePlugin" disabled="false" />
     </type>
+    <preference for="Magento\Framework\App\Cache\Frontend\Factory" type="JustBetter\Sentry\Cache\Frontend\Factory"/>
 
     <!-- Cron Check-Ins -->
     <type name="Magento\Cron\Model\Schedule">
