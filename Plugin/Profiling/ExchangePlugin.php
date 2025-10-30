@@ -14,8 +14,8 @@ class ExchangePlugin
      * Method creates a Sentry span for queue monitoring.
      *
      * @param ExchangeInterface|BulkExchangeInterface $subject
-     * @param string $topic
-     * @param EnvelopeInterface|EnvelopeInterface[] $envelopes
+     * @param string                                  $topic
+     * @param EnvelopeInterface|EnvelopeInterface[]   $envelopes
      *
      * @return array
      */
@@ -41,15 +41,15 @@ class ExchangePlugin
                 $envelope,
                 json_encode([
                     ...$body,
-                    'sentry_trace' => \Sentry\getTraceparent(),
+                    'sentry_trace'   => \Sentry\getTraceparent(),
                     'sentry_baggage' => \Sentry\getBaggage(),
                 ])
             );
 
             $span
                 ->setData([
-                    'messaging.message.id' => $properties['message_id'] ?? null,
-                    'messaging.destination.name' => $topic,
+                    'messaging.message.id'        => $properties['message_id'] ?? null,
+                    'messaging.destination.name'  => $topic,
                     'messaging.message.body.size' => strlen($envelope->getBody()),
                 ])
                 ->finish();
@@ -60,6 +60,7 @@ class ExchangePlugin
         }, $isMultipleEnvelopes ? $envelopes : [$envelopes]);
 
         $envelopes = $isMultipleEnvelopes ? $envelopes : $envelopes[0];
+
         return [$topic, $envelopes];
     }
 
@@ -67,7 +68,7 @@ class ExchangePlugin
      * Attempt to set the body to the private body variable.
      *
      * @param EnvelopeInterface $envelope
-     * @param string $body
+     * @param string            $body
      *
      * @return EnvelopeInterface
      */
