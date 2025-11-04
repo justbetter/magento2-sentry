@@ -94,6 +94,7 @@ class Data extends AbstractHelper
         'clean_stacktrace'                    => ['type' => 'bool'],
         'cron_monitoring_enabled'             => ['type' => 'bool'],
         'track_crons'                         => ['type' => 'array'],
+        'enable_csp_report_url'               => ['type' => 'bool'],
     ];
 
     /**
@@ -612,6 +613,16 @@ class Data extends AbstractHelper
     public function getIgnoreExceptions(): array
     {
         return $this->collectModuleConfig()['ignore_exceptions'] ?? [];
+    }
+
+    /**
+     * Whether the report-uri directive in the CSP is enabled.
+     *
+     * @return bool
+     */
+    public function isEnableCspReportUrl(): bool
+    {
+        return $this->collectModuleConfig()['enable_csp_report_url'] ?? false;
     }
 
     /**
