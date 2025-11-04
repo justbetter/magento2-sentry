@@ -80,7 +80,7 @@ class Data extends AbstractHelper
         ...self::NATIVE_SENTRY_CONFIG_KEYS,
         'logrocket_key'                       => ['type' => 'string'],
         'log_level'                           => ['type' => 'int'],
-        'logger_log_level'                    => ['type' => 'int', 'default' => \Monolog\Logger::WARNING],
+        'logger_log_level'                    => ['type' => 'int', 'default' => 300 /* \Monolog\Level::Warning */],
         'errorexception_reporting'            => ['type' => 'int'], /* @deprecated by @see: error_types https://docs.sentry.io/platforms/php/configuration/options/#error_types */
         'mage_mode_development'               => ['type' => 'bool'],
         'js_sdk_version'                      => ['type' => 'string'],
