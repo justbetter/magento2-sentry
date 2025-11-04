@@ -54,7 +54,8 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'performance_tracking_enabled' => true,
     'performance_tracking_excluded_areas' => [\Magento\Framework\App::AREA_ADMINHTML, \Magento\Framework\App::AREA_CRONTAB],
     'profiles_sample_rate' => 0.5,
-    'ignore_js_errors' => []
+    'ignore_js_errors' => [],
+    'enable_csp_report_url' => true,
 ]
 ```
 
@@ -90,7 +91,7 @@ Next to that there are some configuration options under Stores > Configuration >
 | `track_crons` | `[]` | Cron handles of crons to track with cron monitoring, [Sentry only supports 6 check-ins per minute](https://docs.sentry.io/platforms/php/crons/#rate-limits) Magento does many more. |
 | `spotlight` | `false` | Enable [Spotlight](https://spotlightjs.com/) on the page |
 | `spotlight_url` | - | Override the [Sidecar url](https://spotlightjs.com/sidecar/) |         
-                   
+| `enable_csp_report_url` | `false` | If set to true, the report-uri will be automatically added based on the DSN. |
 
 ### Configuration for Adobe Cloud
 Since Adobe Cloud doesn't allow you to add manually add content to the `env.php` file, the configuration can be done
@@ -143,7 +144,7 @@ public function execute(\Magento\Framework\Event\Observer $observer)
 Example: https://github.com/justbetter/magento2-sentry-filter-events
 
 This same thing is the case for
-|                                |                                                                                     | 
+|                                |                                                                                     |
 |--------------------------------|-------------------------------------------------------------------------------------|
 | sentry_before_send             | https://docs.sentry.io/platforms/php/configuration/options/#before_send             |
 | sentry_before_send_transaction | https://docs.sentry.io/platforms/php/configuration/options/#before_send_transaction |
@@ -164,7 +165,7 @@ Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 Most importantly:
 - When making a PR please add a description what you've added, and if relevant why.
-- To save time on codestyle feedback, please run 
+- To save time on codestyle feedback, please run
     - `composer install`
     - `composer run codestyle`
     - `composer run analyse`

@@ -25,12 +25,17 @@
                 sortOrder="10" disabled="false"/>
     </type>
 
+    <!-- Content Security Policies -->
     <type name="Magento\Csp\Model\CompositePolicyCollector">
         <arguments>
             <argument name="collectors" xsi:type="array">
                 <item name="sentry" xsi:type="object" sortOrder="99">JustBetter\Sentry\Model\Collector\SentryRelatedCspCollector\Proxy</item>
             </argument>
         </arguments>
+    </type>
+
+    <type name="Magento\Csp\Api\ModeConfigManagerInterface">
+        <plugin name="sentry-set-report-uri" type="JustBetter\Sentry\Plugin\CspModeConfigManagerPlugin"/>
     </type>
 
     <type name="JustBetter\Sentry\Model\SentryLog">
