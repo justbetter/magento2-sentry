@@ -1,4 +1,15 @@
 # Changelog
+## [4.5.0] - 2025-11-04
+### Added
+    * Added Logger support (https://github.com/justbetter/magento2-sentry/pull/201)
+    * Added support for manual release defnition (https://github.com/justbetter/magento2-sentry/pull/204)
+    * Added custom SDK identifier to module (https://github.com/justbetter/magento2-sentry/pull/208)
+    * Added Cache instrumentation (https://github.com/justbetter/magento2-sentry/pull/206)
+    * Added Queue instrumentation (https://github.com/justbetter/magento2-sentry/pull/210)
+    * add csp report-uri if none is configured (https://github.com/justbetter/magento2-sentry/pull/216) thanks to https://github.com/rommelfreddy 
+### Changed
+    * Replaced deprecated \Monolog\Logger::Warning (https://github.com/justbetter/magento2-sentry/pull/214) thanks to https://github.com/GeKVe
+    * use configured dsn-hostname for csp connect-src policy (https://github.com/justbetter/magento2-sentry/pull/215) thanks to https://github.com/rommelfreddy 
 ## [4.4.0] - 2025-07-14
 ### Fixed
     * Catch zend db adapter errors when database is missing (https://github.com/justbetter/magento2-sentry/pull/193)
