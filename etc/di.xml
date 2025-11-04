@@ -1,6 +1,18 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Startup & Exception catching -->
+    <type name="Magento\Framework\AppInterface">
+        <plugin disabled="false" name="GlobalExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher"
+                sortOrder="0"/>
+    </type>
+
+    <type name="Symfony\Component\Console\Command\Command">
+        <plugin disabled="false" name="CliExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher"
+                sortOrder="0"/>
+    </type>
+
+    <!-- Log catching-->
     <type name="Monolog\Logger">
         <plugin disabled="false" name="SentryMonologPlugin" type="JustBetter\Sentry\Plugin\MonologPlugin" sortOrder="10"/>
     </type>
@@ -11,19 +23,17 @@
         </arguments>
     </type>
 
-    <type name="Magento\Framework\AppInterface">
-        <plugin disabled="false" name="GlobalExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher"
-                sortOrder="0"/>
-    </type>
-    <type name="Symfony\Component\Console\Command\Command">
-        <plugin disabled="false" name="CliExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher"
-                sortOrder="0"/>
-    </type>
-
     <type name="Magento\Customer\CustomerData\Customer">
         <plugin name="LogrocketCustomerInfo" type="JustBetter\Sentry\Plugin\LogrocketCustomerInfo"
                 sortOrder="10" disabled="false"/>
     </type>
+
+    <type name="JustBetter\Sentry\Model\SentryLog">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
 
     <!-- Content Security Policies -->
     <type name="Magento\Csp\Model\CompositePolicyCollector">
@@ -36,12 +46,6 @@
 
     <type name="Magento\Csp\Api\ModeConfigManagerInterface">
         <plugin name="sentry-set-report-uri" type="JustBetter\Sentry\Plugin\CspModeConfigManagerPlugin"/>
-    </type>
-
-    <type name="JustBetter\Sentry\Model\SentryLog">
-        <arguments>
-            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
-        </arguments>
     </type>
 
     <!-- Tracing / Profiling -->
