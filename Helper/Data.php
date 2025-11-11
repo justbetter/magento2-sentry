@@ -38,7 +38,7 @@ class Data extends AbstractHelper
         'server_name'           => ['type' => 'string'],
         'in_app_include'        => ['type' => 'array'],
         'in_app_exclude'        => ['type' => 'array'],
-        'prefixes'              => ['type' => 'array', 'default' => defined('BP') ? [BP] : null],
+        'prefixes'              => ['type' => 'array'],
         'max_request_body_size' => ['type' => 'string'],
         'max_value_length'      => ['type' => 'int'],
         // https://docs.sentry.io/platforms/php/configuration/options/#error-monitoring-options
@@ -139,6 +139,21 @@ class Data extends AbstractHelper
     public function getRelease(): ?string
     {
         return $this->collectModuleConfig()['release'];
+    }
+
+    /**
+     * Get the sentry prefixes.
+     *
+     * @return array
+     */
+    public function getPrefixes(): array
+    {
+        $prefixes = $this->collectModuleConfig()['prefixes'] ?? [];
+        if (defined('BP')) {
+            $prefixes[] = [BP];
+        }
+
+        return $prefixes;
     }
 
     /**

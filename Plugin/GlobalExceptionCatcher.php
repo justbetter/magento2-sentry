@@ -140,6 +140,10 @@ class GlobalExceptionCatcher
             $config->setEnvironment($environment);
         }
 
+        if ($prefixes = $this->sentryHelper->getPrefixes()) {
+            $config->setPrefixes($prefixes);
+        }
+
         $config->setBeforeBreadcrumb(function (\Sentry\Breadcrumb $breadcrumb): ?\Sentry\Breadcrumb {
             $data = $this->dataObjectFactory->create();
             $data->setBreadcrumb($breadcrumb);
