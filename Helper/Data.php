@@ -142,6 +142,21 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get the sentry prefixes.
+     *
+     * @return array
+     */
+    public function getPrefixes(): array
+    {
+        $prefixes = $this->collectModuleConfig()['prefixes'] ?? [];
+        if (defined('BP')) {
+            $prefixes[] = BP;
+        }
+
+        return $prefixes;
+    }
+
+    /**
      * Whether cron monitoring (check-in events) is enabled.
      */
     public function isCronMonitoringEnabled(): bool
