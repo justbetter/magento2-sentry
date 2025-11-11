@@ -150,7 +150,7 @@ class Data extends AbstractHelper
     {
         $prefixes = $this->collectModuleConfig()['prefixes'] ?? [];
         if (defined('BP')) {
-            $prefixes[] = [BP];
+            $prefixes[] = BP;
         }
 
         return $prefixes;
