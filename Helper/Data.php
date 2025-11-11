@@ -38,7 +38,7 @@ class Data extends AbstractHelper
         'server_name'           => ['type' => 'string'],
         'in_app_include'        => ['type' => 'array'],
         'in_app_exclude'        => ['type' => 'array'],
-        'prefixes'              => ['type' => 'array', 'default' => [BP]],
+        'prefixes'              => ['type' => 'array', 'default' => defined('BP') ? [BP] : null],
         'max_request_body_size' => ['type' => 'string'],
         'max_value_length'      => ['type' => 'int'],
         // https://docs.sentry.io/platforms/php/configuration/options/#error-monitoring-options
