@@ -70,7 +70,7 @@ Next to that there are some configuration options under Stores > Configuration >
 | `environment`               | — | Specify the environment under which the deployed version is running. Common values: production, staging, development. Helps differentiate errors between environments. |
 | `max_breadcrumbs`           | `100` | This variable controls the total amount of breadcrumbs that should be captured. |
 | `attach_stacktrace`         | `false` | When enabled, stack traces are automatically attached to all messages logged. Even if they are not exceptions. |
-| `prefixes`                  | - | A list of prefixes that should be stripped from the filenames of captured stacktraces to make them relative. |
+| `prefixes`                  | [[BP](https://github.com/magento/magento2/blob/9a62604c5a7ab70db1386d307b0dbfe596611102/app/autoload.php#L16)] | A list of prefixes that should be stripped from the filenames of captured stacktraces to make them relative. |
 | `sample_rate`               | `1.0` | Configures the sample rate for error events, in the range of 0.0 to 1.0. |
 | `ignore_exceptions`         | `[]` | If the class being thrown matches any in this list, do not send it to Sentry, e.g., `[\Magento\Framework\Exception\NoSuchEntityException::class]` |
 | `error_types`               | `E_ALL` | If the Exception is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php), send the error to Sentry if it matches the error reporting. Uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php), e.g., `E_ERROR` | E_WARNING`. |
