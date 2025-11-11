@@ -1,4 +1,7 @@
 # Changelog
+## [4.5.1] - 2025-11-11
+### Added
+    * Set Magento BP as default prefix
 ## [4.5.0] - 2025-11-04
 ### Added
     * Added Logger support (https://github.com/justbetter/magento2-sentry/pull/201)
