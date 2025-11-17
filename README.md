@@ -50,9 +50,9 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'traces_sample_rate' => 0.5,
     'disable_default_integrations' => [
         \Sentry\Integration\ModulesIntegration::class,
-    ]
+    ],
     'performance_tracking_enabled' => true,
-    'performance_tracking_excluded_areas' => [\Magento\Framework\App::AREA_ADMINHTML, \Magento\Framework\App::AREA_CRONTAB],
+    'performance_tracking_excluded_areas' => [\Magento\Framework\App\Area::AREA_ADMINHTML, \Magento\Framework\App\Area::AREA_CRONTAB],
     'profiles_sample_rate' => 0.5,
     'ignore_js_errors' => [],
     'enable_csp_report_url' => true,
