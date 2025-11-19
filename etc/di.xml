@@ -34,6 +34,12 @@
         </arguments>
     </type>
 
+    <type name="JustBetter\Sentry\Logger\Handler\Sentry">
+        <arguments>
+            <argument name="sentryHelper" xsi:type="object">JustBetter\Sentry\Helper\Data\Proxy</argument>
+            <argument name="sentryLog" xsi:type="object">JustBetter\Sentry\Model\SentryLog\Proxy</argument>
+        </arguments>
+    </type>
 
     <!-- Content Security Policies -->
     <type name="Magento\Csp\Model\CompositePolicyCollector">
