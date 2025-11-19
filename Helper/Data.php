@@ -95,6 +95,7 @@ class Data extends AbstractHelper
         'cron_monitoring_enabled'             => ['type' => 'bool'],
         'track_crons'                         => ['type' => 'array'],
         'enable_csp_report_url'               => ['type' => 'bool'],
+        'loader_script'                       => ['type' => 'string'],
     ];
 
     /**
@@ -232,6 +233,16 @@ class Data extends AbstractHelper
     public function getJsSdkVersion(): string
     {
         return $this->collectModuleConfig()['js_sdk_version'] ?: SentryScript::CURRENT_VERSION;
+    }
+
+    /**
+     * Get the loaderscript copied from Sentry.
+     *
+     * @return string The url to sentry's loading script e.g. https://js.sentry-cdn.com/x0xx00x.min.js
+     */
+    public function getLoaderScript(): string
+    {
+        return $this->collectModuleConfig()['loader_script'];
     }
 
     /**

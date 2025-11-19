@@ -34,6 +34,22 @@ class SentryRelatedCspCollector implements PolicyCollectorInterface
                 ['https://browser.sentry-cdn.com']
             );
 
+            $policies[] = new FetchPolicy(
+                'script-src',
+                false,
+                ['https://js.sentry-cdn.com']
+            );
+
+            $customLoader = $this->dataHelper->getLoaderScript();
+            $customLoaderHost = is_string($customLoader) ? UriFactory::factory($customLoader) : null;
+            if ($customLoaderHost !== null) {
+                $policies[] = new FetchPolicy(
+                    'script-src',
+                    false,
+                    [$customLoaderHost->getScheme().'://'.$customLoaderHost->getHost()]
+                );
+            }
+
             $dsn = $this->dataHelper->getDsn();
             $dsnHost = is_string($dsn) ? UriFactory::factory($dsn)->getHost() : null;
             if (!empty($dsnHost)) {
