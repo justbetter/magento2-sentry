@@ -103,7 +103,7 @@ class SentryScript extends Template
     }
 
     /**
-     * Assembles and returns the JS script path
+     * Assembles and returns the JS script path.
      */
     public function getJsUrl(): string
     {

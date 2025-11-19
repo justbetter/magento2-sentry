@@ -46,7 +46,7 @@ class SentryRelatedCspCollector implements PolicyCollectorInterface
                 $policies[] = new FetchPolicy(
                     'script-src',
                     false,
-                    [$customLoaderHost->getScheme() . '://' . $customLoaderHost->getHost()]
+                    [$customLoaderHost->getScheme().'://'.$customLoaderHost->getHost()]
                 );
             }
 
