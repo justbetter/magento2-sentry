@@ -50,9 +50,9 @@ class QueuePlugin
             ->setData([
                 'messaging.message.id'          => $properties['message_id'],
                 'messaging.destination.name'    => $properties['topic_name'],
-                'messaging.queue.name'          => $properties['queue_name'],
+                'messaging.queue.name'          => $properties['queue_name'] ?? null,
                 'messaging.message.body.size'   => strlen($envelope->getBody()),
-                'messaging.message.retry.count' => $properties['retries'],
+                'messaging.message.retry.count' => $properties['retries'] ?? null,
             ]);
         \Sentry\SentrySdk::getCurrentHub()->setSpan($this->transactions[$properties['message_id']]);
 
