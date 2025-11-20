@@ -31,7 +31,7 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
             ->setData([
                 'cache.key' => $identifier,
             ])
-            ->setDescription($identifier)
+            ->setDescription((string) $identifier)
             ->setOrigin('auto.cache');
         $span = $parentSpan->startChild($context);
         SentrySdk::getCurrentHub()->setSpan($span);
