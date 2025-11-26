@@ -74,6 +74,11 @@ class Data extends AbstractHelper
     protected $config = [];
 
     /**
+     * @var ?bool
+     */
+    protected $isActive = null;
+
+    /**
      * @var array
      */
     protected $configKeys = [
@@ -351,7 +356,7 @@ class Data extends AbstractHelper
      */
     public function isActive(): bool
     {
-        return $this->isActiveWithReason()['active'];
+        return $this->isActive ??= $this->isActiveWithReason()['active'];
     }
 
     /**
