@@ -66,7 +66,7 @@ return static function (RectorConfig $rectorConfig): void {
         $projectPhpVersion = ComposerJsonPhpVersionResolver::resolveFromCwdOrFail();
         $phpLevelSets = \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion($projectPhpVersion);
     } catch (InvalidConfigurationException) {
-        $phpLevelSets = [LevelSetList::UP_TO_PHP_84];
+        $phpLevelSets = [LevelSetList::UP_TO_PHP_81];
     }
     // define sets of rules
     $rectorConfig->sets($phpLevelSets);
