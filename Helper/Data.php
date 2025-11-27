@@ -74,6 +74,11 @@ class Data extends AbstractHelper
     protected $config = [];
 
     /**
+     * @var ?bool
+     */
+    protected $isActive = null;
+
+    /**
      * @var array
      */
     protected $configKeys = [
@@ -351,7 +356,7 @@ class Data extends AbstractHelper
      */
     public function isActive(): bool
     {
-        return $this->isActiveWithReason()['active'];
+        return $this->isActive ??= $this->isActiveWithReason()['active'];
     }
 
     /**
@@ -365,7 +370,7 @@ class Data extends AbstractHelper
         $config = $this->collectModuleConfig();
         $emptyConfig = empty($config);
         $configEnabled = isset($config['enabled']) && $config['enabled'];
-        $dsnNotEmpty = $this->getDSN();
+        $dsn = $this->getDSN();
         $productionMode = ($this->isProductionMode() || $this->isOverwriteProductionMode());
 
         if ($emptyConfig) {
@@ -374,8 +379,15 @@ class Data extends AbstractHelper
         if (!$configEnabled) {
             $reasons[] = __('Module is not enabled in config.');
         }
-        if (!$dsnNotEmpty && !$this->isSpotlightEnabled()) {
+        if (!$dsn && !$this->isSpotlightEnabled()) {
             $reasons[] = __('DSN is empty.');
+        }
+        if ($dsn) {
+            try {
+                \Sentry\Dsn::createFromString($dsn);
+            } catch (\InvalidArgumentException $e) {
+                $reasons[] = $e->getMessage();
+            }
         }
         if (!$productionMode) {
             $reasons[] = __('Not in production and development mode is false.');
