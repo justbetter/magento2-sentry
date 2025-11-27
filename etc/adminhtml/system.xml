@@ -135,6 +135,20 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="traces_sample_rate_cli" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
+                    <label>CLI Tracing Sample Rate</label>
+                    <validate>validate-not-negative-number validate-number</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="profiles_sample_rate" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
+                    <label>Profile Sample Rate</label>
+                    <validate>validate-not-negative-number validate-number</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
             <group id="issue_grouping" translate="label" type="text" sortOrder="30" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
                 <label>Sentry issue grouping</label>
