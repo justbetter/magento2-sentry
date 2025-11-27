@@ -1,4 +1,9 @@
 # Changelog
+## [4.5.2] - 2025-11-27
+### Fixed
+    * Fixed undefined message properties on queues (https://github.com/justbetter/magento2-sentry/pull/221)
+    * Fixed error thrown on new setup:install (https://github.com/justbetter/magento2-sentry/pull/223)
+    * Fixed activating sentry with invalid DSN (https://github.com/justbetter/magento2-sentry/pull/222)
 ## [4.5.1] - 2025-11-11
 ### Added
     * Set Magento BP as default prefix
