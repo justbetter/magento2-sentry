@@ -80,6 +80,7 @@
   },
   "require-dev": {
     "bitexpert/phpstan-magento": "^0.32.0",
-    "magento/magento-coding-standard": "^34"
+    "magento/magento-coding-standard": "^34",
+    "rector/rector": ">=1.2.5"
   }
 }
