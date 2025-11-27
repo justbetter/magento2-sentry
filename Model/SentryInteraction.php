@@ -108,6 +108,7 @@ class SentryInteraction
 
         /** @var ?UserContextInterface $userContext */
         $userContext = $this->getObjectIfInitialized(UserContextInterface::class);
+
         return $this->userContext = $userContext;
     }
 
