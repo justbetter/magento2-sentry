@@ -2,7 +2,7 @@
 if (typeof Sentry !== 'undefined') {
     Sentry.init({
     dsn: '<?= $escaper->escapeUrl(trim($block->getDSN())) ?>',
-    release: '<?= $escaper->escapeHtml(trim($block->getVersion())) ?>',
+    release: '<?= $escaper->escapeHtml(trim((string) $block->getVersion())) ?>',
     environment: '<?= $escaper->escapeHtml(trim($block->getEnvironment())) ?>',
     integrations: [
     <?php if ($block->isTracingEnabled()): ?>

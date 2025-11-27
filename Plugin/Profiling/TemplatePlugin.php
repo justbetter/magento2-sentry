@@ -32,7 +32,7 @@ class TemplatePlugin
             ->setTags($tags)
             ->setData([
                 'block_name'  => $subject->getNameInLayout(),
-                'block_class' => get_class($subject),
+                'block_class' => $subject::class,
                 'module'      => $subject->getModuleName(),
                 'template'    => $fileName,
             ])

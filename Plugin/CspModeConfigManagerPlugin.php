@@ -54,7 +54,7 @@ class CspModeConfigManagerPlugin
 
         $uriParsed = UriFactory::factory($dsn);
 
-        $dsnPaths = explode('/', $uriParsed->getPath()); // the last one is the project-id
+        $dsnPaths = explode('/', (string) $uriParsed->getPath()); // the last one is the project-id
         $reportUri = sprintf('https://%s/api/%s/security', $uriParsed->getHost(), $dsnPaths[count($dsnPaths) - 1]);
 
         $params = [

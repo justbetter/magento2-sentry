@@ -77,7 +77,7 @@ class SentryScript extends Template
     /**
      * Get the current version of the Magento application.
      *
-     * @return int|string
+     * @return ?string
      */
     public function getVersion()
     {
@@ -231,6 +231,6 @@ class SentryScript extends Template
      */
     public function getIgnoreJsErrors(): string
     {
-        return $this->json->serialize($this->dataHelper->getIgnoreJsErrors());
+        return (string) $this->json->serialize($this->dataHelper->getIgnoreJsErrors() ?? '[]');
     }
 }

@@ -44,7 +44,7 @@ class DeploymentConfigInfo extends Field
     /**
      * Get static version.
      *
-     * @return string
+     * @return ?string
      */
     public function getVersion()
     {

@@ -72,7 +72,7 @@ class SentryInteraction
         try {
             // @phpcs:ignore Generic.PHP.NoSilencedErrors
             return in_array(@$this->appState->getAreaCode(), [Area::AREA_ADMINHTML, Area::AREA_FRONTEND, Area::AREA_WEBAPI_REST, Area::AREA_WEBAPI_SOAP, Area::AREA_GRAPHQL]);
-        } catch (LocalizedException $ex) {
+        } catch (LocalizedException) {
             return false;
         }
     }
@@ -106,7 +106,9 @@ class SentryInteraction
             return $this->userContext;
         }
 
-        return $this->userContext = $this->getObjectIfInitialized(UserContextInterface::class);
+        /** @var ?UserContextInterface $userContext */
+        $userContext = $this->getObjectIfInitialized(UserContextInterface::class);
+        return $this->userContext = $userContext;
     }
 
     /**
@@ -117,7 +119,7 @@ class SentryInteraction
         try {
             // @phpcs:ignore Generic.PHP.NoSilencedErrors
             return in_array(@$this->appState->getAreaCode(), [Area::AREA_ADMINHTML, Area::AREA_FRONTEND]);
-        } catch (LocalizedException $ex) {
+        } catch (LocalizedException) {
             return false;
         }
     }
@@ -132,6 +134,7 @@ class SentryInteraction
         }
 
         if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+            /** @var ?AdminSession $adminSession */
             $adminSession = $this->getObjectIfInitialized(AdminSession::class);
             if ($adminSession === null) {
                 return [];
@@ -147,6 +150,7 @@ class SentryInteraction
         }
 
         if ($this->appState->getAreaCode() === Area::AREA_FRONTEND) {
+            /** @var ?CustomerSession $customerSession */
             $customerSession = $this->getObjectIfInitialized(CustomerSession::class);
             if ($customerSession === null) {
                 return [];
@@ -188,9 +192,9 @@ class SentryInteraction
             }
 
             if ($this->canGetUserContext()) {
-                $userId = $this->getUserContext()->getUserId();
+                $userId = $this->getUserContext()?->getUserId();
                 if ($userId) {
-                    $userType = $this->getUserContext()->getUserType();
+                    $userType = $this->getUserContext()?->getUserType();
                 }
             }
 
@@ -217,7 +221,7 @@ class SentryInteraction
                     },
                 ]);
             });
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             // User context could not be found or added.
             \Magento\Framework\Profiler::stop('SENTRY::add_user_context');
 

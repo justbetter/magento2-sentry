@@ -72,7 +72,7 @@ class Sentry extends Action
         $response = $this->getResponse();
 
         return $response->representJson(
-            $this->jsonSerializer->serialize($result)
+            (string) $this->jsonSerializer->serialize($result)
         );
     }
 }

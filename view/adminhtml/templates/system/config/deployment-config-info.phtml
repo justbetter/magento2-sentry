@@ -27,5 +27,5 @@
 ]"); ?>
     </pre>
 
-    <p><?= $escaper->escapeHtml(__("Release ID: %1", $block->getVersion())); ?></p>
+    <p><?= $escaper->escapeHtml(__("Release ID: %1", (string) $block->getVersion())); ?></p>
 </td>

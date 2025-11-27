@@ -88,8 +88,8 @@ class SentryPerformance
         $requestStartTime = $this->request->getServer('REQUEST_TIME_FLOAT', microtime(true));
 
         $context = TransactionContext::fromHeaders(
-            $this->request->getHeader('sentry-trace') ?: '',
-            $this->request->getHeader('baggage') ?: ''
+            (string) ($this->request->getHeader('sentry-trace') ?: ''),
+            (string) ($this->request->getHeader('baggage') ?: '')
         );
 
         $requestPath = '/'.ltrim($this->request->getRequestUri(), '/');
@@ -175,7 +175,7 @@ class SentryPerformance
         try {
             $state = $this->objectManager->get(State::class);
             $areaCode = $state->getAreaCode();
-        } catch (LocalizedException $e) {
+        } catch (LocalizedException) {
             // Default area is global.
             $areaCode = Area::AREA_GLOBAL;
         }

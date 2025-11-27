@@ -7,7 +7,7 @@ parameters:
         - vendor
         - Test/*
         - Logger/Handler/Sentry.php
-    level: 6
+    level: 8
     ignoreErrors:
         -
             identifier: missingType.iterableValue

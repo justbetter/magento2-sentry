@@ -40,7 +40,7 @@ class SentryCron
             !array_reduce(
                 $this->data->getTrackCrons(),
                 fn ($trackCron, $expression) => $trackCron || (
-                    preg_match('/^\/.*\/[imsu]*$/', $expression) ?
+                    preg_match('/^\/.*\/[imsu]*$/', (string) $expression) ?
                         preg_match($expression, $schedule->getJobCode()) :
                         $schedule->getJobCode() === $expression
                 ),
