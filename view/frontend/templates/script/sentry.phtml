@@ -11,12 +11,16 @@ if (!$block->canUseScriptTag($block->getNameInLayout())) {
     <?php
         $bundleFile = 'bundle';
 
-    if ($block->isTracingEnabled()) {
+    if ($block->isTracingEnabled() || $block->isFeedbackButtonEnabled()) {
         $bundleFile .= '.tracing';
     }
 
-    if ($block->useSessionReplay()) {
+    if ($block->useSessionReplay() || $block->isFeedbackButtonEnabled()) {
         $bundleFile .= '.replay';
+    }
+
+    if ($block->isFeedbackButtonEnabled()) {
+        $bundleFile .= '.feedback';
     }
 
         $bundleFile .= '.min.js';
