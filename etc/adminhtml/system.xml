@@ -41,6 +41,14 @@
                         <field id="enable_script_tag">1</field>
                     </depends>
                 </field>
+                <field id="enable_feedback_button" translate="label" type="select" sortOrder="40" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
+                    <label>Enable Customer Feedback button</label>
+                    <comment>Enabling the feedback button will also include session replay and tracing in the javascript bundle, to use it also enable the options accordingly</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enable_script_tag">1</field>
+                    </depends>
+                </field>
                 <field id="replay_session_sample_rate" translate="label" type="text" sortOrder="50" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Session Sample Rate</label>
                     <depends>

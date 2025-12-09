@@ -510,6 +510,14 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Whether to enable the user feedback button.
+     */
+    public function isFeedbackButtonEnabled(): bool
+    {
+        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'enable_feedback_button', ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
      * Get the session replay sample rate.
      */
     public function getReplaySessionSampleRate(): float
