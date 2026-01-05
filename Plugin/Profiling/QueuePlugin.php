@@ -59,7 +59,7 @@ class QueuePlugin
         unset($body['sentry_trace']);
         unset($body['sentry_baggage']);
 
-        return $this->setBody($envelope, json_encode($body));
+        return $this->setBody($envelope, (string) json_encode($body));
     }
 
     /**

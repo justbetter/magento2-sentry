@@ -304,7 +304,7 @@ class Data extends AbstractHelper
         try {
             $this->config[$storeId]['enabled'] = $this->scopeConfig->getValue('sentry/environment/enabled', ScopeInterface::SCOPE_STORE)
                 ?? $this->deploymentConfig->get('sentry') !== null;
-        } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException|Zend_Db_Adapter_Exception $e) {
+        } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException|Zend_Db_Adapter_Exception) {
             $this->config[$storeId]['enabled'] = $this->deploymentConfig->get('sentry') !== null;
         }
 
@@ -312,7 +312,7 @@ class Data extends AbstractHelper
             try {
                 $value = $this->scopeConfig->getValue('sentry/environment/'.$key, ScopeInterface::SCOPE_STORE)
                     ?? $this->deploymentConfig->get('sentry/'.$key);
-            } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException|Zend_Db_Adapter_Exception $e) {
+            } catch (TableNotFoundException|FileSystemException|RuntimeException|DomainException|Zend_Db_Adapter_Exception) {
                 $value = $this->deploymentConfig->get('sentry/'.$key);
             }
 
@@ -403,7 +403,7 @@ class Data extends AbstractHelper
      */
     public function isProductionMode(): bool
     {
-        return $this->appState->emulateAreaCode(Area::AREA_GLOBAL, [$this, 'getAppState']) === 'production';
+        return $this->appState->emulateAreaCode(Area::AREA_GLOBAL, $this->getAppState(...)) === 'production';
     }
 
     /**
@@ -445,7 +445,7 @@ class Data extends AbstractHelper
     {
         try {
             return $this->storeManager->getStore();
-        } catch (DomainException|Zend_Db_Adapter_Exception|NoSuchEntityException $e) {
+        } catch (DomainException|Zend_Db_Adapter_Exception|NoSuchEntityException) {
             // If the store is not available, return null
             return null;
         }
@@ -665,7 +665,7 @@ class Data extends AbstractHelper
             return false;
         }
 
-        if (in_array(get_class($ex), $this->getIgnoreExceptions())) {
+        if (in_array($ex::class, $this->getIgnoreExceptions())) {
             return false;
         }
 

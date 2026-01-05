@@ -23,7 +23,7 @@
   "type": "magento2-module",
   "license": "MIT",
   "require": {
-    "php": ">=8.0",
+    "php": ">=8.1",
     "sentry/sentry": "^4.13",
     "monolog/monolog": ">=2.7.0|^3.0",
     "magento/framework": ">=103.0.7",
@@ -72,6 +72,7 @@
     "analyse": "vendor/bin/phpstan analyse --memory-limit='1G'",
     "phpcs": "vendor/bin/phpcs --colors --standard=vendor/magento/magento-coding-standard/Magento2 -s --exclude=Generic.Files.LineLength --report=full,summary,gitblame --extensions=php,phtml --ignore=./vendor ./",
     "phpcbf": "vendor/bin/phpcbf --colors --standard=vendor/magento/magento-coding-standard/Magento2 --exclude=Generic.Files.LineLength --extensions=php,phtml --ignore=./vendor ./ || exit 0",
+    "rector": "vendor/bin/rector",
     "codestyle": [
       "@phpcbf",
       "@phpcs"
@@ -79,6 +80,7 @@
   },
   "require-dev": {
     "bitexpert/phpstan-magento": "^0.32.0",
-    "magento/magento-coding-standard": "^34"
+    "magento/magento-coding-standard": ">=34",
+    "rector/rector": ">=1.2.5"
   }
 }

@@ -39,7 +39,7 @@ class ExchangePlugin
             $body = json_decode($envelope->getBody(), true);
             $envelope = $this->setBody(
                 $envelope,
-                json_encode([
+                (string) json_encode([
                     ...$body,
                     'sentry_trace'   => \Sentry\getTraceparent(),
                     'sentry_baggage' => \Sentry\getBaggage(),

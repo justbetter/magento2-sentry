@@ -95,7 +95,7 @@ class SentryLog
             if (true === $this->canGetCustomerData()) {
                 $this->customerSession->setSentryEventId($lastEventId);
             }
-        } catch (SessionException $e) {
+        } catch (SessionException) {
             return;
         }
     }
@@ -132,7 +132,7 @@ class SentryLog
     {
         try {
             return $this->appState->getAreaCode() === Area::AREA_FRONTEND;
-        } catch (LocalizedException $ex) {
+        } catch (LocalizedException) {
             return false;
         }
     }

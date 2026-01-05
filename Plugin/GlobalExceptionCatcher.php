@@ -198,7 +198,7 @@ class GlobalExceptionCatcher
         $disabledDefaultIntegrations = $this->sentryHelper->getDisabledDefaultIntegrations();
         $config->setData('integrations', static fn (array $integrations) => array_filter(
             $integrations,
-            static fn (IntegrationInterface $integration) => !in_array(get_class($integration), $disabledDefaultIntegrations)
+            static fn (IntegrationInterface $integration) => !in_array($integration::class, $disabledDefaultIntegrations)
         ));
 
         $config->setErrorTypes($this->sentryHelper->getErrorTypes());
