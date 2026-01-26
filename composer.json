@@ -29,7 +29,8 @@
     "magento/framework": ">=103.0.7",
     "magento/module-csp": "*",
     "nyholm/psr7": "^1.2",
-    "magento/module-config": ">=101.2"
+    "magento/module-config": ">=101.2",
+    "justbetter/magento2-core": "^1.0"
   },
   "repositories": {
     "magento": {
