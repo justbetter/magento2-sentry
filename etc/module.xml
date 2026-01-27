@@ -3,6 +3,7 @@
     <module name="JustBetter_Sentry" setup_version="2.0.0">
         <sequence>
             <module name="Magento_Store"/>
+            <module name="JustBetter_Core"/>
         </sequence>
     </module>
 </config>
