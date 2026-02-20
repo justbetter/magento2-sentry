@@ -36,15 +36,7 @@ class ExchangePlugin
             $span = $parentSpan->startChild($context);
             \Sentry\SentrySdk::getCurrentHub()->setSpan($span);
 
-            $body = json_decode($envelope->getBody(), true);
-            $envelope = $this->setBody(
-                $envelope,
-                (string) json_encode([
-                    ...$body,
-                    'sentry_trace'   => \Sentry\getTraceparent(),
-                    'sentry_baggage' => \Sentry\getBaggage(),
-                ])
-            );
+            $this->modifyEnvelope($envelope);
 
             $span
                 ->setData([
@@ -65,26 +57,27 @@ class ExchangePlugin
     }
 
     /**
-     * Attempt to set the body to the private body variable.
+     * Inject Sentry trace and baggage headers into the envelope's properties.
      *
      * @param EnvelopeInterface $envelope
-     * @param string            $body
-     *
-     * @return EnvelopeInterface
      */
-    protected function setBody(EnvelopeInterface $envelope, string $body): EnvelopeInterface
+    protected function modifyEnvelope(EnvelopeInterface $envelope): void
     {
         $reflectedEnvelope = new \ReflectionObject($envelope);
-        // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock.DetectedWhile
-        while (!$reflectedEnvelope->hasProperty('body') && $reflectedEnvelope = $reflectedEnvelope->getParentClass()) {
+
+        while ($reflectedEnvelope && !$reflectedEnvelope->hasProperty('properties')) {
+            $reflectedEnvelope = $reflectedEnvelope->getParentClass();
         }
 
-        if ($reflectedEnvelope && $reflectedEnvelope->hasProperty('body')) {
-            $prop = $reflectedEnvelope->getProperty('body');
-            $prop->setAccessible(true);
-            $prop->setValue($envelope, $body);
+        if (!$reflectedEnvelope) {
+            throw new \RuntimeException('Envelope class does not have a "properties" field.');
         }
 
-        return $envelope;
+        $prop = $reflectedEnvelope->getProperty('properties');
+        $prop->setValue($envelope, [
+            ...$prop->getValue($envelope),
+            'sentry_trace'   => \Sentry\getTraceparent(),
+            'sentry_baggage' => \Sentry\getBaggage(),
+        ]);
     }
 }

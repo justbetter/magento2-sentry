@@ -31,16 +31,15 @@ class QueuePlugin
         }
 
         $properties = $envelope->getProperties();
-        $body = json_decode($envelope->getBody(), true);
-        if (!isset($body['sentry_trace']) && !isset($body['sentry_baggage'])) {
+        if (!isset($properties['sentry_trace']) && !isset($properties['sentry_baggage'])) {
             return $envelope;
         }
 
         $this->parentSpan ??= \Sentry\SentrySdk::getCurrentHub()->getSpan();
 
         $context = \Sentry\continueTrace(
-            $body['sentry_trace'],
-            $body['sentry_baggage']
+            $properties['sentry_trace'],
+            $properties['sentry_baggage']
         )
             ->setOp('queue.process')
             ->setName($properties['topic_name']);
@@ -56,10 +55,7 @@ class QueuePlugin
             ]);
         \Sentry\SentrySdk::getCurrentHub()->setSpan($this->transactions[$properties['message_id']]);
 
-        unset($body['sentry_trace']);
-        unset($body['sentry_baggage']);
-
-        return $this->setBody($envelope, (string) json_encode($body));
+        return $envelope;
     }
 
     /**
@@ -116,29 +112,5 @@ class QueuePlugin
         }
 
         return [$envelope];
-    }
-
-    /**
-     * Attempt to set the body to the private body variable.
-     *
-     * @param EnvelopeInterface $envelope
-     * @param string            $body
-     *
-     * @return EnvelopeInterface
-     */
-    protected function setBody(EnvelopeInterface $envelope, string $body): EnvelopeInterface
-    {
-        $reflectedEnvelope = new \ReflectionObject($envelope);
-        // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock.DetectedWhile
-        while (!$reflectedEnvelope->hasProperty('body') && $reflectedEnvelope = $reflectedEnvelope->getParentClass()) {
-        }
-
-        if ($reflectedEnvelope && $reflectedEnvelope->hasProperty('body')) {
-            $prop = $reflectedEnvelope->getProperty('body');
-            $prop->setAccessible(true);
-            $prop->setValue($envelope, $body);
-        }
-
-        return $envelope;
     }
 }
