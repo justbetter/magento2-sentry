@@ -57,27 +57,43 @@ class ExchangePlugin
     }
 
     /**
-     * Inject Sentry trace and baggage headers into the envelope's properties.
+     * Modify the envelope body to include Sentry trace and baggage information.
      *
      * @param EnvelopeInterface $envelope
+     *
+     * @return void
      */
     protected function modifyEnvelope(EnvelopeInterface $envelope): void
     {
+        $body = (string) json_encode([
+            'envelope_body'       => $envelope->getBody(),
+            'envelope_properties' => $envelope->getProperties(),
+            'sentry_trace'        => \Sentry\getTraceparent(),
+            'sentry_baggage'      => \Sentry\getBaggage(),
+        ]);
+
+        $this->modifyBody($envelope, $body);
+    }
+
+    /**
+     * Use reflection to modify the body of the envelope.
+     *
+     * @param EnvelopeInterface $envelope
+     * @param string            $body
+     *
+     * @return void
+     */
+    protected function modifyBody(EnvelopeInterface $envelope, string $body): void
+    {
         $reflectedEnvelope = new \ReflectionObject($envelope);
 
-        while ($reflectedEnvelope && !$reflectedEnvelope->hasProperty('properties')) {
-            $reflectedEnvelope = $reflectedEnvelope->getParentClass();
+        // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock.DetectedWhile
+        while (!$reflectedEnvelope->hasProperty('body') && $reflectedEnvelope = $reflectedEnvelope->getParentClass()) {
         }
 
-        if (!$reflectedEnvelope) {
-            throw new \RuntimeException('Envelope class does not have a "properties" field.');
+        if ($reflectedEnvelope && $reflectedEnvelope->hasProperty('body')) {
+            $prop = $reflectedEnvelope->getProperty('body');
+            $prop->setValue($envelope, $body);
         }
-
-        $prop = $reflectedEnvelope->getProperty('properties');
-        $prop->setValue($envelope, [
-            ...$prop->getValue($envelope),
-            'sentry_trace'   => \Sentry\getTraceparent(),
-            'sentry_baggage' => \Sentry\getBaggage(),
-        ]);
     }
 }

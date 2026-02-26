@@ -17,7 +17,7 @@ class QueuePlugin
     private array $transactions = [];
 
     /**
-     * Start transaction for job.
+     * Modifies the envelope body to include envelope properties to be used for transaction context.
      *
      * @param QueueInterface     $queue
      * @param ?EnvelopeInterface $envelope
@@ -30,32 +30,16 @@ class QueuePlugin
             return $envelope;
         }
 
-        $properties = $envelope->getProperties();
-        if (!isset($properties['sentry_trace']) && !isset($properties['sentry_baggage'])) {
+        $body = json_decode($envelope->getBody(), true);
+        if (!isset($body['sentry_trace']) && !isset($body['sentry_baggage'])) {
             return $envelope;
         }
 
         $this->parentSpan ??= \Sentry\SentrySdk::getCurrentHub()->getSpan();
 
-        $context = \Sentry\continueTrace(
-            $properties['sentry_trace'],
-            $properties['sentry_baggage']
-        )
-            ->setOp('queue.process')
-            ->setName($properties['topic_name']);
+        $body['envelope_properties'] = $envelope->getProperties();
 
-        $this->transactions[$properties['message_id']] = \Sentry\startTransaction($context);
-        $this->transactions[$properties['message_id']]
-            ->setData([
-                'messaging.message.id'          => $properties['message_id'],
-                'messaging.destination.name'    => $properties['topic_name'],
-                'messaging.queue.name'          => $properties['queue_name'] ?? null,
-                'messaging.message.body.size'   => strlen($envelope->getBody()),
-                'messaging.message.retry.count' => $properties['retries'] ?? null,
-            ]);
-        \Sentry\SentrySdk::getCurrentHub()->setSpan($this->transactions[$properties['message_id']]);
-
-        return $envelope;
+        return $this->setBody($envelope, (string) json_encode($body));
     }
 
     /**
@@ -112,5 +96,29 @@ class QueuePlugin
         }
 
         return [$envelope];
+    }
+
+    /**
+     * Attempt to set the body to the private body variable.
+     *
+     * @param EnvelopeInterface $envelope
+     * @param string            $body
+     *
+     * @return EnvelopeInterface
+     */
+    protected function setBody(EnvelopeInterface $envelope, string $body): EnvelopeInterface
+    {
+        $reflectedEnvelope = new \ReflectionObject($envelope);
+        // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock.DetectedWhile
+        while (!$reflectedEnvelope->hasProperty('body') && $reflectedEnvelope = $reflectedEnvelope->getParentClass()) {
+        }
+
+        if ($reflectedEnvelope && $reflectedEnvelope->hasProperty('body')) {
+            $prop = $reflectedEnvelope->getProperty('body');
+            $prop->setAccessible(true);
+            $prop->setValue($envelope, $body);
+        }
+
+        return $envelope;
     }
 }
