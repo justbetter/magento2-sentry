@@ -7,7 +7,7 @@ use Rector\Php71\Rector\FuncCall\RemoveExtraParametersRector;
 use Rector\Php80\Rector\FunctionLike\MixedTypeRector;
 
 /** @var RectorConfigBuilder $rectorConfig */
-$rectorConfig = require 'vendor/justbetter/magento2-coding-standard/rector.php';
+$rectorConfig = require 'vendor/justbetter/magento2-coding-standard/rector.php'; // phpcs:ignore
 
 $rectorConfig->withPaths([
     __DIR__.'/Adminhtml',
