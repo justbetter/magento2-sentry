@@ -83,6 +83,6 @@
     "bitexpert/phpstan-magento": "^0.32.0",
     "magento/magento-coding-standard": ">=38",
     "rector/rector": ">=1.2.5",
-    "justbetter/magento2-coding-standard": "^1.0"
+    "justbetter/magento2-coding-standard": "^1.0,>=1.0.2"
   }
 }
