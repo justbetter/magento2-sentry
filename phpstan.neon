@@ -1,5 +1,6 @@
 includes:
-    - vendor/bitexpert/phpstan-magento/extension.neon
+    - ./vendor/justbetter/magento2-coding-standard/phpstan.neon
+
 parameters:
     paths:
         - .
@@ -11,4 +12,3 @@ parameters:
     ignoreErrors:
         -
             identifier: missingType.iterableValue
-    treatPhpDocTypesAsCertain: false
