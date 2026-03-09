@@ -103,6 +103,35 @@ class SentryScript extends Template
     }
 
     /**
+     * Assembles and returns the JS script path.
+     */
+    public function getJsUrl(): string
+    {
+        $bundleFile = $this->dataHelper->getLoaderScript();
+        if ($bundleFile) {
+            return $bundleFile;
+        }
+
+        $bundleFile = 'bundle';
+
+        if ($this->isTracingEnabled()) {
+            $bundleFile .= '.tracing';
+        }
+
+        if ($this->useSessionReplay()) {
+            $bundleFile .= '.replay';
+        }
+
+        $bundleFile .= '.min.js';
+
+        return sprintf(
+            'https://browser.sentry-cdn.com/%s/%s',
+            $this->getJsSdkVersion(),
+            $bundleFile
+        );
+    }
+
+    /**
      * Whether to enable session replay.
      */
     public function useSessionReplay(): bool
