@@ -25,11 +25,11 @@ $rectorConfig->withPaths([
     __DIR__.'/view',
 ]);
 
-/** Define additional rules here
+/** Define additional rules here.
  * @see: https://getrector.com/find-rule?activeRectorSetGroup=php
+ *
  * @see: https://getrector.com/find-rule?activeRectorSetGroup=core
  */
-
 $rectorConfig->withSkip([
     RemoveExtraParametersRector::class,
     MixedTypeRector::class,
