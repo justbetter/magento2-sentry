@@ -45,6 +45,16 @@ class QueueMessageEncoderPlugin
         ]);
         \Sentry\SentrySdk::getCurrentHub()->setSpan($transaction);
 
-        return [$topic, $body['envelope_body'], $requestType];
+        unset(
+            $body['envelope_properties'],
+            $body['sentry_trace'],
+            $body['sentry_baggage']
+        );
+
+        return [
+            $topic,
+            $body['envelope_body'] ?? (string) json_encode($body),
+            $requestType,
+        ];
     }
 }
