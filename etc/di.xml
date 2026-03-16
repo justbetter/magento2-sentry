@@ -70,6 +70,9 @@
     <type name="Magento\Framework\MessageQueue\Bulk\ExchangeInterface">
         <plugin name="sentry-profiling-enqueue-bulk" type="JustBetter\Sentry\Plugin\Profiling\ExchangePlugin" disabled="false" />
     </type>
+    <type name="Magento\Framework\MessageQueue\MessageEncoder">
+        <plugin name="sentry-profiling-queue-message-encoder" type="JustBetter\Sentry\Plugin\Profiling\QueueMessageEncoderPlugin" disabled="false" />
+    </type>
     <type name="Magento\Framework\MessageQueue\QueueInterface">
         <plugin name="sentry-profiling-queue-runner" type="JustBetter\Sentry\Plugin\Profiling\QueuePlugin" disabled="false" />
     </type>
