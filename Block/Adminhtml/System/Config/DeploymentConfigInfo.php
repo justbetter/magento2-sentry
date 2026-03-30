@@ -21,7 +21,7 @@ class DeploymentConfigInfo extends Field
      * @param Version $version
      * @param array   $data
      */
-    public function __construct( // @phpstan-ignore missingType.iterableValue
+    public function __construct(// @phpstan-ignore missingType.iterableValue
         Context $context,
         private Version $version,
         array $data = []

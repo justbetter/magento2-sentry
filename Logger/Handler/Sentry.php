@@ -1,4 +1,5 @@
 <?php
+
 //
 
 namespace JustBetter\Sentry\Logger\Handler;
