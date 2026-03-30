@@ -16,7 +16,7 @@ class QueueMessageEncoderPlugin
      * @param string         $message
      * @param bool           $requestType
      *
-     * @return array
+     * @return array{0: string,1:string,2:bool}
      */
     public function beforeDecode(MessageEncoder $subject, string $topic, $message, $requestType = true): array
     {
