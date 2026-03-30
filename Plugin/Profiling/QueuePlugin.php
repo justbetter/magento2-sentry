@@ -17,7 +17,7 @@ class QueuePlugin
     private array $transactions = [];
 
     /**
-     * Start transaction for job.
+     * Modifies the envelope body to include envelope properties to be used for transaction context.
      *
      * @param QueueInterface     $queue
      * @param ?EnvelopeInterface $envelope
@@ -30,7 +30,6 @@ class QueuePlugin
             return $envelope;
         }
 
-        $properties = $envelope->getProperties();
         $body = json_decode($envelope->getBody(), true);
         if (!isset($body['sentry_trace']) && !isset($body['sentry_baggage'])) {
             return $envelope;
@@ -38,26 +37,7 @@ class QueuePlugin
 
         $this->parentSpan ??= \Sentry\SentrySdk::getCurrentHub()->getSpan();
 
-        $context = \Sentry\continueTrace(
-            $body['sentry_trace'],
-            $body['sentry_baggage']
-        )
-            ->setOp('queue.process')
-            ->setName($properties['topic_name']);
-
-        $this->transactions[$properties['message_id']] = \Sentry\startTransaction($context);
-        $this->transactions[$properties['message_id']]
-            ->setData([
-                'messaging.message.id'          => $properties['message_id'],
-                'messaging.destination.name'    => $properties['topic_name'],
-                'messaging.queue.name'          => $properties['queue_name'] ?? null,
-                'messaging.message.body.size'   => strlen($envelope->getBody()),
-                'messaging.message.retry.count' => $properties['retries'] ?? null,
-            ]);
-        \Sentry\SentrySdk::getCurrentHub()->setSpan($this->transactions[$properties['message_id']]);
-
-        unset($body['sentry_trace']);
-        unset($body['sentry_baggage']);
+        $body['envelope_properties'] = $envelope->getProperties();
 
         return $this->setBody($envelope, (string) json_encode($body));
     }
