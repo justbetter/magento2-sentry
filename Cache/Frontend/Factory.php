@@ -15,7 +15,7 @@ class Factory extends \Magento\Framework\App\Cache\Frontend\Factory
      * @param array                             $enforcedOptions
      * @param array<string,array{class:string}> $decorators
      */
-    public function __construct( // @phpstan-ignore missingType.iterableValue
+    public function __construct(// @phpstan-ignore missingType.iterableValue
         ObjectManagerInterface $objectManager,
         Filesystem $filesystem,
         ResourceConnection $resource,

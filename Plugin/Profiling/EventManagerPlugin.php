@@ -17,7 +17,7 @@ class EventManagerPlugin
      * @param ConfigInterface $config
      * @param array           $excludePatterns
      */
-    public function __construct( // @phpstan-ignore missingType.iterableValue
+    public function __construct(// @phpstan-ignore missingType.iterableValue
         private ConfigInterface $config,
         private array $excludePatterns = []
     ) {
@@ -49,6 +49,7 @@ class EventManagerPlugin
                 return false;
             }
         }
+
         return $this->config->getObservers(mb_strtolower($eventName)) !== [];
     }
 

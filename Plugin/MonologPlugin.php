@@ -18,7 +18,7 @@ class MonologPlugin
     /**
      * Add the Sentry handler to the Monolog logger if it does not already exist.
      *
-     * @param Logger $subject
+     * @param Logger                             $subject
      * @param \Monolog\Handler\AbstractHandler[] $handlers
      *
      * @return \Monolog\Handler\AbstractHandler[][]
