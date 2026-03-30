@@ -6,9 +6,6 @@ parameters:
         - .
     excludePaths:
         - vendor
-        - Test/*
         - Logger/Handler/Sentry.php
     level: 8
-    ignoreErrors:
-        -
-            identifier: missingType.iterableValue
+    reportUnmatchedIgnoredErrors: false

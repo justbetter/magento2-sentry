@@ -19,10 +19,10 @@ class ExchangePlugin
      *
      * @return array
      */
-    public function beforeEnqueue(ExchangeInterface|BulkExchangeInterface $subject, $topic, $envelopes): array
+    public function beforeEnqueue(ExchangeInterface|BulkExchangeInterface $subject, ?string $topic, $envelopes): array // @phpstan-ignore missingType.iterableValue
     {
         $parentSpan = \Sentry\SentrySdk::getCurrentHub()->getSpan();
-        if ($parentSpan === null) {
+        if (!$parentSpan instanceof \Sentry\Tracing\Span) {
             return [$topic, $envelopes];
         }
 
@@ -31,7 +31,7 @@ class ExchangePlugin
             ->setOp('queue.publish')
             ->setDescription($topic);
 
-        $envelopes = array_map(function (EnvelopeInterface $envelope) use ($parentSpan, $context, $topic) {
+        $envelopes = array_map(function (EnvelopeInterface $envelope) use ($parentSpan, $context, $topic): \Magento\Framework\MessageQueue\EnvelopeInterface {
             $properties = $envelope->getProperties();
             $span = $parentSpan->startChild($context);
             \Sentry\SentrySdk::getCurrentHub()->setSpan($span);

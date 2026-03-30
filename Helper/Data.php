@@ -69,17 +69,17 @@ class Data extends AbstractHelper
     protected $scopeConfig;
 
     /**
-     * @var array
+     * @var array<int,array<string,mixed>>
      */
     protected $config = [];
 
     /**
      * @var ?bool
      */
-    protected $isActive = null;
+    protected $isActive;
 
     /**
-     * @var array
+     * @var array<string,array{type:string,default?:mixed}>
      */
     protected $configKeys = [
         ...self::NATIVE_SENTRY_CONFIG_KEYS,
@@ -149,7 +149,7 @@ class Data extends AbstractHelper
     /**
      * Get the sentry prefixes.
      *
-     * @return array
+     * @return string[]
      */
     public function getPrefixes(): array
     {
@@ -171,6 +171,8 @@ class Data extends AbstractHelper
 
     /**
      * Get a list of crons to track.
+     *
+     * @return string[]
      */
     public function getTrackCrons(): array
     {
@@ -213,6 +215,8 @@ class Data extends AbstractHelper
 
     /**
      * Get a list of integrations to disable.
+     *
+     * @return string[]
      */
     public function getDisabledDefaultIntegrations(): array
     {
@@ -224,7 +228,7 @@ class Data extends AbstractHelper
      *
      * @return array|null
      */
-    public function getIgnoreJsErrors()
+    public function getIgnoreJsErrors() // @phpstan-ignore missingType.iterableValue
     {
         return $this->collectModuleConfig()['ignore_js_errors'];
     }
@@ -274,7 +278,7 @@ class Data extends AbstractHelper
      *
      * @return mixed
      */
-    public function getGeneralConfig($code, $storeId = null)
+    public function getGeneralConfig(string $code, $storeId = null)
     {
         return $this->getConfigValue(static::XML_PATH_SRS.$code, $storeId);
     }
@@ -292,7 +296,7 @@ class Data extends AbstractHelper
     /**
      * Gather all configuration.
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public function collectModuleConfig(): array
     {
@@ -333,7 +337,7 @@ class Data extends AbstractHelper
      *
      * @return mixed
      */
-    public function processConfigValue(mixed $value, array $config): mixed
+    public function processConfigValue(mixed $value, array $config): mixed // @phpstan-ignore missingType.iterableValue
     {
         if ($value === null) {
             return $config['default'] ?? null;
@@ -362,13 +366,13 @@ class Data extends AbstractHelper
     /**
      * Whether sentry is active, adding a reason why not.
      *
-     * @return array
+     * @return array{active:bool,reasons?:string[]}
      */
     public function isActiveWithReason(): array
     {
         $reasons = [];
         $config = $this->collectModuleConfig();
-        $emptyConfig = empty($config);
+        $emptyConfig = $config === [];
         $configEnabled = isset($config['enabled']) && $config['enabled'];
         $dsn = $this->getDSN();
         $productionMode = ($this->isProductionMode() || $this->isOverwriteProductionMode());
@@ -445,7 +449,7 @@ class Data extends AbstractHelper
     {
         try {
             return $this->storeManager->getStore();
-        } catch (DomainException|Zend_Db_Adapter_Exception|NoSuchEntityException) {
+        } catch (DomainException|Zend_Db_Adapter_Exception|NoSuchEntityException) { // @phpstan-ignore-line
             // If the store is not available, return null
             return null;
         }
@@ -637,7 +641,7 @@ class Data extends AbstractHelper
      *
      * @return array
      */
-    public function getIgnoreExceptions(): array
+    public function getIgnoreExceptions(): array // @phpstan-ignore missingType.iterableValue
     {
         return $this->collectModuleConfig()['ignore_exceptions'] ?? [];
     }
@@ -669,7 +673,7 @@ class Data extends AbstractHelper
             return false;
         }
 
-        if ($ex->getPrevious()) {
+        if ($ex->getPrevious() instanceof \Throwable) {
             return $this->shouldCaptureException($ex->getPrevious());
         }
 

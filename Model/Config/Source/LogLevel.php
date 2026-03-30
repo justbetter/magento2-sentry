@@ -10,7 +10,7 @@ class LogLevel implements ArrayInterface
     /**
      * Mapping of Monolog values to Strings.
      *
-     * @return array
+     * @return array{array{value:int,label:string|\Magento\Framework\Phrase}}
      */
     public function toOptionArray()
     {

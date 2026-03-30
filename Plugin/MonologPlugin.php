@@ -18,10 +18,10 @@ class MonologPlugin
     /**
      * Add the Sentry handler to the Monolog logger if it does not already exist.
      *
-     * @param Logger $subject
-     * @param array  $handlers
+     * @param Logger                             $subject
+     * @param \Monolog\Handler\AbstractHandler[] $handlers
      *
-     * @return array
+     * @return \Monolog\Handler\AbstractHandler[][]
      */
     public function beforeSetHandlers(
         Logger $subject,
@@ -37,7 +37,7 @@ class MonologPlugin
     /**
      * Check if the Sentry handler is already in the list of handlers.
      *
-     * @param array $handlers
+     * @param \Monolog\Handler\AbstractHandler[] $handlers
      *
      * @return bool
      */

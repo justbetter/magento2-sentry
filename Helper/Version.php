@@ -16,7 +16,7 @@ class Version extends AbstractHelper
     /**
      * @var ?string
      */
-    private $cachedValue;
+    private ?string $cachedValue = null;
 
     /**
      * @var ?LoggerInterface
@@ -80,7 +80,7 @@ class Version extends AbstractHelper
                 return null;
             }
             $result = (string) $this->generateVersion();
-            $this->versionStorage->save((string) $result);
+            $this->versionStorage->save($result);
         }
 
         return $result;

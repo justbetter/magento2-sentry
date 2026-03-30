@@ -17,7 +17,7 @@ class EventManagerPlugin
      * @param ConfigInterface $config
      * @param array           $excludePatterns
      */
-    public function __construct(
+    public function __construct(// @phpstan-ignore missingType.iterableValue
         private ConfigInterface $config,
         private array $excludePatterns = []
     ) {
@@ -50,11 +50,7 @@ class EventManagerPlugin
             }
         }
 
-        if ($this->config->getObservers(mb_strtolower($eventName)) === []) {
-            return false;
-        }
-
-        return true;
+        return $this->config->getObservers(mb_strtolower($eventName)) !== [];
     }
 
     /**
@@ -67,7 +63,7 @@ class EventManagerPlugin
      *
      * @return mixed
      */
-    public function aroundDispatch(ManagerInterface $subject, callable $callable, string $eventName, array $data = []): mixed
+    public function aroundDispatch(ManagerInterface $subject, callable $callable, string $eventName, array $data = []): mixed // @phpstan-ignore missingType.iterableValue
     {
         if (!$this->canTrace($eventName)) {
             return $callable($eventName, $data);

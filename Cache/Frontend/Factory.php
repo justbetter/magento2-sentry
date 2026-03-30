@@ -9,13 +9,13 @@ use Magento\Framework\ObjectManagerInterface;
 class Factory extends \Magento\Framework\App\Cache\Frontend\Factory
 {
     /**
-     * @param ObjectManagerInterface $objectManager
-     * @param Filesystem             $filesystem
-     * @param ResourceConnection     $resource
-     * @param array                  $enforcedOptions
-     * @param array                  $decorators
+     * @param ObjectManagerInterface            $objectManager
+     * @param Filesystem                        $filesystem
+     * @param ResourceConnection                $resource
+     * @param array                             $enforcedOptions
+     * @param array<string,array{class:string}> $decorators
      */
-    public function __construct(
+    public function __construct(// @phpstan-ignore missingType.iterableValue
         ObjectManagerInterface $objectManager,
         Filesystem $filesystem,
         ResourceConnection $resource,

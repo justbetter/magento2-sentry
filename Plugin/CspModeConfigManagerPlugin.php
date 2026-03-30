@@ -40,7 +40,7 @@ class CspModeConfigManagerPlugin
         }
 
         $dsn = $this->config->getDSN();
-        if (!is_string($dsn) || empty($dsn)) {
+        if (!is_string($dsn) || $dsn === '') {
             return $result;
         }
 

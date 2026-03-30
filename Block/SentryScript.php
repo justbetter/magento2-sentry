@@ -20,7 +20,7 @@ class SentryScript extends Template
      * @param Json             $json
      * @param array            $data
      */
-    public function __construct(
+    public function __construct(// @phpstan-ignore missingType.iterableValue
         private DataHelper $dataHelper,
         private Version $version,
         Template\Context $context,
@@ -37,7 +37,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function canUseScriptTag($blockName)
+    public function canUseScriptTag($blockName): bool
     {
         if (!$this->dataHelper->isActive() || !$this->dataHelper->showScriptTagInThisBlock($blockName)) {
             return false;
@@ -47,11 +47,7 @@ class SentryScript extends Template
             return true;
         }
 
-        if ($this->isSpotlightEnabled()) {
-            return true;
-        }
-
-        return false;
+        return $this->isSpotlightEnabled();
     }
 
     /**
@@ -59,7 +55,7 @@ class SentryScript extends Template
      *
      * @return string
      */
-    public function getDSN()
+    public function getDSN(): string
     {
         return (string) $this->dataHelper->getDSN();
     }
@@ -69,7 +65,7 @@ class SentryScript extends Template
      *
      * @return string
      */
-    public function getJsSdkVersion()
+    public function getJsSdkVersion(): string
     {
         return $this->dataHelper->getJsSdkVersion();
     }
@@ -79,7 +75,7 @@ class SentryScript extends Template
      *
      * @return ?string
      */
-    public function getVersion()
+    public function getVersion(): ?string
     {
         return $this->version->getValue();
     }
@@ -147,7 +143,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function useLogRocket()
+    public function useLogRocket(): bool
     {
         return $this->dataHelper->useLogrocket();
     }
@@ -157,7 +153,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function useLogRocketIdentify()
+    public function useLogRocketIdentify(): bool
     {
         return $this->dataHelper->useLogrocketIdentify();
     }
@@ -177,7 +173,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function stripStaticContentVersion()
+    public function stripStaticContentVersion(): bool
     {
         return $this->dataHelper->stripStaticContentVersion();
     }
@@ -187,7 +183,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function stripStoreCode()
+    public function stripStoreCode(): bool
     {
         return $this->dataHelper->stripStoreCode();
     }

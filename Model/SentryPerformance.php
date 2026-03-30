@@ -59,7 +59,7 @@ class SentryPerformance
      */
     public function startTransaction(Command|AppInterface $app, ...$args): void
     {
-        if ($this->transaction !== null) {
+        if ($this->transaction instanceof \Sentry\Tracing\Transaction) {
             // Do not start a transaction if one is already runnning.
             return;
         }
@@ -144,7 +144,7 @@ class SentryPerformance
         $transaction = startTransaction($context);
 
         // Do not sample long running tasks, individual jobs are sampled if the initiator was sampled.
-        if (in_array($command->getName(), ['queue:consumers:start'])) {
+        if ($command->getName() == 'queue:consumers:start') {
             $transaction->setSampled(false);
         }
 
@@ -168,7 +168,7 @@ class SentryPerformance
      */
     public function finishTransaction(ResponseInterface|int|null $statusCode = null): void
     {
-        if ($this->transaction === null) {
+        if (!$this->transaction instanceof \Sentry\Tracing\Transaction) {
             return;
         }
 
@@ -233,7 +233,7 @@ class SentryPerformance
         $span = null;
 
         $parentSpan = $scope->getSpan();
-        if ($parentSpan !== null && $parentSpan->getSampled()) {
+        if ($parentSpan instanceof \Sentry\Tracing\Span && $parentSpan->getSampled()) {
             $span = $parentSpan->startChild($context);
             $scope->setSpan($span);
         }
@@ -250,7 +250,7 @@ class SentryPerformance
      */
     public static function traceEnd(PerformanceTracingDto $context): void // phpcs:ignore Magento2.Functions.StaticFunction.StaticFunction
     {
-        if ($context->getSpan()) {
+        if ($context->getSpan() instanceof \Sentry\Tracing\Span) {
             $context->getSpan()->finish();
             $context->getScope()->setSpan($context->getParentSpan());
         }

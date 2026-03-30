@@ -65,7 +65,7 @@ class Sentry extends Action
                 $this->logger->critical($e);
             }
         } else {
-            $result['content'] = implode(PHP_EOL, $activeWithReason['reasons']);
+            $result['content'] = implode(PHP_EOL, $activeWithReason['reasons'] ?? []);
         }
 
         /** @var \Magento\Framework\App\Response\Http $response */

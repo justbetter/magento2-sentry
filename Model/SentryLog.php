@@ -17,7 +17,7 @@ use Sentry\State\Scope as SentryScope;
 class SentryLog
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $config = [];
 
@@ -44,7 +44,7 @@ class SentryLog
      * @param int               $logLevel
      * @param array             $context
      */
-    public function send($message, $logLevel, $context = []): void
+    public function send($message, $logLevel, array $context = []): void // @phpstan-ignore missingType.iterableValue
     {
         $config = $this->data->collectModuleConfig();
         $customTags = [];
@@ -64,7 +64,7 @@ class SentryLog
             return;
         }
 
-        if (true === isset($context['custom_tags']) && false === empty($context['custom_tags'])) {
+        if (isset($context['custom_tags']) && false === empty($context['custom_tags'])) {
             $customTags = $context['custom_tags'];
             unset($context['custom_tags']);
         }
@@ -72,7 +72,7 @@ class SentryLog
         \Sentry\configureScope(
             function (SentryScope $scope) use ($context, $customTags): void {
                 $this->setTags($scope, $customTags);
-                if (false === empty($context)) {
+                if ($context !== []) {
                     $scope->setContext('Custom context', $context);
                 }
             }
@@ -92,7 +92,7 @@ class SentryLog
 
         /// when using JS SDK you can use this for custom error page printing
         try {
-            if (true === $this->canGetCustomerData()) {
+            if ($this->canGetCustomerData()) {
                 $this->customerSession->setSentryEventId($lastEventId);
             }
         } catch (SessionException) {
@@ -107,7 +107,7 @@ class SentryLog
      *
      * @return EventHint|null
      */
-    public function monologContextToSentryHint(array $context): ?EventHint
+    public function monologContextToSentryHint(array $context): ?EventHint // @phpstan-ignore missingType.iterableValue
     {
         return EventHint::fromArray(
             [
@@ -116,7 +116,7 @@ class SentryLog
                 'stacktrace' => ($context['stacktrace'] ?? null) instanceof Stacktrace ? $context['stacktrace'] : null,
                 'extra'      => array_filter(
                     $context,
-                    fn ($key) => !in_array($key, ['exception', 'mechanism', 'stacktrace']),
+                    fn ($key): bool => !in_array($key, ['exception', 'mechanism', 'stacktrace']),
                     ARRAY_FILTER_USE_KEY
                 ) ?: [],
             ]
@@ -128,7 +128,7 @@ class SentryLog
      *
      * @return bool
      */
-    private function canGetCustomerData()
+    private function canGetCustomerData(): bool
     {
         try {
             return $this->appState->getAreaCode() === Area::AREA_FRONTEND;
@@ -143,7 +143,7 @@ class SentryLog
      * @param SentryScope $scope
      * @param array       $customTags
      */
-    private function setTags(SentryScope $scope, $customTags): void
+    private function setTags(SentryScope $scope, $customTags): void // @phpstan-ignore missingType.iterableValue
     {
         $store = $this->data->getStore();
 
