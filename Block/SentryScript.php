@@ -46,12 +46,7 @@ class SentryScript extends Template
         if ($this->useScriptTag()) {
             return true;
         }
-
-        if ($this->isSpotlightEnabled()) {
-            return true;
-        }
-
-        return false;
+        return $this->isSpotlightEnabled();
     }
 
     /**

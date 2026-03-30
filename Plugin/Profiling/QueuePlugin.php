@@ -26,7 +26,7 @@ class QueuePlugin
      */
     public function afterDequeue(QueueInterface $queue, ?EnvelopeInterface $envelope): ?EnvelopeInterface
     {
-        if ($envelope === null) {
+        if (!$envelope instanceof \Magento\Framework\MessageQueue\EnvelopeInterface) {
             return $envelope;
         }
 
@@ -84,7 +84,7 @@ class QueuePlugin
 
         $transaction->finish();
         unset($this->transactions[$properties['message_id']]);
-        if ($this->parentSpan) {
+        if ($this->parentSpan instanceof \Sentry\Tracing\Span) {
             \Sentry\SentrySdk::getCurrentHub()->setSpan($this->parentSpan);
         }
 
@@ -111,7 +111,7 @@ class QueuePlugin
 
         $transaction->finish();
         unset($this->transactions[$properties['message_id']]);
-        if ($this->parentSpan) {
+        if ($this->parentSpan instanceof \Sentry\Tracing\Span) {
             \Sentry\SentrySdk::getCurrentHub()->setSpan($this->parentSpan);
         }
 

@@ -22,7 +22,7 @@ class ExchangePlugin
     public function beforeEnqueue(ExchangeInterface|BulkExchangeInterface $subject, ?string $topic, $envelopes): array // @phpstan-ignore missingType.iterableValue
     {
         $parentSpan = \Sentry\SentrySdk::getCurrentHub()->getSpan();
-        if ($parentSpan === null) {
+        if (!$parentSpan instanceof \Sentry\Tracing\Span) {
             return [$topic, $envelopes];
         }
 

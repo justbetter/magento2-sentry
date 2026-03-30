@@ -80,7 +80,7 @@ class Version extends AbstractHelper
                 return null;
             }
             $result = (string) $this->generateVersion();
-            $this->versionStorage->save((string) $result);
+            $this->versionStorage->save($result);
         }
 
         return $result;

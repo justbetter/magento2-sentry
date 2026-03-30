@@ -22,7 +22,7 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
     public function load($identifier)
     {
         $parentSpan = SentrySdk::getCurrentHub()->getSpan();
-        if ($parentSpan === null) {
+        if (!$parentSpan instanceof \Sentry\Tracing\Span) {
             return parent::load($identifier);
         }
 
@@ -68,7 +68,7 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
     public function save($data, $identifier, array $tags = [], $lifeTime = null) // @phpstan-ignore missingType.iterableValue
     {
         $parentSpan = SentrySdk::getCurrentHub()->getSpan();
-        if ($parentSpan === null) {
+        if (!$parentSpan instanceof \Sentry\Tracing\Span) {
             return parent::save($data, $identifier, $tags, $lifeTime);
         }
 
@@ -103,7 +103,7 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
     public function remove($identifier)
     {
         $parentSpan = SentrySdk::getCurrentHub()->getSpan();
-        if ($parentSpan === null) {
+        if (!$parentSpan instanceof \Sentry\Tracing\Span) {
             return parent::remove($identifier);
         }
 
@@ -137,7 +137,7 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
     public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, array $tags = []) // @phpstan-ignore missingType.iterableValue
     {
         $parentSpan = SentrySdk::getCurrentHub()->getSpan();
-        if ($parentSpan === null) {
+        if (!$parentSpan instanceof \Sentry\Tracing\Span) {
             return parent::clean($mode, $tags);
         }
 

@@ -76,7 +76,7 @@ class Data extends AbstractHelper
     /**
      * @var ?bool
      */
-    protected $isActive = null;
+    protected $isActive;
 
     /**
      * @var array<string,array{type:string,default?:mixed}>
@@ -278,7 +278,7 @@ class Data extends AbstractHelper
      *
      * @return mixed
      */
-    public function getGeneralConfig($code, $storeId = null)
+    public function getGeneralConfig(string $code, $storeId = null)
     {
         return $this->getConfigValue(static::XML_PATH_SRS.$code, $storeId);
     }
@@ -372,7 +372,7 @@ class Data extends AbstractHelper
     {
         $reasons = [];
         $config = $this->collectModuleConfig();
-        $emptyConfig = empty($config);
+        $emptyConfig = $config === [];
         $configEnabled = isset($config['enabled']) && $config['enabled'];
         $dsn = $this->getDSN();
         $productionMode = ($this->isProductionMode() || $this->isOverwriteProductionMode());
@@ -673,7 +673,7 @@ class Data extends AbstractHelper
             return false;
         }
 
-        if ($ex->getPrevious()) {
+        if ($ex->getPrevious() instanceof \Throwable) {
             return $this->shouldCaptureException($ex->getPrevious());
         }
 

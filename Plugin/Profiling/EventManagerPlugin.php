@@ -49,12 +49,7 @@ class EventManagerPlugin
                 return false;
             }
         }
-
-        if ($this->config->getObservers(mb_strtolower($eventName)) === []) {
-            return false;
-        }
-
-        return true;
+        return $this->config->getObservers(mb_strtolower($eventName)) !== [];
     }
 
     /**

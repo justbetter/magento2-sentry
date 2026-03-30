@@ -44,7 +44,7 @@ class SentryLog
      * @param int               $logLevel
      * @param array             $context
      */
-    public function send($message, $logLevel, $context = []): void // @phpstan-ignore missingType.iterableValue
+    public function send($message, $logLevel, array $context = []): void // @phpstan-ignore missingType.iterableValue
     {
         $config = $this->data->collectModuleConfig();
         $customTags = [];
@@ -64,7 +64,7 @@ class SentryLog
             return;
         }
 
-        if (true === isset($context['custom_tags']) && false === empty($context['custom_tags'])) {
+        if (isset($context['custom_tags']) && false === empty($context['custom_tags'])) {
             $customTags = $context['custom_tags'];
             unset($context['custom_tags']);
         }
@@ -72,7 +72,7 @@ class SentryLog
         \Sentry\configureScope(
             function (SentryScope $scope) use ($context, $customTags): void {
                 $this->setTags($scope, $customTags);
-                if (false === empty($context)) {
+                if ($context !== []) {
                     $scope->setContext('Custom context', $context);
                 }
             }
@@ -92,7 +92,7 @@ class SentryLog
 
         /// when using JS SDK you can use this for custom error page printing
         try {
-            if (true === $this->canGetCustomerData()) {
+            if ($this->canGetCustomerData()) {
                 $this->customerSession->setSentryEventId($lastEventId);
             }
         } catch (SessionException) {

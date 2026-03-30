@@ -136,7 +136,7 @@ class GlobalExceptionCatcher
         $config->setSpotlight($this->sentryHelper->isSpotlightEnabled());
         $config->setDsn($this->sentryHelper->getDSN());
         if ($release = $this->releaseIdentifier->getReleaseId()) {
-            $config->setRelease((string) $release);
+            $config->setRelease($release);
         }
 
         if ($environment = $this->sentryHelper->getEnvironment()) {

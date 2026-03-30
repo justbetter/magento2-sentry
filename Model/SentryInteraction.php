@@ -101,7 +101,7 @@ class SentryInteraction
      */
     public function getUserContext(): ?UserContextInterface
     {
-        if ($this->userContext) {
+        if ($this->userContext instanceof \Magento\Authorization\Model\UserContextInterface) {
             return $this->userContext;
         }
 
