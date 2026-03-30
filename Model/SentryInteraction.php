@@ -56,7 +56,7 @@ class SentryInteraction
      *
      * @return void
      */
-    public function initialize($config): void
+    public function initialize(array $config): void // @phpstan-ignore missingType.iterableValue
     {
         $client = ClientBuilder::create($config)
             ->setSdkIdentifier(static::SDK_IDENTIFIER);
@@ -87,7 +87,6 @@ class SentryInteraction
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $reflectionClass = new ReflectionClass($objectManager);
         $sharedInstances = $reflectionClass->getProperty('_sharedInstances');
-        $sharedInstances->setAccessible(true);
         $class = $this->omConfigInterface->getPreference($class);
 
         if (!array_key_exists(ltrim($class, '\\'), $sharedInstances->getValue($objectManager))) {
@@ -128,7 +127,7 @@ class SentryInteraction
     /**
      * Attempt to get userdata from the current session.
      */
-    private function getSessionUserData(): array
+    private function getSessionUserData(): array // @phpstan-ignore missingType.iterableValue
     {
         if (!$this->canGetUserData()) {
             return [];
@@ -185,7 +184,7 @@ class SentryInteraction
         try {
             $ip = $this->remoteAddress->getRemoteAddress();
             if ($ip) {
-                configureScope(function (Scope $scope) use ($ip) {
+                configureScope(function (Scope $scope) use ($ip): void {
                     $scope->setUser([
                         'ip_address' => $ip,
                     ]);
@@ -209,7 +208,7 @@ class SentryInteraction
                 return;
             }
 
-            configureScope(function (Scope $scope) use ($userType, $userId, $userData) {
+            configureScope(function (Scope $scope) use ($userType, $userId, $userData): void {
                 $scope->setUser([
                     'id' => $userId,
                     ...$userData,

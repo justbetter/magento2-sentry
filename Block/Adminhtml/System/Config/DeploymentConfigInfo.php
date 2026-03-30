@@ -21,7 +21,7 @@ class DeploymentConfigInfo extends Field
      * @param Version $version
      * @param array   $data
      */
-    public function __construct(
+    public function __construct( // @phpstan-ignore missingType.iterableValue
         Context $context,
         private Version $version,
         array $data = []
@@ -46,7 +46,7 @@ class DeploymentConfigInfo extends Field
      *
      * @return ?string
      */
-    public function getVersion()
+    public function getVersion(): ?string
     {
         return $this->version->getValue();
     }

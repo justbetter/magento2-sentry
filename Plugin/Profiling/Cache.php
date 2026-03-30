@@ -65,7 +65,7 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
      *
      * @return bool
      */
-    public function save($data, $identifier, array $tags = [], $lifeTime = null)
+    public function save($data, $identifier, array $tags = [], $lifeTime = null) // @phpstan-ignore missingType.iterableValue
     {
         $parentSpan = SentrySdk::getCurrentHub()->getSpan();
         if ($parentSpan === null) {
@@ -134,7 +134,7 @@ class Cache extends \Magento\Framework\Cache\Frontend\Decorator\Bare
      *
      * @return bool
      */
-    public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, array $tags = [])
+    public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, array $tags = []) // @phpstan-ignore missingType.iterableValue
     {
         $parentSpan = SentrySdk::getCurrentHub()->getSpan();
         if ($parentSpan === null) {

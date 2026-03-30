@@ -16,7 +16,7 @@ class Version extends AbstractHelper
     /**
      * @var ?string
      */
-    private $cachedValue;
+    private ?string $cachedValue = null;
 
     /**
      * @var ?LoggerInterface

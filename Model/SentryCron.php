@@ -12,7 +12,7 @@ use Sentry\MonitorSchedule;
 class SentryCron
 {
     /**
-     * @var array
+     * @var array<int,array{started_at:float,check_in_id:?string}>
      */
     protected array $runningCheckins = [];
 
@@ -39,7 +39,7 @@ class SentryCron
             !$this->data->isCronMonitoringEnabled() ||
             !array_reduce(
                 $this->data->getTrackCrons(),
-                fn ($trackCron, $expression) => $trackCron || (
+                fn ($trackCron, $expression): bool => $trackCron || (
                     preg_match('/^\/.*\/[imsu]*$/', (string) $expression) ?
                         preg_match($expression, $schedule->getJobCode()) :
                         $schedule->getJobCode() === $expression
@@ -60,7 +60,7 @@ class SentryCron
         }
 
         /** @var array|null $cronExpressionArr */
-        $cronExpressionArr = $schedule->getCronExprArr();
+        $cronExpressionArr = $schedule->getCronExprArr(); // @phpstan-ignore missingType.iterableValue
         $monitorConfig = null;
         if (!empty($cronExpressionArr)) {
             $cronExpression = implode(' ', $cronExpressionArr);

@@ -72,7 +72,7 @@ class QueuePlugin
      *
      * @return array
      */
-    public function beforeReject(QueueInterface $queue, EnvelopeInterface $envelope, $requeue = true, $rejectionMessage = null): array
+    public function beforeReject(QueueInterface $queue, EnvelopeInterface $envelope, $requeue = true, $rejectionMessage = null): array // @phpstan-ignore missingType.iterableValue
     {
         $properties = $envelope->getProperties();
         $transaction = $this->transactions[$properties['message_id']] ?? null;
@@ -99,7 +99,7 @@ class QueuePlugin
      *
      * @return array
      */
-    public function beforeAcknowledge(QueueInterface $queue, EnvelopeInterface $envelope): array
+    public function beforeAcknowledge(QueueInterface $queue, EnvelopeInterface $envelope): array // @phpstan-ignore missingType.iterableValue
     {
         $properties = $envelope->getProperties();
         $transaction = $this->transactions[$properties['message_id']] ?? null;
@@ -135,7 +135,6 @@ class QueuePlugin
 
         if ($reflectedEnvelope && $reflectedEnvelope->hasProperty('body')) {
             $prop = $reflectedEnvelope->getProperty('body');
-            $prop->setAccessible(true);
             $prop->setValue($envelope, $body);
         }
 

@@ -26,9 +26,9 @@ class LogrocketCustomerInfo
      * @param Customer $subject
      * @param array    $result
      *
-     * @return array $result
+     * @return array $result // @phpstan-ignore missingType.iterableValue
      */
-    public function afterGetSectionData(Customer $subject, $result)
+    public function afterGetSectionData(Customer $subject, $result) // @phpstan-ignore missingType.iterableValue
     {
         if (!$this->customerSession->isLoggedIn()) {
             return $result;

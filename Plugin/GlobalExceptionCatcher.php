@@ -106,7 +106,10 @@ class GlobalExceptionCatcher
         $config = $this->prepareConfig();
 
         $this->sentryInteraction->initialize(array_filter($config->getData()));
-        $this->sentryPerformance->startTransaction($subject, ...$args);
+        if (($subject instanceof \Symfony\Component\Console\Command\Command)
+            || ($subject instanceof \Magento\Framework\AppInterface)) {
+            $this->sentryPerformance->startTransaction($subject, ...$args);
+        }
 
         try {
             return $response = $proceed(...$args);
@@ -196,9 +199,9 @@ class GlobalExceptionCatcher
         });
 
         $disabledDefaultIntegrations = $this->sentryHelper->getDisabledDefaultIntegrations();
-        $config->setData('integrations', static fn (array $integrations) => array_filter(
+        $config->setData('integrations', static fn (array $integrations): array => array_filter(
             $integrations,
-            static fn (IntegrationInterface $integration) => !in_array($integration::class, $disabledDefaultIntegrations)
+            static fn (IntegrationInterface $integration): bool => !in_array($integration::class, $disabledDefaultIntegrations)
         ));
 
         $config->setErrorTypes($this->sentryHelper->getErrorTypes());

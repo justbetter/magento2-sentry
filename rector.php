@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Rector\Configuration\RectorConfigBuilder;
 use Rector\Php71\Rector\FuncCall\RemoveExtraParametersRector;
-use Rector\Php80\Rector\FunctionLike\MixedTypeRector;
 
 /** @var RectorConfigBuilder $rectorConfig */
 $rectorConfig = require 'vendor/justbetter/magento2-coding-standard/rector.php'; // phpcs:ignore
@@ -32,11 +31,10 @@ $rectorConfig->withPaths([
  */
 $rectorConfig->withSkip([
     RemoveExtraParametersRector::class,
-    MixedTypeRector::class,
 ]);
 
 /** @see: https://getrector.com/documentation/levels */
-$rectorConfig->withTypeCoverageLevel(4);         // 1 is least intrusive changes, higher is more intrusive
+$rectorConfig->withTypeCoverageLevel(50);         // 1 is least intrusive changes, higher is more intrusive
 $rectorConfig->withCodeQualityLevel(10);          // 1 is least intrusive changes, higher is more intrusive
 $rectorConfig->withDeadCodeLevel(1);             // 1 is least intrusive changes, higher is more intrusive
 
