@@ -18,7 +18,7 @@ class QueueMessageEncoderPlugin
      *
      * @return array
      */
-    public function beforeDecode(MessageEncoder $subject, $topic, $message, $requestType = true): array
+    public function beforeDecode(MessageEncoder $subject, string $topic, $message, $requestType = true): array
     {
         $body = json_decode($message, true);
 
