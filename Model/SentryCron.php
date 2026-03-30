@@ -12,7 +12,7 @@ use Sentry\MonitorSchedule;
 class SentryCron
 {
     /**
-     * @var array<int,array{started_at:float,check_in_id:?string}>
+     * @var array<int|string,array{started_at:float,check_in_id:?string}>
      */
     protected array $runningCheckins = [];
 
