@@ -20,7 +20,7 @@ class SentryScript extends Template
      * @param Json             $json
      * @param array            $data
      */
-    public function __construct( // @phpstan-ignore missingType.iterableValue
+    public function __construct(// @phpstan-ignore missingType.iterableValue
         private DataHelper $dataHelper,
         private Version $version,
         Template\Context $context,
@@ -46,6 +46,7 @@ class SentryScript extends Template
         if ($this->useScriptTag()) {
             return true;
         }
+
         return $this->isSpotlightEnabled();
     }
 
