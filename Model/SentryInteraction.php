@@ -194,7 +194,7 @@ class SentryInteraction
             if ($this->canGetUserContext()) {
                 $userId = $this->getUserContext()?->getUserId();
                 if ($userId) {
-                    $userType = $this->getUserContext()?->getUserType(); // @phpstan-ignore nullsafe.neverNull
+                    $userType = $this->getUserContext()?->getUserType(); // @phpstan-ignore nullsafe.neverNull (Later Magento versions have made this non-nullable)
                 }
             }
 
