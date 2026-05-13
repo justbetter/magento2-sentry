@@ -76,7 +76,15 @@
     <type name="Magento\Framework\MessageQueue\QueueInterface">
         <plugin name="sentry-profiling-queue-runner" type="JustBetter\Sentry\Plugin\Profiling\QueuePlugin" disabled="false" />
     </type>
-    <preference for="Magento\Framework\App\Cache\Frontend\Factory" type="JustBetter\Sentry\Cache\Frontend\Factory"/>
+    <type name="Magento\Framework\App\Cache\Frontend\Factory">
+        <arguments>
+            <argument name="decorators" xsi:type="array">
+                <item name="sentry" xsi:type="array">
+                    <item name="class" xsi:type="string">JustBetter\Sentry\Plugin\Profiling\Cache</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
 
     <!-- Cron Check-Ins -->
     <type name="Magento\Cron\Model\Schedule">
