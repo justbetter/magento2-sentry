@@ -46,7 +46,7 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'dsn' => 'example.com',
     'logrocket_key' => 'example/example',
     'environment' => null,
-    'log_level' => \Monolog\Level::Warning,
+    'log_level' => \Monolog\Level::Warning->value,
     'error_types' => E_ALL,
     'ignore_exceptions' => [],
     'mage_mode_development' => false,
