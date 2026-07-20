@@ -76,17 +76,11 @@ class ResilientTransport implements TransportInterface
     }
 
     /**
-     * Queue always when async is on; otherwise only as fallback when the circuit is open.
+     * Whether the event should be published to the queue.
      */
     private function shouldQueue(): bool
     {
-        if ($this->helper->isAsyncSendingEnabled()) {
-            return true;
-        }
-
-        return $this->helper->isCircuitBreakerEnabled()
-            && $this->helper->isAsyncFallbackOnCircuitOpen()
-            && !$this->circuitBreaker->allowRequest();
+        return $this->helper->isAsyncSendingEnabled();
     }
 
     /**
@@ -96,12 +90,16 @@ class ResilientTransport implements TransportInterface
      */
     private function sendHttp(Event $event): Result
     {
+        if (!$this->circuitBreaker->allowRequest()) {
+            return new Result(ResultStatus::failed(), $event);
+        }
+
         try {
             $result = $this->httpTransport->send($event);
         } catch (Throwable) {
             $this->circuitBreaker->recordFailure();
 
-            return $this->fallbackToQueueOrFail($event);
+            return new Result(ResultStatus::failed(), $event);
         }
 
         if ($this->isSuccess($result)) {
@@ -113,25 +111,10 @@ class ResilientTransport implements TransportInterface
         if ($this->isServerSideFailure($result)) {
             $this->circuitBreaker->recordFailure();
 
-            return $this->fallbackToQueueOrFail($event, $result);
+            return $result;
         }
 
         return $result;
-    }
-
-    /**
-     * Queue the event when fallback is enabled, otherwise return the failed result.
-     *
-     * @param Event       $event
-     * @param Result|null $result
-     */
-    private function fallbackToQueueOrFail(Event $event, ?Result $result = null): Result
-    {
-        if ($this->helper->isAsyncFallbackOnCircuitOpen()) {
-            return $this->queue($event);
-        }
-
-        return $result ?? new Result(ResultStatus::failed(), $event);
     }
 
     /**

@@ -97,45 +97,12 @@ class ResilientTransportTest extends TestCase
         $this->assertSame((string) ResultStatus::success(), (string) $result->getStatus());
     }
 
-    public function testSyncHttpExceptionFallsBackToQueueWhenEnabled(): void
+    public function testSyncHttpExceptionFailsAndRecordsCircuitFailure(): void
     {
         $event = Event::createEvent();
         $helper = $this->createStub(Data::class);
         $helper->method('isAsyncSendingEnabled')->willReturn(false);
         $helper->method('isCircuitBreakerEnabled')->willReturn(true);
-        $helper->method('isAsyncFallbackOnCircuitOpen')->willReturn(true);
-
-        $circuitBreaker = $this->createMock(CircuitBreaker::class);
-        $circuitBreaker->method('allowRequest')->willReturn(true);
-        $circuitBreaker->expects($this->once())->method('recordFailure');
-
-        $httpTransport = $this->createStub(TransportInterface::class);
-        $httpTransport->method('send')->willThrowException(new RuntimeException('network down'));
-
-        $payloadSerializer = $this->createStub(PayloadSerializerInterface::class);
-        $payloadSerializer->method('serialize')->willReturn('payload');
-
-        $publisher = $this->createMock(SentryEventPublisher::class);
-        $publisher->expects($this->once())->method('publish')->with('payload');
-
-        $result = $this->createTransport(
-            $httpTransport,
-            $payloadSerializer,
-            $publisher,
-            $circuitBreaker,
-            $helper
-        )->send($event);
-
-        $this->assertSame((string) ResultStatus::success(), (string) $result->getStatus());
-    }
-
-    public function testSyncHttpExceptionFailsWhenFallbackDisabled(): void
-    {
-        $event = Event::createEvent();
-        $helper = $this->createStub(Data::class);
-        $helper->method('isAsyncSendingEnabled')->willReturn(false);
-        $helper->method('isCircuitBreakerEnabled')->willReturn(true);
-        $helper->method('isAsyncFallbackOnCircuitOpen')->willReturn(false);
 
         $circuitBreaker = $this->createMock(CircuitBreaker::class);
         $circuitBreaker->method('allowRequest')->willReturn(true);
@@ -158,13 +125,12 @@ class ResilientTransportTest extends TestCase
         $this->assertSame((string) ResultStatus::failed(), (string) $result->getStatus());
     }
 
-    public function testServerSideFailureRecordsAndFallsBack(): void
+    public function testServerSideFailureRecordsAndReturnsFailed(): void
     {
         $event = Event::createEvent();
         $helper = $this->createStub(Data::class);
         $helper->method('isAsyncSendingEnabled')->willReturn(false);
         $helper->method('isCircuitBreakerEnabled')->willReturn(true);
-        $helper->method('isAsyncFallbackOnCircuitOpen')->willReturn(true);
 
         $circuitBreaker = $this->createMock(CircuitBreaker::class);
         $circuitBreaker->method('allowRequest')->willReturn(true);
@@ -173,24 +139,21 @@ class ResilientTransportTest extends TestCase
         $httpTransport = $this->createStub(TransportInterface::class);
         $httpTransport->method('send')->willReturn(new Result(ResultStatus::failed(), $event));
 
-        $payloadSerializer = $this->createStub(PayloadSerializerInterface::class);
-        $payloadSerializer->method('serialize')->willReturn('payload');
-
         $publisher = $this->createMock(SentryEventPublisher::class);
-        $publisher->expects($this->once())->method('publish')->with('payload');
+        $publisher->expects($this->never())->method('publish');
 
         $result = $this->createTransport(
             $httpTransport,
-            $payloadSerializer,
+            $this->createStub(PayloadSerializerInterface::class),
             $publisher,
             $circuitBreaker,
             $helper
         )->send($event);
 
-        $this->assertSame((string) ResultStatus::success(), (string) $result->getStatus());
+        $this->assertSame((string) ResultStatus::failed(), (string) $result->getStatus());
     }
 
-    public function testInvalidResultDoesNotTripCircuitOrQueue(): void
+    public function testInvalidResultDoesNotTripCircuit(): void
     {
         $event = Event::createEvent();
         $helper = $this->createStub(Data::class);
@@ -219,63 +182,31 @@ class ResilientTransportTest extends TestCase
         $this->assertSame((string) ResultStatus::invalid(), (string) $result->getStatus());
     }
 
-    public function testOpenCircuitQueuesWhenFallbackEnabled(): void
+    public function testOpenCircuitReturnsFailedWithoutCallingHttp(): void
     {
         $event = Event::createEvent();
         $helper = $this->createStub(Data::class);
         $helper->method('isAsyncSendingEnabled')->willReturn(false);
         $helper->method('isCircuitBreakerEnabled')->willReturn(true);
-        $helper->method('isAsyncFallbackOnCircuitOpen')->willReturn(true);
 
         $circuitBreaker = $this->createStub(CircuitBreaker::class);
         $circuitBreaker->method('allowRequest')->willReturn(false);
 
-        $payloadSerializer = $this->createStub(PayloadSerializerInterface::class);
-        $payloadSerializer->method('serialize')->willReturn('queued');
-
         $publisher = $this->createMock(SentryEventPublisher::class);
-        $publisher->expects($this->once())->method('publish')->with('queued');
+        $publisher->expects($this->never())->method('publish');
 
         $httpTransport = $this->createMock(TransportInterface::class);
         $httpTransport->expects($this->never())->method('send');
 
         $result = $this->createTransport(
             $httpTransport,
-            $payloadSerializer,
+            $this->createStub(PayloadSerializerInterface::class),
             $publisher,
             $circuitBreaker,
             $helper
         )->send($event);
 
-        $this->assertSame((string) ResultStatus::success(), (string) $result->getStatus());
-    }
-
-    public function testOpenCircuitWithoutFallbackGoesHttp(): void
-    {
-        $event = Event::createEvent();
-        $helper = $this->createStub(Data::class);
-        $helper->method('isAsyncSendingEnabled')->willReturn(false);
-        $helper->method('isCircuitBreakerEnabled')->willReturn(true);
-        $helper->method('isAsyncFallbackOnCircuitOpen')->willReturn(false);
-
-        $httpTransport = $this->createMock(TransportInterface::class);
-        $httpTransport
-            ->expects($this->once())
-            ->method('send')
-            ->willReturn(new Result(ResultStatus::success(), $event));
-
-        $publisher = $this->createMock(SentryEventPublisher::class);
-        $publisher->expects($this->never())->method('publish');
-
-        $result = $this->createTransport(
-            $httpTransport,
-            $this->createStub(PayloadSerializerInterface::class),
-            $publisher,
-            $this->createStub(CircuitBreaker::class),
-            $helper
-        )->send($event);
-
-        $this->assertSame((string) ResultStatus::success(), (string) $result->getStatus());
+        $this->assertSame((string) ResultStatus::failed(), (string) $result->getStatus());
     }
 
     public function testQueueSetsTimestampWhenMissing(): void
