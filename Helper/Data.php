@@ -102,7 +102,6 @@ class Data extends AbstractHelper
         'enable_csp_report_url'               => ['type' => 'bool'],
         // Resilient delivery (async MQ + circuit breaker)
         'async_sending_enabled'               => ['type' => 'bool', 'default' => false],
-        'async_fallback_on_circuit_open'      => ['type' => 'bool', 'default' => true],
         'circuit_breaker_enabled'             => ['type' => 'bool', 'default' => true],
         'circuit_breaker_failure_threshold'   => ['type' => 'int', 'default' => 5],
         'circuit_breaker_recovery_timeout'    => ['type' => 'int', 'default' => 60],
@@ -671,14 +670,6 @@ class Data extends AbstractHelper
     public function isAsyncSendingEnabled(): bool
     {
         return (bool) ($this->collectModuleConfig()['async_sending_enabled'] ?? false);
-    }
-
-    /**
-     * When the circuit is open (or sync send fails), fall back to async MQ delivery.
-     */
-    public function isAsyncFallbackOnCircuitOpen(): bool
-    {
-        return (bool) ($this->collectModuleConfig()['async_fallback_on_circuit_open'] ?? true);
     }
 
     /**
