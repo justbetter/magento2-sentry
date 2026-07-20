@@ -153,6 +153,7 @@
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
+                </field>
                 <field id="circuit_breaker_enabled" translate="label comment" type="select" sortOrder="120" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
                     <label>Circuit Breaker Enabled</label>
                     <comment><![CDATA[Fail fast on synchronous Sentry HTTP calls after repeated failures so a degraded Sentry does not stall shoppers.]]></comment>

@@ -117,8 +117,8 @@ Next to that there are some configuration options under Stores > Configuration >
 
 Event delivery can be configured as either synchronous or asynchronous:
 
-1. **Async mode** (`async_sending_enabled = true`): Events are serialized immediately with exact capture timestamps and published to the `justbetter.sentry.event.send` message queue. A background consumer delivers them to Sentry via HTTP.
-2. **Sync mode + circuit breaker** (`async_sending_enabled = false`): Events are sent over HTTP immediately. If `circuit_breaker_enabled` is true and consecutive failures reach `circuit_breaker_failure_threshold`, the circuit opens and subsequent requests fail fast without blocking Magento.
+1. (Default) **Sync mode + circuit breaker** (`async_sending_enabled = false`): Events are sent over HTTP immediately. If `circuit_breaker_enabled` is true and consecutive failures reach `circuit_breaker_failure_threshold`, the circuit opens and subsequent requests fail fast without blocking Magento.
+2. **Async mode** (`async_sending_enabled = true`): Events are serialized immediately with exact capture timestamps and published to the `justbetter.sentry.event.send` message queue. A background consumer delivers them to Sentry via HTTP.
 
 To run the queue consumer manually:
 
