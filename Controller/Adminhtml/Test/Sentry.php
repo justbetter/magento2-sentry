@@ -68,8 +68,8 @@ class Sentry extends Action
                     } else {
                         $result['content'] = __(
                             'Sentry did not confirm delivery of the test event. This usually means '
-                            . 'your Sentry quota or rate limit has been reached, or the event was '
-                            . 'rejected. Check your Sentry project quota for details.'
+                            .'your Sentry quota or rate limit has been reached, or the event was '
+                            .'rejected. Check your Sentry project quota for details.'
                         );
                     }
                 } else {
