@@ -3,6 +3,7 @@
 namespace JustBetter\Sentry\Controller\Adminhtml\Test;
 
 use JustBetter\Sentry\Helper\Data;
+use JustBetter\Sentry\Model\SentryInteraction;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Logger\Monolog;
@@ -22,12 +23,13 @@ class Sentry extends Action
     /**
      * Sentry constructor.
      *
-     * @param Context         $context
-     * @param PageFactory     $resultPageFactory
-     * @param Json            $jsonSerializer
-     * @param LoggerInterface $logger
-     * @param Data            $helperSentry
-     * @param Monolog         $monolog
+     * @param Context           $context
+     * @param PageFactory       $resultPageFactory
+     * @param Json              $jsonSerializer
+     * @param LoggerInterface   $logger
+     * @param Data              $helperSentry
+     * @param Monolog           $monolog
+     * @param SentryInteraction $sentryInteraction
      */
     public function __construct(
         Context $context,
@@ -35,7 +37,8 @@ class Sentry extends Action
         private Json $jsonSerializer,
         protected LoggerInterface $logger,
         private Data $helperSentry,
-        private Monolog $monolog
+        private Monolog $monolog,
+        private SentryInteraction $sentryInteraction
     ) {
         parent::__construct($context);
     }
@@ -55,8 +58,20 @@ class Sentry extends Action
             try {
                 if ($this->helperSentry->isPhpTrackingEnabled()) {
                     $this->monolog->addRecord(\Monolog\Logger::ALERT, 'TEST message from Magento 2', []);
-                    $result['status'] = true;
-                    $result['content'] = __('Check sentry.io which should hold an alert');
+
+                    $sentryResponse = $this->sentryInteraction->getLastResponse();
+                    $rateLimited = $sentryResponse !== null && $sentryResponse->hasHeader('X-Sentry-Rate-Limits');
+
+                    if ($sentryResponse !== null && $sentryResponse->isSuccess() && !$rateLimited) {
+                        $result['status'] = true;
+                        $result['content'] = __('Check sentry.io which should hold an alert');
+                    } else {
+                        $result['content'] = __(
+                            'Sentry did not confirm delivery of the test event. This usually means '
+                            .'your Sentry quota or rate limit has been reached, or the event was '
+                            .'rejected. Check your Sentry project quota for details.'
+                        );
+                    }
                 } else {
                     $result['content'] = __('Php error tracking must be enabled for testing');
                 }
