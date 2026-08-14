@@ -7,10 +7,7 @@ namespace JustBetter\Sentry\Model\Transport;
 use JustBetter\Sentry\Helper\Data;
 use JustBetter\Sentry\Model\CircuitBreaker;
 use JustBetter\Sentry\Model\Queue\Publisher\SentryEventPublisher;
-use JustBetter\Sentry\Model\SentryInteraction;
 use Psr\Log\NullLogger;
-use Sentry\Client;
-use Sentry\HttpClient\HttpClient;
 use Sentry\HttpClient\HttpClientInterface;
 use Sentry\Options;
 use Sentry\Serializer\PayloadSerializer;
@@ -37,12 +34,11 @@ class ResilientTransportFactory
     /**
      * Create transport for the given Sentry client options.
      *
-     * @param Options                  $options
-     * @param HttpClientInterface|null $httpClient Optional client used for sync HTTP (e.g. tracking wrapper)
+     * @param Options             $options
+     * @param HttpClientInterface $httpClient
      */
-    public function create(Options $options, ?HttpClientInterface $httpClient = null): TransportInterface
+    public function create(Options $options, HttpClientInterface $httpClient): TransportInterface
     {
-        $httpClient ??= new HttpClient(SentryInteraction::SDK_IDENTIFIER, Client::SDK_VERSION);
         $payloadSerializer = new PayloadSerializer($options);
         $httpTransport = new HttpTransport(
             $options,
