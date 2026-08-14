@@ -7,7 +7,6 @@ use Magento\Customer\Model\Session;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\SessionException;
 use Magento\Framework\Logger\Monolog;
 use Sentry\EventHint;
 use Sentry\ExceptionMechanism;
@@ -95,7 +94,7 @@ class SentryLog
             if ($this->canGetCustomerData()) {
                 $this->customerSession->setSentryEventId($lastEventId);
             }
-        } catch (SessionException) {
+        } catch (\Throwable) {
             return;
         }
     }

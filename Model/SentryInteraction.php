@@ -7,6 +7,7 @@ namespace JustBetter\Sentry\Model;
 // phpcs:disable Magento2.Functions.DiscouragedFunction
 
 use JustBetter\Sentry\Helper\Data;
+use JustBetter\Sentry\Model\Http\TrackingHttpClient;
 use JustBetter\Sentry\Model\Transport\ResilientTransportFactory;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Backend\Model\Auth\Session as AdminSession;
@@ -18,6 +19,7 @@ use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\ObjectManager\ConfigInterface;
 use ReflectionClass;
 use Sentry\ClientBuilder;
+use Sentry\HttpClient\Response;
 use Sentry\SentrySdk;
 use Sentry\State\Scope;
 use Throwable;
@@ -33,6 +35,11 @@ class SentryInteraction
      * @var ?UserContextInterface
      */
     private ?UserContextInterface $userContext = null;
+
+    /**
+     * @var ?TrackingHttpClient
+     */
+    private ?TrackingHttpClient $trackingHttpClient = null;
 
     /**
      * SentryInteraction constructor.
@@ -64,11 +71,24 @@ class SentryInteraction
         $builder = ClientBuilder::create($config)
             ->setSdkIdentifier(static::SDK_IDENTIFIER);
 
+        $this->trackingHttpClient = new TrackingHttpClient($builder->getHttpClient());
+        $builder->setHttpClient($this->trackingHttpClient);
         $builder->setTransport(
-            $this->resilientTransportFactory->create($builder->getOptions())
+            $this->resilientTransportFactory->create(
+                $builder->getOptions(),
+                $this->trackingHttpClient
+            )
         );
 
         SentrySdk::init()->bindClient($builder->getClient());
+    }
+
+    /**
+     * Get the raw response of the most recent Sentry API call, if any was made this request.
+     */
+    public function getLastResponse(): ?Response
+    {
+        return $this->trackingHttpClient?->getLastResponse();
     }
 
     /**
