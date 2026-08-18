@@ -139,36 +139,6 @@ class SentryScript extends Template
     }
 
     /**
-     * If LogRocket should be used.
-     *
-     * @return bool
-     */
-    public function useLogRocket(): bool
-    {
-        return $this->dataHelper->useLogrocket();
-    }
-
-    /**
-     * If LogRocket identify should be used.
-     *
-     * @return bool
-     */
-    public function useLogRocketIdentify(): bool
-    {
-        return $this->dataHelper->useLogrocketIdentify();
-    }
-
-    /**
-     * Gets the LogRocket key.
-     *
-     * @return string
-     */
-    public function getLogrocketKey()
-    {
-        return $this->dataHelper->getLogrocketKey();
-    }
-
-    /**
      * Whether we should strip the static content version from the URL.
      *
      * @return bool

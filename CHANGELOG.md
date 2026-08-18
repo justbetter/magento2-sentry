@@ -1,4 +1,7 @@
 # Changelog
+## [5.0.0] - Unreleased
+### Removed
+    * **BREAKING:** Removed the LogRocket integration. It has been extracted into its own module, [`justbetter/magento2-sentry-logrocket`](https://github.com/justbetter/magento2-sentry-logrocket). If you were using LogRocket, install that module before upgrading — the config paths and `env.php` key are unchanged, so no configuration changes are needed. If you don't use LogRocket, no action is needed.
 ## [4.5.2] - 2025-11-27
 ### Fixed
     * Fixed undefined message properties on queues (https://github.com/justbetter/magento2-sentry/pull/221)

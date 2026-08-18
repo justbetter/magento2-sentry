@@ -26,8 +26,9 @@ Depending on the log level configured in the backend of magento 2, notifications
     - [Queue monitoring](https://docs.sentry.io/platforms/php/tracing/instrumentation/queues-module/)
 - Cron Monitoring
 - Session replay
-- Logrocket support
 - Sentry feedback form after an error
+
+> **LogRocket?** LogRocket support moved out of this module into [`justbetter/magento2-sentry-logrocket`](https://github.com/justbetter/magento2-sentry-logrocket) as of 5.0.0. If you were using it before, install that module — no configuration changes needed.
 
 ## Installation
 - `composer require justbetter/magento2-sentry`
@@ -44,7 +45,6 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
 ```
 'sentry' => [
     'dsn' => 'example.com',
-    'logrocket_key' => 'example/example',
     'environment' => null,
     'log_level' => \Monolog\Level::Warning->value,
     'error_types' => E_ALL,
