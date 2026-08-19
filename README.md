@@ -98,6 +98,46 @@ Next to that there are some configuration options under Stores > Configuration >
 | `spotlight_url` | - | Override the [Sidecar url](https://spotlightjs.com/sidecar/) |         
 | `enable_csp_report_url` | `false` | If set to true, the report-uri will be automatically added based on the DSN. |
 
+### Javascript issue grouping
+These settings live in the Magento configuration under Stores > Configuration > JustBetter > Sentry > Sentry issue
+grouping (`sentry/issue_grouping/*`), because they are store specific and safe to change at runtime. All of them
+default to off, so updating the module never changes existing grouping or transaction names.
+
+| Name | Default | Description |
+|---|---|---|
+| `strip_static_content_version` | `false` | Strip `version1234567890/` from stacktrace filenames so a static content deploy does not create new issues. |
+| `strip_store_code` | `false` | Strip the store code from stacktrace filenames. Replaces the first occurrence only. |
+| `add_action_context` | `false` | Send the Magento controller action of the current page (for example `catalog_product_view`, the same value Magento adds to the body tag) to the browser. Every Javascript event gets the `magento.route`, `magento.controller`, `magento.action` and `magento.full_action` tags, `event.transaction` is set to the full action name, and the pageload transaction is named after the action instead of the URL path. |
+| `strip_document_url` | `false` | Requires `add_action_context`. Errors thrown from inline scripts (`x-magento-init`, inline `require([...])`, inline event handlers) are reported by the browser with the page URL as their filename, so Sentry creates a separate issue for every product, category and CMS URL. This replaces that filename with `/<catalog_product_view>` so they group per page type instead. |
+
+Enabling `strip_document_url` is a trade-off: Sentry can no longer show the source line for those frames, because the
+filename it was fetched from is no longer a real URL. Line and column numbers are kept, the real page URL is still
+sent with the event (`request.url`) and in navigation breadcrumbs, and frames pointing at real `.js` files are left
+untouched. It does not regroup issues retroactively — existing per-URL issues simply stop receiving new events, and a
+batch of new issues (now grouped per page type) appears the first time you enable it.
+
+If you'd rather not ship any extra Javascript, the same result can often be achieved without this module at all, using
+Sentry's own project settings: a [Stack Trace Rule](https://docs.sentry.io/concepts/data-management/event-grouping/stack-trace-rules/)
+like `family:javascript stack.abs_path:"*.html" -group` removes document-URL frames from grouping entirely, and
+[Fingerprint Rules](https://docs.sentry.io/concepts/data-management/event-grouping/fingerprint-rules/) can use
+`{{ tags.magento_action }}` once `add_action_context` is enabled.
+
+#### Adding your own Javascript context
+`add_action_context` dispatches the `sentry_javascript_context` event with a `Magento\Framework\DataObject` before it
+is rendered, so you can add tags or change the filename that replaces the document URL:
+
+```PHP
+public function execute(\Magento\Framework\Event\Observer $observer)
+{
+    $context = $observer->getEvent()->getContext();
+    $context->setData('tags', array_merge($context->getData('tags'), ['magento.theme' => 'hyva']));
+}
+```
+
+The result is rendered inline into the (possibly full-page-cached) HTML and is readable as
+`window.sentryMagentoContext`, so anything you add must be derivable from the URL alone and must never contain
+customer data.
+
 ### Configuration for Adobe Cloud
 Since Adobe Cloud doesn't allow you to add manually add content to the `env.php` file, the configuration can be done
 using the "Variables" in Adobe Commerce using the following variables:
@@ -156,6 +196,10 @@ This same thing is the case for
 | sentry_before_send_check_in    | https://docs.sentry.io/platforms/php/configuration/options/#before_send_check_in    |
 | sentry_before_breadcrumb       | https://docs.sentry.io/platforms/php/configuration/options/#before_breadcrumb       |
 | sentry_before_send_log         | https://docs.sentry.io/platforms/php/configuration/options/#before_send_log         |
+
+The `sentry_javascript_context` event is dispatched server-side when `sentry/issue_grouping/add_action_context` is
+enabled, before the request context is rendered into the page for the browser SDK. See
+[Adding your own Javascript context](#adding-your-own-javascript-context) above.
 
 ## Compatibility
 The module is tested on Magento version 2.4.x with sentry sdk version 4.x. feel free to fork this project or make a pull request.

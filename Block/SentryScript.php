@@ -4,6 +4,7 @@ namespace JustBetter\Sentry\Block;
 
 use JustBetter\Sentry\Helper\Data as DataHelper;
 use JustBetter\Sentry\Helper\Version;
+use JustBetter\Sentry\Model\JavascriptContext;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Element\Template;
 
@@ -14,17 +15,19 @@ class SentryScript extends Template
     /**
      * SentryScript constructor.
      *
-     * @param DataHelper       $dataHelper
-     * @param Version          $version
-     * @param Template\Context $context
-     * @param Json             $json
-     * @param array            $data
+     * @param DataHelper        $dataHelper
+     * @param Version           $version
+     * @param Template\Context  $context
+     * @param Json              $json
+     * @param JavascriptContext $javascriptContext
+     * @param array             $data
      */
     public function __construct(// @phpstan-ignore missingType.iterableValue
         private DataHelper $dataHelper,
         private Version $version,
         Template\Context $context,
         private Json $json,
+        private JavascriptContext $javascriptContext,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -189,6 +192,42 @@ class SentryScript extends Template
     }
 
     /**
+     * Whether we should replace the document url in Javascript stacktraces.
+     *
+     * @return bool
+     */
+    public function stripDocumentUrl(): bool
+    {
+        return $this->dataHelper->stripDocumentUrl();
+    }
+
+    /**
+     * Get the Magento request context for the browser SDK as a Javascript object literal.
+     *
+     * Returns null when the context is disabled or unavailable, in which case none of the
+     * context based features may be rendered.
+     *
+     * @return ?string
+     */
+    public function getJavascriptContextJson(): ?string
+    {
+        $context = $this->javascriptContext->get();
+
+        if (!$context) {
+            return null;
+        }
+
+        // Json::serialize() has no JSON_HEX_* flags, so escape breakout characters ourselves.
+        return strtr((string) $this->json->serialize($context), [
+            '<'            => '\u003C',
+            '>'            => '\u003E',
+            '&'            => '\u0026',
+            "\xE2\x80\xA8" => '\u2028',
+            "\xE2\x80\xA9" => '\u2029',
+        ]);
+    }
+
+    /**
      * Get Store code.
      *
      * @return string
@@ -227,6 +266,6 @@ class SentryScript extends Template
      */
     public function getIgnoreJsErrors(): string
     {
-        return (string) $this->json->serialize($this->dataHelper->getIgnoreJsErrors() ?? '[]');
+        return (string) $this->json->serialize($this->dataHelper->getIgnoreJsErrors() ?? []);
     }
 }
