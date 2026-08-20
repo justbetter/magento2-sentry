@@ -13,13 +13,11 @@
     </type>
 
     <!-- Log catching-->
-    <type name="Monolog\Logger">
-        <plugin disabled="false" name="SentryMonologPlugin" type="JustBetter\Sentry\Plugin\MonologPlugin" sortOrder="10"/>
-    </type>
-
-    <type name="JustBetter\Sentry\Plugin\MonologPlugin">
+    <type name="Magento\Framework\Logger\Monolog">
         <arguments>
-            <argument name="sentryHandler" xsi:type="object">JustBetter\Sentry\Logger\Handler\Sentry\Proxy</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="sentry" xsi:type="object">JustBetter\Sentry\Logger\Handler\Sentry\Proxy</item>
+            </argument>
         </arguments>
     </type>
 
