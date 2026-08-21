@@ -1,7 +1,5 @@
 # Changelog
 ## [Unreleased]
-### Changed
-    * Register the Sentry Monolog handler as a constructor argument on Magento\Framework\Logger\Monolog instead of a plugin on Monolog\Logger, avoiding interceptor generation for a third-party class (https://github.com/justbetter/magento2-sentry/issues/242)
 ### Fixed
     * Fixed Logger\Handler\Sentry::isHandling() being able to throw during early bootstrap error logging (https://github.com/justbetter/magento2-sentry/issues/242)
 ## [4.5.2] - 2025-11-27
