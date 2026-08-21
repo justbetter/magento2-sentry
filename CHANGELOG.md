@@ -1,4 +1,7 @@
 # Changelog
+## [Unreleased]
+### Fixed
+    * Fixed Logger\Handler\Sentry::isHandling() being able to throw during early bootstrap error logging (https://github.com/justbetter/magento2-sentry/issues/242)
 ## [4.5.2] - 2025-11-27
 ### Fixed
     * Fixed undefined message properties on queues (https://github.com/justbetter/magento2-sentry/pull/221)
