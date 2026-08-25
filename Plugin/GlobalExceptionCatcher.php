@@ -103,12 +103,16 @@ class GlobalExceptionCatcher
             return $proceed(...$args);
         }
 
-        $config = $this->prepareConfig();
-
-        $this->sentryInteraction->initialize(array_filter($config->getData()));
-        if (($subject instanceof \Symfony\Component\Console\Command\Command)
-            || ($subject instanceof \Magento\Framework\AppInterface)) {
-            $this->sentryPerformance->startTransaction($subject, ...$args);
+        try {
+            $config = $this->prepareConfig();
+            $this->sentryInteraction->initialize(array_filter($config->getData()));
+            if (($subject instanceof \Symfony\Component\Console\Command\Command)
+                || ($subject instanceof \Magento\Framework\AppInterface)) {
+                $this->sentryPerformance->startTransaction($subject, ...$args);
+            }
+        } catch (Throwable) {
+            // Sentry bootstrap must never take down Magento.
+            return $proceed(...$args);
         }
 
         try {
@@ -135,6 +139,9 @@ class GlobalExceptionCatcher
 
         $config->setSpotlight($this->sentryHelper->isSpotlightEnabled());
         $config->setDsn($this->sentryHelper->getDSN());
+        // Keep outbound HTTP short so a degraded Sentry cannot stall Magento.
+        $config->setHttpTimeout($this->sentryHelper->getHttpTimeout());
+        $config->setHttpConnectTimeout($this->sentryHelper->getHttpConnectTimeout());
         if ($release = $this->releaseIdentifier->getReleaseId()) {
             $config->setRelease($release);
         }

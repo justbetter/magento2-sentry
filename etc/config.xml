@@ -26,6 +26,13 @@
                 <tracing_enabled/>
                 <tracing_sample_data/>
                 <ignore_js_errors/>
+                <async_sending_enabled>0</async_sending_enabled>
+                <circuit_breaker_enabled>1</circuit_breaker_enabled>
+                <circuit_breaker_failure_threshold>5</circuit_breaker_failure_threshold>
+                <circuit_breaker_recovery_timeout>60</circuit_breaker_recovery_timeout>
+                <circuit_breaker_success_threshold>2</circuit_breaker_success_threshold>
+                <http_timeout>2</http_timeout>
+                <http_connect_timeout>1</http_connect_timeout>
             </environment>
         </sentry>
     </default>

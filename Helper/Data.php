@@ -100,6 +100,14 @@ class Data extends AbstractHelper
         'cron_monitoring_enabled'             => ['type' => 'bool'],
         'track_crons'                         => ['type' => 'array'],
         'enable_csp_report_url'               => ['type' => 'bool'],
+        // Resilient delivery (async MQ + circuit breaker)
+        'async_sending_enabled'               => ['type' => 'bool', 'default' => false],
+        'circuit_breaker_enabled'             => ['type' => 'bool', 'default' => true],
+        'circuit_breaker_failure_threshold'   => ['type' => 'int', 'default' => 5],
+        'circuit_breaker_recovery_timeout'    => ['type' => 'int', 'default' => 60],
+        'circuit_breaker_success_threshold'   => ['type' => 'int', 'default' => 2],
+        'http_timeout'                        => ['type' => 'int', 'default' => 2],
+        'http_connect_timeout'                => ['type' => 'int', 'default' => 1],
     ];
 
     /**
@@ -654,6 +662,62 @@ class Data extends AbstractHelper
     public function isEnableCspReportUrl(): bool
     {
         return $this->collectModuleConfig()['enable_csp_report_url'] ?? false;
+    }
+
+    /**
+     * Whether Sentry envelopes should be published to Magento MQ instead of HTTP on the request path.
+     */
+    public function isAsyncSendingEnabled(): bool
+    {
+        return (bool) ($this->collectModuleConfig()['async_sending_enabled'] ?? false);
+    }
+
+    /**
+     * Whether the circuit breaker is enabled for synchronous Sentry HTTP calls.
+     */
+    public function isCircuitBreakerEnabled(): bool
+    {
+        return (bool) ($this->collectModuleConfig()['circuit_breaker_enabled'] ?? true);
+    }
+
+    /**
+     * Consecutive HTTP failures before the circuit opens.
+     */
+    public function getCircuitBreakerFailureThreshold(): int
+    {
+        return max(1, (int) ($this->collectModuleConfig()['circuit_breaker_failure_threshold'] ?? 5));
+    }
+
+    /**
+     * Seconds to wait before probing Sentry again after the circuit opens.
+     */
+    public function getCircuitBreakerRecoveryTimeout(): int
+    {
+        return max(1, (int) ($this->collectModuleConfig()['circuit_breaker_recovery_timeout'] ?? 60));
+    }
+
+    /**
+     * Successful probes required in half-open state before closing the circuit.
+     */
+    public function getCircuitBreakerSuccessThreshold(): int
+    {
+        return max(1, (int) ($this->collectModuleConfig()['circuit_breaker_success_threshold'] ?? 2));
+    }
+
+    /**
+     * HTTP timeout (seconds) for Sentry envelope delivery.
+     */
+    public function getHttpTimeout(): int
+    {
+        return max(1, (int) ($this->collectModuleConfig()['http_timeout'] ?? 2));
+    }
+
+    /**
+     * HTTP connect timeout (seconds) for Sentry envelope delivery.
+     */
+    public function getHttpConnectTimeout(): int
+    {
+        return max(1, (int) ($this->collectModuleConfig()['http_connect_timeout'] ?? 1));
     }
 
     /**

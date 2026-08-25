@@ -90,4 +90,27 @@
     <type name="Magento\Cron\Model\Schedule">
         <plugin name="sentry-cron-checkin" type="JustBetter\Sentry\Plugin\CronScheduleCheckIn" disabled="false"/>
     </type>
+
+    <!-- Resilient async delivery -->
+    <type name="JustBetter\Sentry\Model\SentryInteraction">
+        <arguments>
+            <argument name="resilientTransportFactory" xsi:type="object">JustBetter\Sentry\Model\Transport\ResilientTransportFactory\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="JustBetter\Sentry\Model\Transport\ResilientTransportFactory">
+        <arguments>
+            <argument name="publisher" xsi:type="object">JustBetter\Sentry\Model\Queue\Publisher\SentryEventPublisher\Proxy</argument>
+            <argument name="circuitBreaker" xsi:type="object">JustBetter\Sentry\Model\CircuitBreaker\Proxy</argument>
+            <argument name="helper" xsi:type="object">JustBetter\Sentry\Helper\Data\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="JustBetter\Sentry\Model\Queue\Consumer\SentryEventConsumer">
+        <arguments>
+            <argument name="envelopeSender" xsi:type="object">JustBetter\Sentry\Model\Transport\EnvelopeSender\Proxy</argument>
+            <argument name="circuitBreaker" xsi:type="object">JustBetter\Sentry\Model\CircuitBreaker\Proxy</argument>
+            <argument name="helper" xsi:type="object">JustBetter\Sentry\Helper\Data\Proxy</argument>
+        </arguments>
+    </type>
 </config>

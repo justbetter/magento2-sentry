@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/consumer.xsd">
+    <consumer name="justbetter.sentry.event"
+              queue="justbetter.sentry.event"
+              handler="JustBetter\Sentry\Model\Queue\Consumer\SentryEventConsumer::process"
+        />
+</config>

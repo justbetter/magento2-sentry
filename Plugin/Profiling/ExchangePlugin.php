@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JustBetter\Sentry\Plugin\Profiling;
 
+use JustBetter\Sentry\Model\Queue\Publisher\SentryEventPublisher;
 use Magento\Framework\MessageQueue\Bulk\ExchangeInterface as BulkExchangeInterface;
 use Magento\Framework\MessageQueue\EnvelopeInterface;
 use Magento\Framework\MessageQueue\ExchangeInterface;
@@ -21,6 +22,11 @@ class ExchangePlugin
      */
     public function beforeEnqueue(ExchangeInterface|BulkExchangeInterface $subject, ?string $topic, $envelopes): array // @phpstan-ignore missingType.iterableValue
     {
+        // Never wrap our own async Sentry delivery — that would nest envelopes and risk recursion.
+        if ($topic === SentryEventPublisher::TOPIC_NAME) {
+            return [$topic, $envelopes];
+        }
+
         $parentSpan = \Sentry\SentrySdk::getCurrentHub()->getSpan();
         if (!$parentSpan instanceof \Sentry\Tracing\Span) {
             return [$topic, $envelopes];

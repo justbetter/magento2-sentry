@@ -146,6 +146,62 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="async_sending_enabled" translate="label comment" type="select" sortOrder="100" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Async Sending (Message Queue)</label>
+                    <comment><![CDATA[When enabled, Sentry envelopes are published to Magento MQ on the request path and delivered by the <code>justbetter.sentry.event</code> consumer. Envelope timestamps are frozen at publish time.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="circuit_breaker_enabled" translate="label comment" type="select" sortOrder="120" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Circuit Breaker Enabled</label>
+                    <comment><![CDATA[Fail fast on synchronous Sentry HTTP calls after repeated failures so a degraded Sentry does not stall shoppers.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="circuit_breaker_failure_threshold" translate="label" type="text" sortOrder="130" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Circuit Breaker Failure Threshold</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="circuit_breaker_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="circuit_breaker_recovery_timeout" translate="label comment" type="text" sortOrder="140" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Circuit Breaker Recovery Timeout (seconds)</label>
+                    <comment><![CDATA[How long the circuit stays open before a probe request is allowed.]]></comment>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="circuit_breaker_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="circuit_breaker_success_threshold" translate="label" type="text" sortOrder="150" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Circuit Breaker Success Threshold</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="circuit_breaker_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="http_timeout" translate="label comment" type="text" sortOrder="160" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Sentry HTTP Timeout (seconds)</label>
+                    <comment><![CDATA[Total HTTP timeout for synchronous and consumer envelope delivery. Keep low on the storefront.]]></comment>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="http_connect_timeout" translate="label" type="text" sortOrder="170" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Sentry HTTP Connect Timeout (seconds)</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
             <group id="issue_grouping" translate="label" type="text" sortOrder="30" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
                 <label>Sentry issue grouping</label>

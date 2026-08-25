@@ -30,6 +30,8 @@
     "magento/module-csp": "*",
     "nyholm/psr7": "^1.2",
     "magento/module-config": ">=101.2",
+    "magento/framework-message-queue": "*",
+    "magento/module-message-queue": "*",
     "justbetter/magento2-core": "^1.0"
   },
   "repositories": {
@@ -66,7 +68,8 @@
     "allow-plugins": {
       "php-http/discovery": true,
       "magento/composer-dependency-version-audit-plugin": true,
-      "dealerdirect/phpcodesniffer-composer-installer": true
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "magento/magento-composer-installer": false
     }
   },
   "scripts": {
@@ -83,6 +86,8 @@
     "bitexpert/phpstan-magento": "^0.42.0",
     "magento/magento-coding-standard": ">=40",
     "rector/rector": ">=1.2.5",
-    "justbetter/magento2-coding-standard": "^1.0,>=1.0.2"
+    "justbetter/magento2-coding-standard": "^1.0,>=1.0.2",
+    "phpcompatibility/php-compatibility": "*",
+    "phpunit/phpunit": "*"
   }
 }

@@ -48,7 +48,7 @@ class SentryLog
         $config = $this->data->collectModuleConfig();
         $customTags = [];
 
-        if ($config['enable_logs'] && $logLevel >= $config['logger_log_level']) {
+        if (($config['enable_logs'] ?? false) && $logLevel >= ($config['logger_log_level'] ?? 300)) {
             match ($logLevel) {
                 Monolog::DEBUG   => \Sentry\Logger()->debug($message, $context),
                 Monolog::INFO    => \Sentry\Logger()->info($message, $context),
@@ -59,7 +59,7 @@ class SentryLog
             };
         }
 
-        if ($logLevel < (int) $config['log_level']) {
+        if ($logLevel < (int) ($config['log_level'] ?? 0)) {
             return;
         }
 
