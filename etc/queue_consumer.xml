@@ -4,6 +4,5 @@
     <consumer name="justbetter.sentry.event"
               queue="justbetter.sentry.event"
               handler="JustBetter\Sentry\Model\Queue\Consumer\SentryEventConsumer::process"
-              consumerInstance="Magento\Framework\MessageQueue\Consumer"
-              maxMessages="500"/>
+        />
 </config>

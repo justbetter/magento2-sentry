@@ -6,6 +6,7 @@ namespace JustBetter\Sentry\Model\Transport;
 
 use JustBetter\Sentry\Helper\Data;
 use JustBetter\Sentry\Model\CircuitBreaker;
+use JustBetter\Sentry\Model\DeliveryGuard;
 use JustBetter\Sentry\Model\Queue\Publisher\SentryEventPublisher;
 use Sentry\Event;
 use Sentry\Serializer\PayloadSerializerInterface;
@@ -20,23 +21,20 @@ use Throwable;
 class ResilientTransport implements TransportInterface
 {
     /**
-     * @var bool
-     */
-    private bool $sending = false;
-
-    /**
      * @param TransportInterface         $httpTransport
      * @param PayloadSerializerInterface $payloadSerializer
      * @param SentryEventPublisher       $publisher
      * @param CircuitBreaker             $circuitBreaker
      * @param Data                       $helper
+     * @param DeliveryGuard              $deliveryGuard
      */
     public function __construct(
         private readonly TransportInterface $httpTransport,
         private readonly PayloadSerializerInterface $payloadSerializer,
         private readonly SentryEventPublisher $publisher,
         private readonly CircuitBreaker $circuitBreaker,
-        private readonly Data $helper
+        private readonly Data $helper,
+        private readonly DeliveryGuard $deliveryGuard
     ) {
     }
 
@@ -44,15 +42,17 @@ class ResilientTransport implements TransportInterface
      * Send event via queue or HTTP depending on configuration and circuit state.
      *
      * @param Event $event
+     *
+     * @return Result
      */
     public function send(Event $event): Result
     {
-        // Avoid re-entry if publishing/logging triggers another capture.
-        if ($this->sending) {
+        // Avoid re-entry if publishing, logging, or the consumer triggers another capture.
+        if ($this->deliveryGuard->isActive()) {
             return new Result(ResultStatus::skipped(), $event);
         }
 
-        $this->sending = true;
+        $this->deliveryGuard->enter();
 
         try {
             return $this->shouldQueue()
@@ -61,7 +61,7 @@ class ResilientTransport implements TransportInterface
         } catch (Throwable) {
             return new Result(ResultStatus::failed(), $event);
         } finally {
-            $this->sending = false;
+            $this->deliveryGuard->leave();
         }
     }
 
@@ -69,6 +69,8 @@ class ResilientTransport implements TransportInterface
      * Close the underlying HTTP transport.
      *
      * @param int|null $timeout
+     *
+     * @return Result
      */
     public function close(?int $timeout = null): Result
     {
@@ -87,6 +89,8 @@ class ResilientTransport implements TransportInterface
      * Attempt synchronous HTTP delivery and update the circuit breaker.
      *
      * @param Event $event
+     *
+     * @return Result
      */
     private function sendHttp(Event $event): Result
     {

@@ -6,6 +6,7 @@ namespace JustBetter\Sentry\Model\Transport;
 
 use JustBetter\Sentry\Helper\Data;
 use JustBetter\Sentry\Model\CircuitBreaker;
+use JustBetter\Sentry\Model\DeliveryGuard;
 use JustBetter\Sentry\Model\Queue\Publisher\SentryEventPublisher;
 use Psr\Log\NullLogger;
 use Sentry\HttpClient\HttpClientInterface;
@@ -23,11 +24,13 @@ class ResilientTransportFactory
      * @param SentryEventPublisher $publisher
      * @param CircuitBreaker       $circuitBreaker
      * @param Data                 $helper
+     * @param DeliveryGuard        $deliveryGuard
      */
     public function __construct(
         private readonly SentryEventPublisher $publisher,
         private readonly CircuitBreaker $circuitBreaker,
-        private readonly Data $helper
+        private readonly Data $helper,
+        private readonly DeliveryGuard $deliveryGuard
     ) {
     }
 
@@ -36,6 +39,8 @@ class ResilientTransportFactory
      *
      * @param Options             $options
      * @param HttpClientInterface $httpClient
+     *
+     * @return TransportInterface
      */
     public function create(Options $options, HttpClientInterface $httpClient): TransportInterface
     {
@@ -52,7 +57,8 @@ class ResilientTransportFactory
             $payloadSerializer,
             $this->publisher,
             $this->circuitBreaker,
-            $this->helper
+            $this->helper,
+            $this->deliveryGuard
         );
     }
 }

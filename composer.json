@@ -69,7 +69,7 @@
       "php-http/discovery": true,
       "magento/composer-dependency-version-audit-plugin": true,
       "dealerdirect/phpcodesniffer-composer-installer": true,
-      "magento/magento-composer-installer": true
+      "magento/magento-composer-installer": false
     }
   },
   "scripts": {

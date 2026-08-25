@@ -6,6 +6,7 @@ namespace JustBetter\Sentry\Test\Unit\Model\Queue\Consumer;
 
 use JustBetter\Sentry\Helper\Data;
 use JustBetter\Sentry\Model\CircuitBreaker;
+use JustBetter\Sentry\Model\DeliveryGuard;
 use JustBetter\Sentry\Model\Queue\Consumer\SentryEventConsumer;
 use JustBetter\Sentry\Model\Transport\EnvelopeSender;
 use PHPUnit\Framework\TestCase;
@@ -25,8 +26,10 @@ class SentryEventConsumerTest extends TestCase
         $circuitBreaker->expects($this->never())->method('recordSuccess');
         $circuitBreaker->expects($this->never())->method('recordFailure');
 
-        $consumer = new SentryEventConsumer($envelopeSender, $circuitBreaker, $helper);
+        $guard = new DeliveryGuard();
+        $consumer = new SentryEventConsumer($envelopeSender, $circuitBreaker, $helper, $guard);
         $consumer->process('payload');
+        $this->assertTrue($guard->isActive());
     }
 
     public function testSkipsEmptyPayload(): void
@@ -37,12 +40,15 @@ class SentryEventConsumerTest extends TestCase
         $envelopeSender = $this->createMock(EnvelopeSender::class);
         $envelopeSender->expects($this->never())->method('send');
 
+        $guard = new DeliveryGuard();
         $consumer = new SentryEventConsumer(
             $envelopeSender,
             $this->createStub(CircuitBreaker::class),
-            $helper
+            $helper,
+            $guard
         );
         $consumer->process('');
+        $this->assertTrue($guard->isActive());
     }
 
     public function testSuccessfulDeliveryRecordsSuccess(): void
@@ -61,8 +67,10 @@ class SentryEventConsumerTest extends TestCase
         $circuitBreaker->expects($this->never())->method('recordFailure');
         $circuitBreaker->expects($this->never())->method('allowRequest');
 
-        $consumer = new SentryEventConsumer($envelopeSender, $circuitBreaker, $helper);
+        $guard = new DeliveryGuard();
+        $consumer = new SentryEventConsumer($envelopeSender, $circuitBreaker, $helper, $guard);
         $consumer->process('envelope-bytes');
+        $this->assertTrue($guard->isActive());
     }
 
     public function testFailureRecordsAndRethrows(): void
@@ -80,7 +88,13 @@ class SentryEventConsumerTest extends TestCase
 
         $this->expectExceptionObject($exception);
 
-        $consumer = new SentryEventConsumer($envelopeSender, $circuitBreaker, $helper);
-        $consumer->process('envelope-bytes');
+        $guard = new DeliveryGuard();
+        $consumer = new SentryEventConsumer($envelopeSender, $circuitBreaker, $helper, $guard);
+
+        try {
+            $consumer->process('envelope-bytes');
+        } finally {
+            $this->assertTrue($guard->isActive());
+        }
     }
 }
