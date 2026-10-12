@@ -63,6 +63,12 @@ class SentryLog
             return;
         }
 
+        $loggedException = $context['exception'] ?? null;
+        if (!$this->data->shouldCaptureError($message)
+            || ($loggedException instanceof \Throwable && !$this->data->shouldCaptureError($loggedException))) {
+            return;
+        }
+
         if (isset($context['custom_tags']) && false === empty($context['custom_tags'])) {
             $customTags = $context['custom_tags'];
             unset($context['custom_tags']);
