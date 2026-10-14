@@ -19,6 +19,7 @@
                 <logrocket_key/>
                 <environment/>
                 <log_level/>
+                <graphql_report_client_safe_errors/>
                 <error_types/>
                 <ignore_exceptions/>
                 <mage_mode_development/>

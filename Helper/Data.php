@@ -4,6 +4,7 @@ namespace JustBetter\Sentry\Helper;
 
 use DomainException;
 use ErrorException;
+use GraphQL\Error\ClientAware;
 use JustBetter\Sentry\Block\SentryScript;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -85,6 +86,8 @@ class Data extends AbstractHelper
         ...self::NATIVE_SENTRY_CONFIG_KEYS,
         'logrocket_key'                       => ['type' => 'string'],
         'log_level'                           => ['type' => 'int'],
+        'exception_log_levels'                => ['type' => 'array'],
+        'graphql_report_client_safe_errors'   => ['type' => 'bool', 'default' => false],
         'logger_log_level'                    => ['type' => 'int', 'default' => 300 /* \Monolog\Level::Warning */],
         'errorexception_reporting'            => ['type' => 'int'], /* @deprecated by @see: error_types https://docs.sentry.io/platforms/php/configuration/options/#error_types */
         'mage_mode_development'               => ['type' => 'bool'],
@@ -644,6 +647,56 @@ class Data extends AbstractHelper
     public function getIgnoreExceptions(): array // @phpstan-ignore missingType.iterableValue
     {
         return $this->collectModuleConfig()['ignore_exceptions'] ?? [];
+    }
+
+    /**
+     * Get a list of exception classes mapped to the log level they should be sent at.
+     *
+     * @return array<class-string<Throwable>,int>
+     */
+    public function getExceptionLogLevels(): array
+    {
+        return $this->collectModuleConfig()['exception_log_levels'] ?? [];
+    }
+
+    /**
+     * Whether client safe GraphQL errors should use the exception log levels.
+     *
+     * @return bool
+     */
+    public function reportGraphQlClientSafeErrors(): bool
+    {
+        return $this->collectModuleConfig()['graphql_report_client_safe_errors'] ?? false;
+    }
+
+    /**
+     * Get the minimum log level for the given exception, the first matching exception log level wins.
+     *
+     * @param Throwable|null $exception
+     *
+     * @return int
+     */
+    public function getLogLevel(?Throwable $exception = null): int
+    {
+        $logLevel = (int) $this->collectModuleConfig()['log_level'];
+
+        if ($exception instanceof ClientAware && $exception->isClientSafe() && !$this->reportGraphQlClientSafeErrors()) {
+            return $logLevel;
+        }
+
+        $exceptionLogLevels = $this->getExceptionLogLevels();
+
+        while ($exception instanceof Throwable) {
+            foreach ($exceptionLogLevels as $class => $exceptionLogLevel) {
+                if ($exception instanceof $class) {
+                    return (int) $exceptionLogLevel;
+                }
+            }
+
+            $exception = $exception->getPrevious();
+        }
+
+        return $logLevel;
     }
 
     /**

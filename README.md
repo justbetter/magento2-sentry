@@ -47,6 +47,10 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'logrocket_key' => 'example/example',
     'environment' => null,
     'log_level' => \Monolog\Level::Warning->value,
+    'exception_log_levels' => [
+        \GraphQL\Error\Error::class => \Monolog\Level::Error->value,
+    ],
+    'graphql_report_client_safe_errors' => false,
     'error_types' => E_ALL,
     'ignore_exceptions' => [],
     'mage_mode_development' => false,
@@ -80,6 +84,8 @@ Next to that there are some configuration options under Stores > Configuration >
 | `ignore_exceptions`         | `[]` | If the class being thrown matches any in this list, do not send it to Sentry, e.g., `[\Magento\Framework\Exception\NoSuchEntityException::class]` |
 | `error_types`               | `E_ALL` | If the Exception is an instance of [ErrorException](https://www.php.net/manual/en/class.errorexception.php), send the error to Sentry if it matches the error reporting. Uses the same syntax as [Error Reporting](https://www.php.net/manual/en/function.error-reporting.php), e.g., `E_ERROR` | E_WARNING`. |
 | `log_level`                 | `\Monolog\Level::Warning` | Specify from which logging level on Sentry should get the [messages](https://docs.sentry.io/platforms/php/usage/#capturing-messages). |
+| `exception_log_levels`      | `[]` | Override `log_level` per exception class, e.g. `[\GraphQL\Error\Error::class => \Monolog\Level::Error->value]`. Previous exceptions are checked as well, the first match wins. See [GraphQL errors](#graphql-errors). |
+| `graphql_report_client_safe_errors` | `false` | If set to true, client safe GraphQL errors (e.g. not logged in or an invalid coupon code) also use `exception_log_levels`. Otherwise they use `log_level`. |
 | `clean_stacktrace`          | `true` | Whether unnecessary files (like Interceptor.php, Proxy.php, and Factory.php) should be removed from the stacktrace. (They will not be removed if they threw the error.) |
 | `tracing_enabled`           | `false` | If set to true, tracing is enabled (bundle file is loaded automatically). |
 | `traces_sample_rate`        | `0.2` | If tracing is enabled, set the sample rate. A number between 0 and 1, controlling the percentage chance a given transaction will be sent to Sentry. |
@@ -114,6 +120,8 @@ using the "Variables" in Adobe Commerce using the following variables:
 | `CONFIG__SENTRY__ENVIRONMENT__IGNORE_EXCEPTIONS` | JSON array of classes |
 | `CONFIG__SENTRY__ENVIRONMENT__ERROR_TYPES`       | integer |
 | `CONFIG__SENTRY__ENVIRONMENT__LOG_LEVEL`         | integer |
+| `CONFIG__SENTRY__ENVIRONMENT__EXCEPTION_LOG_LEVELS` | JSON object of classes and log levels |
+| `CONFIG__SENTRY__ENVIRONMENT__GRAPHQL_REPORT_CLIENT_SAFE_ERRORS` | boolean |
 | `CONFIG__SENTRY__ENVIRONMENT__CLEAN_STACKTRACE`  | boolean |
 | `CONFIG__SENTRY__ENVIRONMENT__TRACING_ENABLED`   | boolean |
 | `CONFIG__SENTRY__ENVIRONMENT__TRACES_SAMPLE_RATE`| float |
@@ -129,6 +137,21 @@ The following configuration settings can be overridden in the Magento admin. Thi
 particular config settings can only be done on server level and can't be broken by changes in the admin.
 
 Please note, that it is not possible to use profiling within the Adobe Cloud.
+
+## GraphQL errors
+Magento logs every GraphQL error with level `ERROR` (400). With `log_level` set to `CRITICAL` (500) these never reach Sentry, which hides bugs in GraphQL based checkouts (like Rapidez).
+Use `exception_log_levels` to send GraphQL errors from `ERROR` while keeping everything else on `CRITICAL`:
+
+```php
+'sentry' => [
+    'log_level' => \Monolog\Level::Critical->value,
+    'exception_log_levels' => [
+        \GraphQL\Error\Error::class => \Monolog\Level::Error->value,
+    ],
+],
+```
+
+Expected client errors, like a customer query without a token or an invalid coupon code, are marked client safe by GraphQL and keep using `log_level`, so they stay out of Sentry. Set `graphql_report_client_safe_errors` to `true` to send those as well.
 
 ## Optional error page configuration
 - Optional you can configure custom error pages in pub/errors. You can use the sentry feedback form and insert here the sentry log ID. The Sentry Log Id is captured in de customer session and can be retrieved in `processor.php`.
