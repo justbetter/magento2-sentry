@@ -14,7 +14,7 @@ Depending on the log level configured in the backend of magento 2, notifications
 
 ## Features
 
-- Send exceptions and logs to Seintry
+- Send exceptions and logs to Sentry
 - Show detailed context on thrown exceptions (Like Magento user/api consumer id)
 - Easily control which events get sent to Sentry
 - Backend and frontend error reporting
