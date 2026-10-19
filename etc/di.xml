@@ -90,4 +90,65 @@
     <type name="Magento\Cron\Model\Schedule">
         <plugin name="sentry-cron-checkin" type="JustBetter\Sentry\Plugin\CronScheduleCheckIn" disabled="false"/>
     </type>
+
+    <!-- Resilient async delivery -->
+    <type name="JustBetter\Sentry\Model\SentryInteraction">
+        <arguments>
+            <argument name="resilientTransportFactory" xsi:type="object">JustBetter\Sentry\Model\Transport\ResilientTransportFactory\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="JustBetter\Sentry\Model\Transport\ResilientTransportFactory">
+        <arguments>
+            <argument name="publisher" xsi:type="object">JustBetter\Sentry\Model\Queue\Publisher\SentryEventPublisher\Proxy</argument>
+            <argument name="circuitBreaker" xsi:type="object">JustBetter\Sentry\Model\CircuitBreaker\Proxy</argument>
+            <argument name="helper" xsi:type="object">JustBetter\Sentry\Helper\Data\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="JustBetter\Sentry\Model\Queue\Consumer\SentryEventConsumer">
+        <arguments>
+            <argument name="envelopeSender" xsi:type="object">JustBetter\Sentry\Model\Transport\EnvelopeSender\Proxy</argument>
+            <argument name="circuitBreaker" xsi:type="object">JustBetter\Sentry\Model\CircuitBreaker\Proxy</argument>
+            <argument name="helper" xsi:type="object">JustBetter\Sentry\Helper\Data\Proxy</argument>
+            <argument name="logger" xsi:type="object">JustBetter\Sentry\Logger\DeliveryLogger</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="JustBetter\Sentry\Model\Transport\EnvelopeHttpClient" type="Sentry\HttpClient\HttpClient">
+        <arguments>
+            <argument name="sdkIdentifier" xsi:type="const">JustBetter\Sentry\Model\SentryInteraction::SDK_IDENTIFIER</argument>
+            <argument name="sdkVersion" xsi:type="const">Sentry\Client::SDK_VERSION</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Async consumer client only; the request-path client is built in ResilientTransportFactory::create() -->
+    <virtualType name="JustBetter\Sentry\Model\Transport\EnvelopeRecordingHttpClient" type="JustBetter\Sentry\Model\Transport\ResponseRecordingHttpClient">
+        <arguments>
+            <argument name="httpClient" xsi:type="object">JustBetter\Sentry\Model\Transport\EnvelopeHttpClient</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="JustBetter\Sentry\Model\Transport\EnvelopeSender">
+        <arguments>
+            <argument name="httpClient" xsi:type="object">JustBetter\Sentry\Model\Transport\EnvelopeRecordingHttpClient</argument>
+        </arguments>
+    </type>
+
+    <!-- Delivery failures: file only, excluded from Sentry by MonologPlugin::EXCLUDED_CHANNEL -->
+    <virtualType name="JustBetter\Sentry\Logger\Handler\DeliveryFile" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/sentry.log</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Plain Monolog\Logger: Magento\Framework\Logger\Monolog would inherit global handlers from app/etc/di.xml -->
+    <virtualType name="JustBetter\Sentry\Logger\DeliveryLogger" type="Monolog\Logger">
+        <arguments>
+            <argument name="name" xsi:type="const">JustBetter\Sentry\Plugin\MonologPlugin::EXCLUDED_CHANNEL</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="file" xsi:type="object">JustBetter\Sentry\Logger\Handler\DeliveryFile</item>
+            </argument>
+        </arguments>
+    </virtualType>
 </config>
