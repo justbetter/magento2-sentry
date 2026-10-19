@@ -27,6 +27,27 @@ class Data extends AbstractHelper
     public const XML_PATH_SRS = 'sentry/general/';
     public const XML_PATH_SRS_ISSUE_GROUPING = 'sentry/issue_grouping/';
 
+    /**
+     * Prefixes used by \Magento\Framework\App\ErrorHandler when it turns a PHP error into a plain exception.
+     */
+    private const MAGENTO_ERROR_PHRASES = [
+        'Error'                         => E_ERROR,
+        'Warning'                       => E_WARNING,
+        'Parse Error'                   => E_PARSE,
+        'Notice'                        => E_NOTICE,
+        'Core Error'                    => E_CORE_ERROR,
+        'Core Warning'                  => E_CORE_WARNING,
+        'Compile Error'                 => E_COMPILE_ERROR,
+        'Compile Warning'               => E_COMPILE_WARNING,
+        'User Error'                    => E_USER_ERROR,
+        'User Warning'                  => E_USER_WARNING,
+        'User Notice'                   => E_USER_NOTICE,
+        'Strict Notice'                 => 2048, // E_STRICT, deprecated as a constant in PHP 8.4
+        'Recoverable Error'             => E_RECOVERABLE_ERROR,
+        'Deprecated Functionality'      => E_DEPRECATED,
+        'User Deprecated Functionality' => E_USER_DEPRECATED,
+    ];
+
     public const NATIVE_SENTRY_CONFIG_KEYS = [
         // https://docs.sentry.io/platforms/php/configuration/options/#core-options
         'dsn'                   => ['type' => 'string'],
@@ -657,6 +678,44 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get the PHP error severity (E_*) behind an exception or log message.
+     *
+     * Besides ErrorException this recognizes the plain exceptions thrown by Magento's ErrorHandler,
+     * which only carry the severity as a message prefix, e.g. "Warning: Undefined variable $x in /file.php on line 3".
+     *
+     * @param Throwable|string $subject
+     *
+     * @return int|null Null if the subject does not originate from a PHP error.
+     */
+    public function getPhpErrorSeverity(Throwable|string $subject): ?int
+    {
+        if ($subject instanceof ErrorException) {
+            return $subject->getSeverity();
+        }
+
+        $message = $subject instanceof Throwable ? $subject->getMessage() : $subject;
+        if (preg_match('/^([A-Za-z ]+): .* in .* on line \d+/s', $message, $matches) !== 1) {
+            return null;
+        }
+
+        return self::MAGENTO_ERROR_PHRASES[$matches[1]] ?? null;
+    }
+
+    /**
+     * Whether the PHP error severity behind the subject is covered by error_types. Always true for non PHP errors.
+     *
+     * @param Throwable|string $subject
+     *
+     * @return bool
+     */
+    public function shouldCaptureError(Throwable|string $subject): bool
+    {
+        $severity = $this->getPhpErrorSeverity($subject);
+
+        return $severity === null || ($severity & $this->getErrorTypes()) !== 0;
+    }
+
+    /**
      * Check whether we should capture the given exception based on severity and ignore exceptions.
      *
      * @param Throwable $ex
@@ -665,7 +724,7 @@ class Data extends AbstractHelper
      */
     public function shouldCaptureException(Throwable $ex): bool
     {
-        if ($ex instanceof ErrorException && !($ex->getSeverity() & $this->getErrorTypes())) {
+        if (!$this->shouldCaptureError($ex)) {
             return false;
         }
 
