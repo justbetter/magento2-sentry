@@ -83,7 +83,6 @@ class Data extends AbstractHelper
      */
     protected $configKeys = [
         ...self::NATIVE_SENTRY_CONFIG_KEYS,
-        'logrocket_key'                       => ['type' => 'string'],
         'log_level'                           => ['type' => 'int'],
         'logger_log_level'                    => ['type' => 'int', 'default' => 300 /* \Monolog\Level::Warning */],
         'errorexception_reporting'            => ['type' => 'int'], /* @deprecated by @see: error_types https://docs.sentry.io/platforms/php/configuration/options/#error_types */
@@ -563,41 +562,6 @@ class Data extends AbstractHelper
         $name = 'sentry.'.$config;
 
         return $name === $blockName;
-    }
-
-    /**
-     * Get logrocket key.
-     *
-     * @return mixed
-     */
-    public function getLogrocketKey()
-    {
-        return $this->collectModuleConfig()['logrocket_key'];
-    }
-
-    /**
-     * Whether to use logrocket.
-     *
-     * @return bool
-     */
-    public function useLogrocket(): bool
-    {
-        return $this->scopeConfig->isSetFlag(static::XML_PATH_SRS.'use_logrocket') &&
-            isset($this->collectModuleConfig()['logrocket_key']) &&
-            $this->getLogrocketKey() !== null;
-    }
-
-    /**
-     * Should logrocket identify.
-     *
-     * @return bool
-     */
-    public function useLogrocketIdentify(): bool
-    {
-        return $this->scopeConfig->isSetFlag(
-            static::XML_PATH_SRS.'logrocket_identify',
-            ScopeInterface::SCOPE_STORE
-        );
     }
 
     /**

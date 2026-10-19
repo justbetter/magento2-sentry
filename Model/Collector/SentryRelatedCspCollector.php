@@ -53,14 +53,6 @@ class SentryRelatedCspCollector implements PolicyCollectorInterface
             );
         }
 
-        if ($this->dataHelper->useLogrocket()) {
-            $policies[] = new FetchPolicy(
-                'script-src',
-                false,
-                ['https://cdn.lr-ingest.io']
-            );
-        }
-
         return $policies;
     }
 }

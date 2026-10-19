@@ -7,8 +7,6 @@
                 <performance_tracking_enabled>0</performance_tracking_enabled>
                 <enable_script_tag>0</enable_script_tag>
                 <script_tag_placement>before.body.end</script_tag_placement>
-                <use_logrocket>0</use_logrocket>
-                <logrocket_identify>0</logrocket_identify>
             </general>
             <issue_grouping>
                 <strip_static_content_version/>
@@ -16,7 +14,6 @@
             </issue_grouping>
             <environment>
                 <dsn/>
-                <logrocket_key/>
                 <environment/>
                 <log_level/>
                 <error_types/>
