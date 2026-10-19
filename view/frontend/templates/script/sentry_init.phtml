@@ -1,13 +1,37 @@
-<?php /** @var \JustBetter\Sentry\Block\SentryScript $block */ ?>
+<?php
+/** @var \JustBetter\Sentry\Block\SentryScript $block */
+$javascriptContext = $block->getJavascriptContextJson();
+$stripDocumentUrl = $javascriptContext !== null && $block->stripDocumentUrl();
+$stripStaticContentVersion = $block->stripStaticContentVersion();
+$stripStoreCode = $block->stripStoreCode();
+$rewriteFrames = $stripDocumentUrl || $stripStaticContentVersion || $stripStoreCode;
+?>
 if (typeof Sentry !== 'undefined') {
+    <?php if ($javascriptContext !== null): ?>
+        var sentryMagentoContext = <?= /** @noEscape */ $javascriptContext ?>;
+    <?php endif ?>
     Sentry.init({
     dsn: '<?= $escaper->escapeUrl(trim($block->getDSN())) ?>',
     release: '<?= $escaper->escapeHtml(trim((string) $block->getVersion())) ?>',
     environment: '<?= $escaper->escapeHtml(trim($block->getEnvironment())) ?>',
+    <?php if ($javascriptContext !== null): ?>
+        initialScope: {
+        tags: sentryMagentoContext.tags,
+        },
+    <?php endif ?>
     integrations: [
     <?php if ($block->isTracingEnabled()): ?>
         Sentry.browserTracingIntegration({
         enableInp: true,
+        <?php if ($javascriptContext !== null): ?>
+            beforeStartSpan: function (options) {
+            if (options.op !== 'pageload') {
+            return options;
+            }
+
+            return Object.assign({}, options, { name: sentryMagentoContext.transaction });
+            },
+        <?php endif ?>
         }),
     <?php endif ?>
     <?php if ($block->useSessionReplay()): ?>
@@ -25,33 +49,54 @@ if (typeof Sentry !== 'undefined') {
         replaysOnErrorSampleRate: <?= $escaper->escapeHtml($block->getReplayErrorSampleRate()) ?>,
     <?php endif ?>
     ignoreErrors: <?= /** @noEscape */ $block->getIgnoreJsErrors() ?>,
-    <?php if ($block->stripStaticContentVersion() || $block->stripStoreCode()): ?>
-        beforeSend: function(event) {
-        event.exception.values.map(function (value) {
-        if (value.stacktrace === undefined || ! value.stacktrace) {
-        return value;
-        }
+    <?php if ($javascriptContext !== null || $rewriteFrames): ?>
+        beforeSend: function (event) {
+        <?php if ($javascriptContext !== null): ?>
+            event.transaction = sentryMagentoContext.transaction;
+        <?php endif ?>
+        <?php if ($rewriteFrames): ?>
+            <?php if ($stripDocumentUrl): ?>
+                var documentUrl = window.location.origin + window.location.pathname;
+            <?php endif ?>
+            var values = (event.exception && event.exception.values) || [];
 
-        <?php if ($block->stripStaticContentVersion()): ?>
-            value.stacktrace.frames.map(function (frame) {
-            frame.filename = frame.filename.replace(/version[0-9]{10}\//, '');
-            return frame;
+            values.forEach(function (value) {
+            if (!value.stacktrace || !value.stacktrace.frames) {
+            return;
+            }
+
+            var frames = value.stacktrace.frames;
+            <?php if ($stripDocumentUrl): ?>
+                <?php // Anonymous single-frame stacks already group correctly by message; keep them untouched. ?>
+                var singleAnonymousFrame = frames.length === 1 && !frames[0].function;
+            <?php endif ?>
+
+            frames.forEach(function (frame) {
+            if (typeof frame.filename !== 'string') {
+            return;
+            }
+
+            <?php if ($stripDocumentUrl): ?>
+                if (!singleAnonymousFrame && frame.filename.split('#')[0].split('?')[0] === documentUrl) {
+                frame.filename = sentryMagentoContext.frame_filename;
+
+                return;
+                }
+            <?php endif ?>
+            <?php if ($stripStaticContentVersion): ?>
+                frame.filename = frame.filename.replace(/version[0-9]{10}\//, '');
+            <?php endif ?>
+            <?php if ($stripStoreCode): ?>
+                <?php // phpcs:disable Generic.Files.LineLength ?>
+                frame.filename = frame.filename.replace('/<?= $escaper->escapeHtml($block->getStoreCode()); ?>/', '/');
+                <?php // phpcs:enable Generic.Files.LineLength ?>
+            <?php endif ?>
             });
-        <?php endif; ?>
-
-        <?php if ($block->stripStoreCode()): ?>
-            value.stacktrace.frames.map(function (frame) {
-            <?php // phpcs:disable Generic.Files.LineLength ?>
-            frame.filename = frame.filename.replace('/<?= $escaper->escapeHtml($block->getStoreCode()); ?>/', '/');
-            <?php // phpcs:enable Generic.Files.LineLength ?>
-            return frame;
             });
-        <?php endif; ?>
+        <?php endif ?>
 
-        return value;
-        });
         return event;
         }
-    <?php endif; ?>
+    <?php endif ?>
     });
 }

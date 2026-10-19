@@ -160,6 +160,19 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <hide_in_single_store_mode>1</hide_in_single_store_mode>
                 </field>
+                <field id="add_action_context" translate="label" type="select" sortOrder="30" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Add controller action to Javascript events</label>
+                    <comment><![CDATA[Sends the Magento controller action of the current page (for example <code>catalog_product_view</code>, the same value Magento adds to the body tag) to the browser. It is added to every Javascript event as the <code>magento.route</code>, <code>magento.controller</code>, <code>magento.action</code> and <code>magento.full_action</code> tags, and is used as the transaction name instead of the URL path.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="strip_document_url" translate="label" type="select" sortOrder="40" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Strip page URL from Javascript stacktraces</label>
+                    <comment><![CDATA[Errors thrown from inline scripts are reported with the page URL as their filename, so Sentry creates a separate issue for every product, category and CMS URL. Replacing that filename with the controller action (<code>/&lt;catalog_product_view&gt;</code>) groups them per page type instead. Caution: this does not regroup existing issues, Sentry can no longer show the source line for those frames, and it will merge distinct errors on the same page type into the same issue.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="add_action_context">1</field>
+                    </depends>
+                </field>
             </group>
         </section>
     </system>
