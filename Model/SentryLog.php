@@ -59,7 +59,8 @@ class SentryLog
             };
         }
 
-        if ($logLevel < (int) $config['log_level']) {
+        $exception = $message instanceof \Throwable ? $message : ($context['exception'] ?? null);
+        if ($logLevel < $this->data->getLogLevel($exception instanceof \Throwable ? $exception : null)) {
             return;
         }
 

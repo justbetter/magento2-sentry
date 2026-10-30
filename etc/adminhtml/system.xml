@@ -118,6 +118,14 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="graphql_report_client_safe_errors" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Report Client Safe GraphQL Errors</label>
+                    <comment><![CDATA[When disabled, client safe GraphQL errors (e.g. not logged in or an invalid coupon code) ignore the exception log levels and use the Log Level above.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
                 <field id="tracing_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
                     <label>Tracing Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
