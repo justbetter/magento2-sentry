@@ -8,6 +8,11 @@ use Monolog\Logger;
 class MonologPlugin
 {
     /**
+     * Channel that reports Sentry delivery failures; routing it to Sentry would loop.
+     */
+    public const EXCLUDED_CHANNEL = 'justbetter_sentry_delivery';
+
+    /**
      * @param Sentry $sentryHandler The sentry handler we will add to all Monolog loggers.
      */
     public function __construct(
@@ -27,7 +32,7 @@ class MonologPlugin
         Logger $subject,
         array $handlers
     ): array {
-        if (!$this->containsHandler($handlers)) {
+        if ($subject->getName() !== self::EXCLUDED_CHANNEL && !$this->containsHandler($handlers)) {
             array_unshift($handlers, $this->sentryHandler);
         }
 
