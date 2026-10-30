@@ -64,22 +64,6 @@
                         <field id="enable_session_replay">1</field>
                     </depends>
                 </field>
-                <field id="use_logrocket" translate="label" type="select" sortOrder="40" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
-                    <label>Use LogRocket</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <depends>
-                        <field id="enable_script_tag">1</field>
-                    </depends>
-                </field>
-                <field id="logrocket_identify" translate="label" type="select" sortOrder="50" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
-                    <label>LogRocket include user data</label>
-                    <tooltip>Include user ID, name and email to identify logged in users in LogRocket</tooltip>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <depends>
-                        <field id="enable_script_tag">1</field>
-                        <field id="use_logrocket">1</field>
-                    </depends>
-                </field>
                 <field id="send_sentry_test" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <button_label>Send Sentry test event</button_label>
                     <button_url>justbetter_sentry/test/sentry</button_url>
@@ -95,12 +79,6 @@
                 </field>
                 <field id="dsn" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
                     <label>DSN</label>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>
-                </field>
-                <field id="logrocket_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1" canRestore="1">
-                    <label>Logrocket Key</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>

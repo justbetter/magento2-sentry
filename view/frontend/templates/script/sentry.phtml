@@ -32,28 +32,6 @@ if (!$block->canUseScriptTag($block->getNameInLayout())) {
         ->setTemplate('JustBetter_Sentry::script/sentry_init.phtml')
         ->toHtml(), false); ?>
 <?php endif; ?>
-<?php if ($block->useLogRocket()): ?>
-    <?= /* @noEscape */ $secureRenderer->renderTag('script', ['src' => 'https://cdn.lr-ingest.io/LogRocket.min.js', 'crossorigin' => 'anonymous']) ?>
-    <?= /* @noEscape */ $secureRenderer->renderTag(
-        'script',
-        [],
-        "window.LogRocket && window.LogRocket.init('" . /* @noEscape */ trim($block->getLogrocketKey()) . "');",
-        false
-    ); ?>
-    <?= /* @noEscape */ $secureRenderer->renderTag(
-        'script',
-        [],
-        'LogRocket.getSessionURL(sessionURL => {
-            Sentry.configureScope(scope => {
-                scope.setExtra("sessionURL", sessionURL);
-            });
-        });',
-        false
-    ); ?>
-    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $block->getLayout()->createBlock(\JustBetter\Sentry\Block\SentryScript::class)
-        ->setTemplate('JustBetter_Sentry::script/logrocket_init.phtml')
-        ->toHtml(), false); ?>
-<?php endif; ?>
 
 <?php if ($block->isSpotlightEnabled()): ?>
     <?= /* @noEscape */ $secureRenderer->renderTag('script', ['src' => 'https://unpkg.com/@spotlightjs/overlay@latest/dist/sentry-spotlight.iife.js', 'crossorigin' => 'anonymous']) ?>
