@@ -107,7 +107,7 @@ class SentryScript extends Template
     }
 
     /**
-     * Whether to enable session replay.
+     * Whether to enable the user feedback button.
      */
     public function isFeedbackButtonEnabled(): bool
     {
