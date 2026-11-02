@@ -346,7 +346,7 @@ class Data extends AbstractHelper
         return match ($config['type']) {
             'array'  => match (true) {
                 is_array($value)                    => $value,
-                is_string($value) && $value !== '' => $this->serializer->unserialize($value),
+                is_string($value) && $value !== ''  => $this->serializer->unserialize($value),
                 default                             => [],
             },
             'int'    => (int) $value,
