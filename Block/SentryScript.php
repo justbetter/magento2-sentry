@@ -192,16 +192,6 @@ class SentryScript extends Template
     }
 
     /**
-     * Whether we should replace the document url in Javascript stacktraces.
-     *
-     * @return bool
-     */
-    public function stripDocumentUrl(): bool
-    {
-        return $this->dataHelper->stripDocumentUrl();
-    }
-
-    /**
      * Get the Magento request context for the browser SDK as a Javascript object literal.
      *
      * Returns null when the context is disabled or unavailable, in which case none of the

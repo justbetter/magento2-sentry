@@ -640,19 +640,6 @@ class Data extends AbstractHelper
     }
 
     /**
-     * Whether to replace the document url in Javascript stacktraces with the controller action.
-     *
-     * @return bool
-     */
-    public function stripDocumentUrl(): bool
-    {
-        return $this->addActionContext() && $this->scopeConfig->isSetFlag(
-            static::XML_PATH_SRS_ISSUE_GROUPING.'strip_document_url',
-            ScopeInterface::SCOPE_STORE
-        );
-    }
-
-    /**
      * Get the ErrorException reporting level we will send at.
      *
      * @return int

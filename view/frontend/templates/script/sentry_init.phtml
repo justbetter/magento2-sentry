@@ -1,10 +1,9 @@
 <?php
 /** @var \JustBetter\Sentry\Block\SentryScript $block */
 $javascriptContext = $block->getJavascriptContextJson();
-$stripDocumentUrl = $javascriptContext !== null && $block->stripDocumentUrl();
 $stripStaticContentVersion = $block->stripStaticContentVersion();
 $stripStoreCode = $block->stripStoreCode();
-$rewriteFrames = $stripDocumentUrl || $stripStaticContentVersion || $stripStoreCode;
+$rewriteFrames = $stripStaticContentVersion || $stripStoreCode;
 ?>
 if (typeof Sentry !== 'undefined') {
     <?php if ($javascriptContext !== null): ?>
@@ -55,9 +54,6 @@ if (typeof Sentry !== 'undefined') {
             event.transaction = sentryMagentoContext.transaction;
         <?php endif ?>
         <?php if ($rewriteFrames): ?>
-            <?php if ($stripDocumentUrl): ?>
-                var documentUrl = window.location.origin + window.location.pathname;
-            <?php endif ?>
             var values = (event.exception && event.exception.values) || [];
 
             values.forEach(function (value) {
@@ -65,24 +61,11 @@ if (typeof Sentry !== 'undefined') {
             return;
             }
 
-            var frames = value.stacktrace.frames;
-            <?php if ($stripDocumentUrl): ?>
-                <?php // Anonymous single-frame stacks already group correctly by message; keep them untouched. ?>
-                var singleAnonymousFrame = frames.length === 1 && !frames[0].function;
-            <?php endif ?>
-
-            frames.forEach(function (frame) {
+            value.stacktrace.frames.forEach(function (frame) {
             if (typeof frame.filename !== 'string') {
             return;
             }
 
-            <?php if ($stripDocumentUrl): ?>
-                if (!singleAnonymousFrame && frame.filename.split('#')[0].split('?')[0] === documentUrl) {
-                frame.filename = sentryMagentoContext.frame_filename;
-
-                return;
-                }
-            <?php endif ?>
             <?php if ($stripStaticContentVersion): ?>
                 frame.filename = frame.filename.replace(/version[0-9]{10}\//, '');
             <?php endif ?>

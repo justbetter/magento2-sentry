@@ -12,8 +12,6 @@ use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 
 class JavascriptContext
 {
-    public const FRAME_FILENAME_FORMAT = '/<%s>';
-
     public const TAG_PREFIX = 'magento.';
 
     public const MAX_VALUE_LENGTH = 64;
@@ -75,9 +73,8 @@ class JavascriptContext
         /** @var DataObject $context */
         $context = $this->dataObjectFactory->create();
         $context->setData([
-            'transaction'    => $fullAction,
-            'frame_filename' => sprintf(static::FRAME_FILENAME_FORMAT, $fullAction),
-            'tags'           => [
+            'transaction' => $fullAction,
+            'tags'        => [
                 static::TAG_PREFIX.'route'       => $route,
                 static::TAG_PREFIX.'controller'  => $controller,
                 static::TAG_PREFIX.'action'      => $action,
