@@ -27,27 +27,6 @@ class Data extends AbstractHelper
     public const XML_PATH_SRS = 'sentry/general/';
     public const XML_PATH_SRS_ISSUE_GROUPING = 'sentry/issue_grouping/';
 
-    /**
-     * Prefixes used by \Magento\Framework\App\ErrorHandler when it turns a PHP error into a plain exception.
-     */
-    private const MAGENTO_ERROR_PHRASES = [
-        'Error'                         => E_ERROR,
-        'Warning'                       => E_WARNING,
-        'Parse Error'                   => E_PARSE,
-        'Notice'                        => E_NOTICE,
-        'Core Error'                    => E_CORE_ERROR,
-        'Core Warning'                  => E_CORE_WARNING,
-        'Compile Error'                 => E_COMPILE_ERROR,
-        'Compile Warning'               => E_COMPILE_WARNING,
-        'User Error'                    => E_USER_ERROR,
-        'User Warning'                  => E_USER_WARNING,
-        'User Notice'                   => E_USER_NOTICE,
-        'Strict Notice'                 => 2048, // E_STRICT, deprecated as a constant in PHP 8.4
-        'Recoverable Error'             => E_RECOVERABLE_ERROR,
-        'Deprecated Functionality'      => E_DEPRECATED,
-        'User Deprecated Functionality' => E_USER_DEPRECATED,
-    ];
-
     public const NATIVE_SENTRY_CONFIG_KEYS = [
         // https://docs.sentry.io/platforms/php/configuration/options/#core-options
         'dsn'                   => ['type' => 'string'],
@@ -82,6 +61,27 @@ class Data extends AbstractHelper
         // https://spotlightjs.com/
         'spotlight'            => ['type' => 'bool'],
         'spotlight_url'        => ['type' => 'string'],
+    ];
+
+    /**
+     * Prefixes used by \Magento\Framework\App\ErrorHandler when it turns a PHP error into a plain exception.
+     */
+    private const MAGENTO_ERROR_PHRASES = [
+        'Error'                         => E_ERROR,
+        'Warning'                       => E_WARNING,
+        'Parse Error'                   => E_PARSE,
+        'Notice'                        => E_NOTICE,
+        'Core Error'                    => E_CORE_ERROR,
+        'Core Warning'                  => E_CORE_WARNING,
+        'Compile Error'                 => E_COMPILE_ERROR,
+        'Compile Warning'               => E_COMPILE_WARNING,
+        'User Error'                    => E_USER_ERROR,
+        'User Warning'                  => E_USER_WARNING,
+        'User Notice'                   => E_USER_NOTICE,
+        'Strict Notice'                 => 2048, // E_STRICT, deprecated as a constant in PHP 8.4
+        'Recoverable Error'             => E_RECOVERABLE_ERROR,
+        'Deprecated Functionality'      => E_DEPRECATED,
+        'User Deprecated Functionality' => E_USER_DEPRECATED,
     ];
 
     /**

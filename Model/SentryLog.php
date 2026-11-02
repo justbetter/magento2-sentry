@@ -63,9 +63,12 @@ class SentryLog
             return;
         }
 
+        if (!$this->data->shouldCaptureError($message)) {
+            return;
+        }
+
         $loggedException = $context['exception'] ?? null;
-        if (!$this->data->shouldCaptureError($message)
-            || ($loggedException instanceof \Throwable && !$this->data->shouldCaptureError($loggedException))) {
+        if ($loggedException instanceof \Throwable && !$this->data->shouldCaptureError($loggedException)) {
             return;
         }
 
