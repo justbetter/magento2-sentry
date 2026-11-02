@@ -15,10 +15,8 @@ class SampleRequest
      *
      * @param SentryPerformance $sentryPerformance
      */
-    public function __construct(
-        private SentryPerformance $sentryPerformance
-    ) {
-        $this->sentryPerformance = $sentryPerformance;
+    public function __construct(private SentryPerformance $sentryPerformance)
+    {
     }
 
     /**
@@ -26,7 +24,7 @@ class SampleRequest
      *
      * @param ResponseInterface $response
      */
-    public function beforeSendResponse(ResponseInterface $response)
+    public function beforeSendResponse(ResponseInterface $response): void
     {
         $this->sentryPerformance->finishTransaction($response);
     }

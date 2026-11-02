@@ -7,7 +7,7 @@ use Magento\Customer\Model\Session;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\SessionException;
+use Magento\Framework\Logger\Monolog;
 use Sentry\EventHint;
 use Sentry\ExceptionMechanism;
 use Sentry\Stacktrace;
@@ -16,7 +16,7 @@ use Sentry\State\Scope as SentryScope;
 class SentryLog
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $config = [];
 
@@ -43,16 +43,27 @@ class SentryLog
      * @param int               $logLevel
      * @param array             $context
      */
-    public function send($message, $logLevel, $context = [])
+    public function send($message, $logLevel, array $context = []): void // @phpstan-ignore missingType.iterableValue
     {
         $config = $this->data->collectModuleConfig();
         $customTags = [];
+
+        if ($config['enable_logs'] && $logLevel >= $config['logger_log_level']) {
+            match ($logLevel) {
+                Monolog::DEBUG   => \Sentry\Logger()->debug($message, $context),
+                Monolog::INFO    => \Sentry\Logger()->info($message, $context),
+                Monolog::WARNING => \Sentry\Logger()->warn($message, $context),
+                Monolog::ERROR, MONOLOG::CRITICAL => \Sentry\Logger()->error($message, $context),
+                Monolog::ALERT, MONOLOG::EMERGENCY => \Sentry\Logger()->fatal($message, $context),
+                default => \Sentry\Logger()->info($message, $context)
+            };
+        }
 
         if ($logLevel < (int) $config['log_level']) {
             return;
         }
 
-        if (true === isset($context['custom_tags']) && false === empty($context['custom_tags'])) {
+        if (isset($context['custom_tags']) && false === empty($context['custom_tags'])) {
             $customTags = $context['custom_tags'];
             unset($context['custom_tags']);
         }
@@ -60,7 +71,7 @@ class SentryLog
         \Sentry\configureScope(
             function (SentryScope $scope) use ($context, $customTags): void {
                 $this->setTags($scope, $customTags);
-                if (false === empty($context)) {
+                if ($context !== []) {
                     $scope->setContext('Custom context', $context);
                 }
             }
@@ -80,10 +91,10 @@ class SentryLog
 
         /// when using JS SDK you can use this for custom error page printing
         try {
-            if (true === $this->canGetCustomerData()) {
+            if ($this->canGetCustomerData()) {
                 $this->customerSession->setSentryEventId($lastEventId);
             }
-        } catch (SessionException $e) {
+        } catch (\Throwable) {
             return;
         }
     }
@@ -95,7 +106,7 @@ class SentryLog
      *
      * @return EventHint|null
      */
-    public function monologContextToSentryHint(array $context): ?EventHint
+    public function monologContextToSentryHint(array $context): ?EventHint // @phpstan-ignore missingType.iterableValue
     {
         return EventHint::fromArray(
             [
@@ -104,7 +115,7 @@ class SentryLog
                 'stacktrace' => ($context['stacktrace'] ?? null) instanceof Stacktrace ? $context['stacktrace'] : null,
                 'extra'      => array_filter(
                     $context,
-                    fn ($key) => !in_array($key, ['exception', 'mechanism', 'stacktrace']),
+                    fn ($key): bool => !in_array($key, ['exception', 'mechanism', 'stacktrace']),
                     ARRAY_FILTER_USE_KEY
                 ) ?: [],
             ]
@@ -116,11 +127,11 @@ class SentryLog
      *
      * @return bool
      */
-    private function canGetCustomerData()
+    private function canGetCustomerData(): bool
     {
         try {
             return $this->appState->getAreaCode() === Area::AREA_FRONTEND;
-        } catch (LocalizedException $ex) {
+        } catch (LocalizedException) {
             return false;
         }
     }
@@ -131,20 +142,28 @@ class SentryLog
      * @param SentryScope $scope
      * @param array       $customTags
      */
-    private function setTags(SentryScope $scope, $customTags): void
+    private function setTags(SentryScope $scope, $customTags): void // @phpstan-ignore missingType.iterableValue
     {
         $store = $this->data->getStore();
 
         $scope->setTag('mage_mode', $this->data->getAppState());
         $scope->setTag('version', $this->data->getMagentoVersion());
-        $scope->setTag('website_id', $store ? $store->getWebsiteId() : null);
-        $scope->setTag('store_id', $store ? $store->getStoreId() : null);
-        $scope->setTag('store_code', $store ? $store->getCode() : null);
+        $scope->setTag('website_id', (string) $store?->getWebsiteId());
+        $scope->setTag('store_id', (string) $store?->getId());
+        $scope->setTag('store_code', (string) $store?->getCode());
 
         if (false === empty($customTags)) {
             foreach ($customTags as $tag => $value) {
                 $scope->setTag($tag, $value);
             }
         }
+    }
+
+    /**
+     * Send the logs to Sentry if there are any.
+     */
+    public function __destruct()
+    {
+        \Sentry\Logger()->flush();
     }
 }

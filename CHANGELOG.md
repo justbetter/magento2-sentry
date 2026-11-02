@@ -1,4 +1,40 @@
 # Changelog
+## [4.5.2] - 2025-11-27
+### Fixed
+    * Fixed undefined message properties on queues (https://github.com/justbetter/magento2-sentry/pull/221)
+    * Fixed error thrown on new setup:install (https://github.com/justbetter/magento2-sentry/pull/223)
+    * Fixed activating sentry with invalid DSN (https://github.com/justbetter/magento2-sentry/pull/222)
+## [4.5.1] - 2025-11-11
+### Added
+    * Set Magento BP as default prefix
+## [4.5.0] - 2025-11-04
+### Added
+    * Added Logger support (https://github.com/justbetter/magento2-sentry/pull/201)
+    * Added support for manual release defnition (https://github.com/justbetter/magento2-sentry/pull/204)
+    * Added custom SDK identifier to module (https://github.com/justbetter/magento2-sentry/pull/208)
+    * Added Cache instrumentation (https://github.com/justbetter/magento2-sentry/pull/206)
+    * Added Queue instrumentation (https://github.com/justbetter/magento2-sentry/pull/210)
+    * add csp report-uri if none is configured (https://github.com/justbetter/magento2-sentry/pull/216) thanks to https://github.com/rommelfreddy 
+### Changed
+    * Replaced deprecated \Monolog\Logger::Warning (https://github.com/justbetter/magento2-sentry/pull/214) thanks to https://github.com/GeKVe
+    * use configured dsn-hostname for csp connect-src policy (https://github.com/justbetter/magento2-sentry/pull/215) thanks to https://github.com/rommelfreddy 
+## [4.4.0] - 2025-07-14
+### Fixed
+    * Catch zend db adapter errors when database is missing (https://github.com/justbetter/magento2-sentry/pull/193)
+    * Fix logrocket key type
+### Added
+    * Add the ability to select job codes using regex (https://github.com/justbetter/magento2-sentry/pull/197)
+    * Added support for [spotlight](https://spotlightjs.com/) (https://github.com/justbetter/magento2-sentry/pull/195)
+## [4.3.0] - 2025-06-24
+### Fixed
+    * Catch The default website isnt defined when getting store (https://github.com/justbetter/magento2-sentry/pull/188)
+### Added
+    * Add sentry logger by hooking into monolog setHandlers (https://github.com/justbetter/magento2-sentry/pull/184)
+    * Added support for cron check-ins (https://github.com/justbetter/magento2-sentry/pull/182)
+## [4.2.0] - 2025-06-11
+### Added
+    * Add performance sampling by (https://github.com/justbetter/magento2-sentry/pull/178) thanks to https://github.com/indykoning, https://github.com/barryvdh and https://github.com/rommelfreddy
+    * Automatically pass all supported sentry config (https://github.com/justbetter/magento2-sentry/pull/177)
 ## [4.1.0] - 2025-06-04
 ### Added
     * Clean up the Magento stacktrace before sending it to Sentry (https://github.com/justbetter/magento2-sentry/pull/171)

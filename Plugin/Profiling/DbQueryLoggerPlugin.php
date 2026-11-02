@@ -29,6 +29,7 @@ class DbQueryLoggerPlugin
             SpanContext::make()
                 ->setOp('db.sql.query')
                 ->setStartTimestamp(microtime(true))
+                ->setOrigin('auto.db')
         );
     }
 
@@ -43,9 +44,9 @@ class DbQueryLoggerPlugin
      *
      * @return void
      */
-    public function beforeLogStats(LoggerInterface $subject, $type, $sql, $bind = [], $result = null): void
+    public function beforeLogStats(LoggerInterface $subject, $type, $sql, $bind = [], $result = null): void // @phpstan-ignore missingType.iterableValue
     {
-        if ($this->tracingDto === null) {
+        if (!$this->tracingDto instanceof \JustBetter\Sentry\Model\PerformanceTracingDto) {
             return;
         }
 

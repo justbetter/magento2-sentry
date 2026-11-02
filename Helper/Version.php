@@ -14,28 +14,30 @@ use Psr\Log\LoggerInterface;
 class Version extends AbstractHelper
 {
     /**
-     * @var string
+     * @var ?string
      */
-    private $cachedValue;
+    private ?string $cachedValue = null;
 
     /**
-     * @var LoggerInterface
+     * @var ?LoggerInterface
      */
     private $logger;
 
     /**
-     * @var DeploymentConfig
+     * @var ?DeploymentConfig
      */
     private $deploymentConfig;
 
     /**
      * @param \Magento\Framework\App\State                                    $appState
      * @param \Magento\Framework\App\View\Deployment\Version\StorageInterface $versionStorage
+     * @param Data                                                            $sentryHelper
      * @param DeploymentConfig|null                                           $deploymentConfig
      */
     public function __construct(
         private \Magento\Framework\App\State $appState,
         private \Magento\Framework\App\View\Deployment\Version\StorageInterface $versionStorage,
+        private Data $sentryHelper,
         ?DeploymentConfig $deploymentConfig = null
     ) {
         $this->deploymentConfig = $deploymentConfig ?: ObjectManager::getInstance()->get(DeploymentConfig::class);
@@ -43,10 +45,8 @@ class Version extends AbstractHelper
 
     /**
      * Retrieve deployment version of static files.
-     *
-     * @return string
      */
-    public function getValue()
+    public function getValue(): ?string
     {
         if (!$this->cachedValue) {
             $this->cachedValue = $this->readValue($this->appState->getMode());
@@ -60,25 +60,27 @@ class Version extends AbstractHelper
      *
      * @param string $appMode
      *
-     * @return string
+     * @return string|null
      */
-    protected function readValue($appMode)
+    protected function readValue($appMode): ?string
     {
+        if ($version = $this->sentryHelper->getRelease()) {
+            return $version;
+        }
+
         $result = $this->versionStorage->load();
         if (!$result) {
             if ($appMode == \Magento\Framework\App\State::MODE_PRODUCTION
-                && !$this->deploymentConfig->getConfigData(
+                && !$this->deploymentConfig?->getConfigData(
                     ConfigOptionsListConstants::CONFIG_PATH_SCD_ON_DEMAND_IN_PRODUCTION
                 )
             ) {
-                $this->getLogger()->critical('Can not load static content version.');
+                $this->getLogger()?->critical('Can not load static content version.');
 
-                throw new \UnexpectedValueException(
-                    'Unable to retrieve deployment version of static files from the file system.'
-                );
+                return null;
             }
-            $result = $this->generateVersion();
-            $this->versionStorage->save((string) $result);
+            $result = (string) $this->generateVersion();
+            $this->versionStorage->save($result);
         }
 
         return $result;
@@ -86,10 +88,8 @@ class Version extends AbstractHelper
 
     /**
      * Generate version of static content.
-     *
-     * @return int
      */
-    private function generateVersion()
+    private function generateVersion(): int
     {
         return time();
     }
@@ -97,7 +97,7 @@ class Version extends AbstractHelper
     /**
      * Get logger.
      *
-     * @return LoggerInterface
+     * @return ?LoggerInterface
      */
     private function getLogger()
     {

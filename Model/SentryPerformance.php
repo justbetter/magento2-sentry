@@ -21,6 +21,9 @@ use Sentry\Tracing\SpanContext;
 use Sentry\Tracing\Transaction;
 use Sentry\Tracing\TransactionContext;
 use Sentry\Tracing\TransactionSource;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
 use function Sentry\startTransaction;
@@ -49,22 +52,44 @@ class SentryPerformance
     /**
      * Starts a new transaction.
      *
-     * @param AppInterface $app
+     * @param Command|AppInterface $app
+     * @param mixed                $args
      *
      * @return void
      */
-    public function startTransaction(AppInterface $app): void
+    public function startTransaction(Command|AppInterface $app, ...$args): void
     {
-        if (!$app instanceof Http) {
-            // We only support profiling of http requests right now.
+        if ($this->transaction instanceof \Sentry\Tracing\Transaction) {
+            // Do not start a transaction if one is already runnning.
             return;
         }
 
+        if ($app instanceof Http) {
+            $this->startHttpTransaction($app, ...$args);
+
+            return;
+        }
+        if ($app instanceof Command) {
+            $this->startCommandTransaction($app, ...$args);
+
+            return;
+        }
+    }
+
+    /**
+     * Starts a new HTTP transaction.
+     *
+     * @param Http $app
+     *
+     * @return void
+     */
+    public function startHttpTransaction(Http $app): void
+    {
         $requestStartTime = $this->request->getServer('REQUEST_TIME_FLOAT', microtime(true));
 
         $context = TransactionContext::fromHeaders(
-            $this->request->getHeader('sentry-trace') ?: '',
-            $this->request->getHeader('baggage') ?: ''
+            (string) ($this->request->getHeader('sentry-trace') ?: ''),
+            (string) ($this->request->getHeader('baggage') ?: '')
         );
 
         $requestPath = '/'.ltrim($this->request->getRequestUri(), '/');
@@ -86,6 +111,48 @@ class SentryPerformance
             return;
         }
 
+        $transaction->setOrigin('auto.http.server');
+
+        $this->transaction = $transaction;
+        SentrySdk::getCurrentHub()->setSpan($transaction);
+    }
+
+    /**
+     * Starts a new Command transaction.
+     *
+     * @param Command         $command
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return void
+     */
+    public function startCommandTransaction(Command $command, InputInterface $input, OutputInterface $output): void
+    {
+        $requestStartTime = microtime(true);
+        $context = TransactionContext::make();
+        $context->setName('bin/magento '.($input->__toString() ?: $command->getName()));
+        $context->setSource(TransactionSource::task());
+        $context->setStartTimestamp($requestStartTime);
+
+        $context->setData([
+            'command'   => $command->getName(),
+            'arguments' => $input->getArguments(),
+            'options'   => $input->getOptions(),
+        ]);
+
+        // Start the transaction
+        $transaction = startTransaction($context);
+
+        // Do not sample long running tasks, individual jobs are sampled if the initiator was sampled.
+        if ($command->getName() == 'queue:consumers:start') {
+            $transaction->setSampled(false);
+        }
+
+        // If this transaction is not sampled, don't set it either and stop doing work from this point on
+        if (!$transaction->getSampled()) {
+            return;
+        }
+
         $this->transaction = $transaction;
         SentrySdk::getCurrentHub()->setSpan($transaction);
     }
@@ -93,15 +160,15 @@ class SentryPerformance
     /**
      * Finish the transaction. this will send the transaction (and the profile) to Sentry.
      *
-     * @param ResponseInterface|int $statusCode
+     * @param ResponseInterface|int|null $statusCode
      *
      * @throws LocalizedException
      *
      * @return void
      */
-    public function finishTransaction(ResponseInterface|int $statusCode): void
+    public function finishTransaction(ResponseInterface|int|null $statusCode = null): void
     {
-        if ($this->transaction === null) {
+        if (!$this->transaction instanceof \Sentry\Tracing\Transaction) {
             return;
         }
 
@@ -109,8 +176,8 @@ class SentryPerformance
             $state = $this->objectManager->get(State::class);
             $areaCode = $state->getAreaCode();
         } catch (LocalizedException) {
-            // we wont track transaction without an area
-            return;
+            // Default area is global.
+            $areaCode = Area::AREA_GLOBAL;
         }
 
         if (in_array($areaCode, $this->helper->getPerformanceTrackingExcludedAreas())) {
@@ -125,9 +192,9 @@ class SentryPerformance
             $this->transaction->setHttpStatus($statusCode);
         }
 
-        if (in_array($state->getAreaCode(), [Area::AREA_FRONTEND, Area::AREA_ADMINHTML, Area::AREA_WEBAPI_REST])) {
+        if (in_array($areaCode, [Area::AREA_FRONTEND, Area::AREA_ADMINHTML, Area::AREA_WEBAPI_REST, Area::AREA_WEBAPI_SOAP, Area::AREA_GRAPHQL])) {
             if (!empty($this->request->getFullActionName())) {
-                $this->transaction->setName(strtoupper($this->request->getMethod()).' '.$this->request->getFullActionName());
+                $this->transaction->setName(strtoupper($this->request->getMethod()).' '.$this->request->getFullActionName('/'));
             }
 
             $this->transaction->setOp('http');
@@ -141,7 +208,7 @@ class SentryPerformance
                 ]
             ));
         } else {
-            $this->transaction->setOp($state->getAreaCode());
+            $this->transaction->setOp($areaCode);
         }
 
         try {
@@ -166,7 +233,7 @@ class SentryPerformance
         $span = null;
 
         $parentSpan = $scope->getSpan();
-        if ($parentSpan !== null && $parentSpan->getSampled()) {
+        if ($parentSpan instanceof \Sentry\Tracing\Span && $parentSpan->getSampled()) {
             $span = $parentSpan->startChild($context);
             $scope->setSpan($span);
         }
@@ -183,7 +250,7 @@ class SentryPerformance
      */
     public static function traceEnd(PerformanceTracingDto $context): void // phpcs:ignore Magento2.Functions.StaticFunction.StaticFunction
     {
-        if ($context->getSpan()) {
+        if ($context->getSpan() instanceof \Sentry\Tracing\Span) {
             $context->getSpan()->finish();
             $context->getScope()->setSpan($context->getParentSpan());
         }

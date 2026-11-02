@@ -9,7 +9,7 @@ use Magento\Framework\View\Element\Template;
 
 class SentryScript extends Template
 {
-    public const CURRENT_VERSION = '8.7.0';
+    public const CURRENT_VERSION = '10.75.3';
 
     /**
      * SentryScript constructor.
@@ -20,7 +20,7 @@ class SentryScript extends Template
      * @param Json             $json
      * @param array            $data
      */
-    public function __construct(
+    public function __construct(// @phpstan-ignore missingType.iterableValue
         private DataHelper $dataHelper,
         private Version $version,
         Template\Context $context,
@@ -37,21 +37,17 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function canUseScriptTag($blockName)
+    public function canUseScriptTag($blockName): bool
     {
-        if (!$this->dataHelper->isActive()) {
+        if (!$this->dataHelper->isActive() || !$this->dataHelper->showScriptTagInThisBlock($blockName)) {
             return false;
         }
 
-        if ($this->dataHelper->useScriptTag() && $this->dataHelper->showScriptTagInThisBlock($blockName)) {
+        if ($this->useScriptTag()) {
             return true;
         }
 
-        if ($this->dataHelper->useSessionReplay()) {
-            return true;
-        }
-
-        return false;
+        return $this->isSpotlightEnabled();
     }
 
     /**
@@ -59,9 +55,9 @@ class SentryScript extends Template
      *
      * @return string
      */
-    public function getDSN()
+    public function getDSN(): string
     {
-        return $this->dataHelper->getDSN();
+        return (string) $this->dataHelper->getDSN();
     }
 
     /**
@@ -69,7 +65,7 @@ class SentryScript extends Template
      *
      * @return string
      */
-    public function getJsSdkVersion()
+    public function getJsSdkVersion(): string
     {
         return $this->dataHelper->getJsSdkVersion();
     }
@@ -77,9 +73,9 @@ class SentryScript extends Template
     /**
      * Get the current version of the Magento application.
      *
-     * @return int|string
+     * @return ?string
      */
-    public function getVersion()
+    public function getVersion(): ?string
     {
         return $this->version->getValue();
     }
@@ -92,6 +88,14 @@ class SentryScript extends Template
     public function getEnvironment()
     {
         return $this->dataHelper->getEnvironment();
+    }
+
+    /**
+     * Whether to enable sentry js tracking.
+     */
+    public function useScriptTag(): bool
+    {
+        return $this->dataHelper->useScriptTag();
     }
 
     /**
@@ -139,7 +143,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function useLogRocket()
+    public function useLogRocket(): bool
     {
         return $this->dataHelper->useLogrocket();
     }
@@ -149,7 +153,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function useLogRocketIdentify()
+    public function useLogRocketIdentify(): bool
     {
         return $this->dataHelper->useLogrocketIdentify();
     }
@@ -169,7 +173,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function stripStaticContentVersion()
+    public function stripStaticContentVersion(): bool
     {
         return $this->dataHelper->stripStaticContentVersion();
     }
@@ -179,7 +183,7 @@ class SentryScript extends Template
      *
      * @return bool
      */
-    public function stripStoreCode()
+    public function stripStoreCode(): bool
     {
         return $this->dataHelper->stripStoreCode();
     }
@@ -203,6 +207,14 @@ class SentryScript extends Template
     }
 
     /**
+     * Whether spotlight is enabled.
+     */
+    public function isSpotlightEnabled(): bool
+    {
+        return $this->dataHelper->isSpotlightEnabled();
+    }
+
+    /**
      * Get sample rate for tracing.
      */
     public function getTracingSampleRate(): float
@@ -215,6 +227,6 @@ class SentryScript extends Template
      */
     public function getIgnoreJsErrors(): string
     {
-        return $this->json->serialize($this->dataHelper->getIgnoreJsErrors());
+        return (string) $this->json->serialize($this->dataHelper->getIgnoreJsErrors() ?? '[]');
     }
 }

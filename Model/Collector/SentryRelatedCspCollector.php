@@ -3,6 +3,7 @@
 namespace JustBetter\Sentry\Model\Collector;
 
 use JustBetter\Sentry\Helper\Data as DataHelper;
+use Laminas\Uri\UriFactory;
 use Magento\Csp\Api\PolicyCollectorInterface;
 use Magento\Csp\Model\Policy\FetchPolicy;
 
@@ -26,16 +27,29 @@ class SentryRelatedCspCollector implements PolicyCollectorInterface
             return $policies;
         }
 
-        if ($this->dataHelper->useScriptTag() || $this->dataHelper->useSessionReplay()) {
+        if ($this->dataHelper->useScriptTag()) {
             $policies[] = new FetchPolicy(
                 'script-src',
                 false,
                 ['https://browser.sentry-cdn.com']
             );
+
+            $dsn = $this->dataHelper->getDsn();
+            $dsnHost = is_string($dsn) ? UriFactory::factory($dsn)->getHost() : null;
+            if (!empty($dsnHost)) {
+                $policies[] = new FetchPolicy(
+                    'connect-src',
+                    false,
+                    [$dsnHost]
+                );
+            }
+        }
+
+        if ($this->dataHelper->isSpotlightEnabled()) {
             $policies[] = new FetchPolicy(
-                'connect-src',
+                'script-src',
                 false,
-                ['https://*.ingest.sentry.io']
+                ['https://unpkg.com/@spotlightjs/']
             );
         }
 

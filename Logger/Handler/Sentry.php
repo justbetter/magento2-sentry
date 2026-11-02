@@ -1,5 +1,7 @@
 <?php
 
+//
+
 namespace JustBetter\Sentry\Logger\Handler;
 
 use JustBetter\Sentry\Helper\Data;
@@ -11,7 +13,7 @@ use Monolog\LogRecord;
 
 // TODO: Remove once V2 support is dropped.
 // phpcs:disable Generic.Classes.DuplicateClassName,PSR2.Classes.ClassDeclaration,PSR1.Classes.ClassDeclaration.MultipleClasses
-if (Logger::API < 3) {
+if (Logger::API < 3) { // @phpstan-ignore-line
     class Sentry extends AbstractHandler
     {
         /**
@@ -32,20 +34,15 @@ if (Logger::API < 3) {
         /**
          * @inheritDoc
          */
-        public function isHandling(array $record): bool
+        public function isHandling(array $record): bool // @phpstan-ignore-line
         {
-            $config = $this->sentryHelper->collectModuleConfig();
-            if ($config['log_level']) {
-                $this->setLevel($config['log_level']);
-            }
-
-            return parent::isHandling($record) && $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
+            return $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
         }
 
         /**
          * @inheritDoc
          */
-        public function handle(array $record): bool
+        public function handle(array $record): bool // @phpstan-ignore-line
         {
             if (!$this->isHandling($record)) {
                 return false;
@@ -56,7 +53,7 @@ if (Logger::API < 3) {
             return false;
         }
     }
-} else {
+} else { // @phpstan-ignore-line
     class Sentry extends AbstractHandler
     {
         /**
@@ -77,20 +74,15 @@ if (Logger::API < 3) {
         /**
          * @inheritDoc
          */
-        public function isHandling(LogRecord $record): bool
+        public function isHandling(LogRecord $record): bool // @phpstan-ignore-line
         {
-            $config = $this->sentryHelper->collectModuleConfig();
-            if ($config['log_level']) {
-                $this->setLevel($config['log_level']);
-            }
-
-            return parent::isHandling($record) && $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
+            return $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
         }
 
         /**
          * @inheritDoc
          */
-        public function handle(LogRecord $record): bool
+        public function handle(LogRecord $record): bool // @phpstan-ignore-line
         {
             if (!$this->isHandling($record)) {
                 return false;

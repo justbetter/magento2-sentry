@@ -20,10 +20,8 @@ class ReleaseIdentifier
 
     /**
      * Get release ID from magento internal release number.
-     *
-     * @return string
      */
-    public function getReleaseId()
+    public function getReleaseId(): ?string
     {
         return $this->version->getValue();
     }

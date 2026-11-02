@@ -13,10 +13,19 @@ use Magento\Framework\DataObject;
 use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Sentry\Integration\IntegrationInterface;
+use Symfony\Component\Console\Command\Command;
 use Throwable;
 
+/**
+ * Catch all uncaught exceptions globally, and send them to Sentry.
+ *
+ * It wraps the launch and run methods of the application and command classes.
+ */
 class GlobalExceptionCatcher
 {
+    /** @var bool Whether the globalExceptionHandler is already attached */
+    private bool $booted = false;
+
     /**
      * GlobalExceptionCatcher constructor.
      *
@@ -42,22 +51,68 @@ class GlobalExceptionCatcher
      *
      * @param AppInterface $subject
      * @param callable     $proceed
+     * @param mixed        $args
      *
      * @return \Magento\Framework\App\ResponseInterface
      */
-    public function aroundLaunch(AppInterface $subject, callable $proceed)
+    public function aroundLaunch(AppInterface $subject, callable $proceed, ...$args)
     {
+        return $this->globalCatcher(
+            $subject,
+            $proceed,
+            ...$args
+        );
+    }
+
+    /**
+     * Wrap command run, start watching for exceptions.
+     *
+     * @param Command  $subject
+     * @param callable $proceed
+     * @param mixed    $args
+     *
+     * @return int
+     */
+    public function aroundRun(Command $subject, callable $proceed, ...$args)
+    {
+        return $this->globalCatcher(
+            $subject,
+            $proceed,
+            ...$args
+        );
+    }
+
+    /**
+     * Catch anything coming out of the proceed function.
+     *
+     * @param mixed    $subject
+     * @param callable $proceed
+     * @param mixed    $args
+     *
+     * @return mixed
+     */
+    public function globalCatcher($subject, $proceed, ...$args)
+    {
+        if ($this->booted) {
+            return $proceed(...$args);
+        }
+
+        $this->booted = true;
+
         if ((!$this->sentryHelper->isActive()) || (!$this->sentryHelper->isPhpTrackingEnabled())) {
-            return $proceed();
+            return $proceed(...$args);
         }
 
         $config = $this->prepareConfig();
 
         $this->sentryInteraction->initialize(array_filter($config->getData()));
-        $this->sentryPerformance->startTransaction($subject);
+        if (($subject instanceof \Symfony\Component\Console\Command\Command)
+            || ($subject instanceof \Magento\Framework\AppInterface)) {
+            $this->sentryPerformance->startTransaction($subject, ...$args);
+        }
 
         try {
-            return $response = $proceed();
+            return $response = $proceed(...$args);
         } catch (Throwable $exception) {
             $this->sentryInteraction->captureException($exception);
 
@@ -78,13 +133,18 @@ class GlobalExceptionCatcher
         $config = $this->dataObjectFactory->create();
         $config->setData(array_intersect_key($this->sentryHelper->collectModuleConfig(), SentryHelper::NATIVE_SENTRY_CONFIG_KEYS));
 
+        $config->setSpotlight($this->sentryHelper->isSpotlightEnabled());
         $config->setDsn($this->sentryHelper->getDSN());
         if ($release = $this->releaseIdentifier->getReleaseId()) {
-            $config->setRelease((string) $release);
+            $config->setRelease($release);
         }
 
         if ($environment = $this->sentryHelper->getEnvironment()) {
             $config->setEnvironment($environment);
+        }
+
+        if ($prefixes = $this->sentryHelper->getPrefixes()) {
+            $config->setPrefixes($prefixes);
         }
 
         $config->setBeforeBreadcrumb(function (\Sentry\Breadcrumb $breadcrumb): ?\Sentry\Breadcrumb {
@@ -117,6 +177,16 @@ class GlobalExceptionCatcher
             return $data->getCheckIn();
         });
 
+        $config->setBeforeSendLog(function (\Sentry\Logs\Log $log): ?\Sentry\Logs\Log {
+            $data = $this->dataObjectFactory->create();
+            $data->setLog($log);
+            $this->eventManager->dispatch('sentry_before_send_log', [
+                'sentry_log' => $data,
+            ]);
+
+            return $data->getLog();
+        });
+
         $config->setBeforeSend(function (\Sentry\Event $event, ?\Sentry\EventHint $hint): ?\Sentry\Event {
             $data = $this->dataObjectFactory->create();
             $data->setEvent($event);
@@ -129,23 +199,48 @@ class GlobalExceptionCatcher
         });
 
         $disabledDefaultIntegrations = $this->sentryHelper->getDisabledDefaultIntegrations();
-        $config->setData('integrations', static fn (array $integrations) => array_filter(
+        $config->setData('integrations', static fn (array $integrations): array => array_filter(
             $integrations,
-            static fn (IntegrationInterface $integration) => !in_array(get_class($integration), $disabledDefaultIntegrations)
+            static fn (IntegrationInterface $integration): bool => !in_array($integration::class, $disabledDefaultIntegrations)
         ));
 
         $config->setErrorTypes($this->sentryHelper->getErrorTypes());
 
         if ($this->sentryHelper->isPerformanceTrackingEnabled()) {
-            $config->setTracesSampleRate($this->sentryHelper->getTracingSampleRate());
+            $config->setTracesSampleRate(
+                php_sapi_name() === 'cli' ?
+                    $this->sentryHelper->getTracingSampleRateCli() :
+                    $this->sentryHelper->getTracingSampleRate()
+            );
         } else {
             $config->unsetTracesSampleRate(null);
         }
+
+        $config->setInAppExclude([
+            ...($config->getInAppExclude() ?? []),
+            'cron.php',
+            'get.php',
+            'health_check.php',
+            'index.php',
+            'static.php',
+            'bin/magento',
+            'app/autoload.php',
+            'app/bootstrap.php',
+            'app/functions.php',
+        ]);
 
         $this->eventManager->dispatch('sentry_before_init', [
             'config' => $config,
         ]);
 
         return $config;
+    }
+
+    /**
+     * Ensure transactions are finished and cleaned up when unexpectedly exiting.
+     */
+    public function __destruct()
+    {
+        $this->sentryPerformance->finishTransaction();
     }
 }

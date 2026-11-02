@@ -1,11 +1,26 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <!-- Cannot use plugin https://github.com/magento/magento2/issues/14950 -->
-    <preference for="Magento\Framework\Logger\Monolog" type="JustBetter\Sentry\Plugin\MonologPlugin"/>
+    <!-- Startup & Exception catching -->
     <type name="Magento\Framework\AppInterface">
         <plugin disabled="false" name="GlobalExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher"
                 sortOrder="0"/>
+    </type>
+
+    <type name="Symfony\Component\Console\Command\Command">
+        <plugin disabled="false" name="CliExceptionCatcher" type="JustBetter\Sentry\Plugin\GlobalExceptionCatcher"
+                sortOrder="0"/>
+    </type>
+
+    <!-- Log catching-->
+    <type name="Monolog\Logger">
+        <plugin disabled="false" name="SentryMonologPlugin" type="JustBetter\Sentry\Plugin\MonologPlugin" sortOrder="10"/>
+    </type>
+
+    <type name="JustBetter\Sentry\Plugin\MonologPlugin">
+        <arguments>
+            <argument name="sentryHandler" xsi:type="object">JustBetter\Sentry\Logger\Handler\Sentry\Proxy</argument>
+        </arguments>
     </type>
 
     <type name="Magento\Customer\CustomerData\Customer">
@@ -13,6 +28,20 @@
                 sortOrder="10" disabled="false"/>
     </type>
 
+    <type name="JustBetter\Sentry\Model\SentryLog">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="JustBetter\Sentry\Logger\Handler\Sentry">
+        <arguments>
+            <argument name="sentryHelper" xsi:type="object">JustBetter\Sentry\Helper\Data\Proxy</argument>
+            <argument name="sentryLog" xsi:type="object">JustBetter\Sentry\Model\SentryLog\Proxy</argument>
+        </arguments>
+    </type>
+
+    <!-- Content Security Policies -->
     <type name="Magento\Csp\Model\CompositePolicyCollector">
         <arguments>
             <argument name="collectors" xsi:type="array">
@@ -20,21 +49,45 @@
             </argument>
         </arguments>
     </type>
-        
-    <type name="JustBetter\Sentry\Model\SentryLog">
-        <arguments>
-            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
-        </arguments>
+
+    <type name="Magento\Csp\Api\ModeConfigManagerInterface">
+        <plugin name="sentry-set-report-uri" type="JustBetter\Sentry\Plugin\CspModeConfigManagerPlugin"/>
     </type>
 
     <!-- Tracing / Profiling -->
     <type name="Magento\Framework\Event\ManagerInterface">
-        <plugin name="sentry-profiling" type="JustBetter\Sentry\Plugin\Profiling\EventManagerPlugin" disabled="false" />
+        <plugin name="sentry-profiling-events" type="JustBetter\Sentry\Plugin\Profiling\EventManagerPlugin" disabled="false" />
     </type>
     <type name="Magento\Framework\View\Element\Template">
-        <plugin name="sentry-profiling" type="JustBetter\Sentry\Plugin\Profiling\TemplatePlugin" disabled="false" />
+        <plugin name="sentry-profiling-templates" type="JustBetter\Sentry\Plugin\Profiling\TemplatePlugin" disabled="false" />
     </type>
     <type name="Magento\Framework\DB\Logger\LoggerProxy">
-        <plugin name="sentry-profiling" type="JustBetter\Sentry\Plugin\Profiling\DbQueryLoggerPlugin" disabled="false" />
+        <plugin name="sentry-profiling-db-queries" type="JustBetter\Sentry\Plugin\Profiling\DbQueryLoggerPlugin" disabled="false" />
+    </type>
+    <type name="Magento\Framework\MessageQueue\ExchangeInterface">
+        <plugin name="sentry-profiling-enqueue" type="JustBetter\Sentry\Plugin\Profiling\ExchangePlugin" disabled="false" />
+    </type>
+    <type name="Magento\Framework\MessageQueue\Bulk\ExchangeInterface">
+        <plugin name="sentry-profiling-enqueue-bulk" type="JustBetter\Sentry\Plugin\Profiling\ExchangePlugin" disabled="false" />
+    </type>
+    <type name="Magento\Framework\MessageQueue\MessageEncoder">
+        <plugin name="sentry-profiling-queue-message-encoder" type="JustBetter\Sentry\Plugin\Profiling\QueueMessageEncoderPlugin" disabled="false" />
+    </type>
+    <type name="Magento\Framework\MessageQueue\QueueInterface">
+        <plugin name="sentry-profiling-queue-runner" type="JustBetter\Sentry\Plugin\Profiling\QueuePlugin" disabled="false" />
+    </type>
+    <type name="Magento\Framework\App\Cache\Frontend\Factory">
+        <arguments>
+            <argument name="decorators" xsi:type="array">
+                <item name="sentry" xsi:type="array">
+                    <item name="class" xsi:type="string">JustBetter\Sentry\Plugin\Profiling\Cache</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Cron Check-Ins -->
+    <type name="Magento\Cron\Model\Schedule">
+        <plugin name="sentry-cron-checkin" type="JustBetter\Sentry\Plugin\CronScheduleCheckIn" disabled="false"/>
     </type>
 </config>
