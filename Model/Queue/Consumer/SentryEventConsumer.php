@@ -59,6 +59,7 @@ class SentryEventConsumer
 
     /**
      * Item type from the envelope's item header; empty if unreadable, so only global limits apply.
+     *
      * SDK envelopes hold one item: "<envelope header>\n<item header>\n<item payload>".
      *
      * @see \Sentry\Serializer\PayloadSerializer::serialize()

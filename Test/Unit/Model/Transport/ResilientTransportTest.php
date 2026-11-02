@@ -400,6 +400,7 @@ class ResilientTransportTest extends TestCase
                     return false;
                 }
             ),
+            default       => $this->fail('Unknown failing step: '.$failingStep),
         };
 
         $circuitBreaker = $this->createStub(CircuitBreaker::class);

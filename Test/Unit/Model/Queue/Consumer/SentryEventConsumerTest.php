@@ -149,6 +149,7 @@ class SentryEventConsumerTest extends TestCase
             'delivery'        => $envelopeSender->method('send')->willThrowException($exception),
             'circuit breaker' => $circuitBreaker->method('allowRequest')->willThrowException($exception),
             'rate limits'     => $rateLimitState->method('isLimited')->willThrowException($exception),
+            default           => $this->fail('Unknown failing dependency: '.$failingDependency),
         };
 
         $logger = $this->createMock(LoggerInterface::class);
@@ -190,6 +191,7 @@ class SentryEventConsumerTest extends TestCase
             ),
         ];
 
+        /** @var array<string, string> $storage */
         $storage = [];
         $cache = $this->createStub(CacheInterface::class);
         $cache->method('load')->willReturnCallback(static function (string $key) use (&$storage): string|false {

@@ -32,6 +32,14 @@ class ResponseRecordingHttpClient implements HttpClientInterface
     ) {
     }
 
+    /**
+     * Send the request and record the response in the circuit breaker and rate limits.
+     *
+     * @param Request $request
+     * @param Options $options
+     *
+     * @return Response
+     */
     public function sendRequest(Request $request, Options $options): Response
     {
         try {
