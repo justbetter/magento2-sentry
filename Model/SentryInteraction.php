@@ -7,6 +7,7 @@ namespace JustBetter\Sentry\Model;
 // phpcs:disable Magento2.Functions.DiscouragedFunction
 
 use JustBetter\Sentry\Helper\Data;
+use JustBetter\Sentry\Model\Http\TrackingHttpClient;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Backend\Model\Auth\Session as AdminSession;
 use Magento\Customer\Model\Session as CustomerSession;
@@ -17,6 +18,7 @@ use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\ObjectManager\ConfigInterface;
 use ReflectionClass;
 use Sentry\ClientBuilder;
+use Sentry\HttpClient\Response;
 use Sentry\SentrySdk;
 use Sentry\State\Scope;
 use Throwable;
@@ -32,6 +34,11 @@ class SentryInteraction
      * @var ?UserContextInterface
      */
     private ?UserContextInterface $userContext = null;
+
+    /**
+     * @var ?TrackingHttpClient
+     */
+    private ?TrackingHttpClient $trackingHttpClient = null;
 
     /**
      * SentryInteraction constructor.
@@ -56,12 +63,23 @@ class SentryInteraction
      *
      * @return void
      */
-    public function initialize($config): void
+    public function initialize(array $config): void // @phpstan-ignore missingType.iterableValue
     {
         $client = ClientBuilder::create($config)
             ->setSdkIdentifier(static::SDK_IDENTIFIER);
 
+        $this->trackingHttpClient = new TrackingHttpClient($client->getHttpClient());
+        $client->setHttpClient($this->trackingHttpClient);
+
         SentrySdk::init()->bindClient($client->getClient());
+    }
+
+    /**
+     * Get the raw response of the most recent Sentry API call, if any was made this request.
+     */
+    public function getLastResponse(): ?Response
+    {
+        return $this->trackingHttpClient?->getLastResponse();
     }
 
     /**
@@ -72,7 +90,7 @@ class SentryInteraction
         try {
             // @phpcs:ignore Generic.PHP.NoSilencedErrors
             return in_array(@$this->appState->getAreaCode(), [Area::AREA_ADMINHTML, Area::AREA_FRONTEND, Area::AREA_WEBAPI_REST, Area::AREA_WEBAPI_SOAP, Area::AREA_GRAPHQL]);
-        } catch (LocalizedException $ex) {
+        } catch (LocalizedException) {
             return false;
         }
     }
@@ -87,7 +105,6 @@ class SentryInteraction
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $reflectionClass = new ReflectionClass($objectManager);
         $sharedInstances = $reflectionClass->getProperty('_sharedInstances');
-        $sharedInstances->setAccessible(true);
         $class = $this->omConfigInterface->getPreference($class);
 
         if (!array_key_exists(ltrim($class, '\\'), $sharedInstances->getValue($objectManager))) {
@@ -102,11 +119,14 @@ class SentryInteraction
      */
     public function getUserContext(): ?UserContextInterface
     {
-        if ($this->userContext) {
+        if ($this->userContext instanceof \Magento\Authorization\Model\UserContextInterface) {
             return $this->userContext;
         }
 
-        return $this->userContext = $this->getObjectIfInitialized(UserContextInterface::class);
+        /** @var ?UserContextInterface $userContext */
+        $userContext = $this->getObjectIfInitialized(UserContextInterface::class);
+
+        return $this->userContext = $userContext;
     }
 
     /**
@@ -117,7 +137,7 @@ class SentryInteraction
         try {
             // @phpcs:ignore Generic.PHP.NoSilencedErrors
             return in_array(@$this->appState->getAreaCode(), [Area::AREA_ADMINHTML, Area::AREA_FRONTEND]);
-        } catch (LocalizedException $ex) {
+        } catch (LocalizedException) {
             return false;
         }
     }
@@ -125,13 +145,14 @@ class SentryInteraction
     /**
      * Attempt to get userdata from the current session.
      */
-    private function getSessionUserData(): array
+    private function getSessionUserData(): array // @phpstan-ignore missingType.iterableValue
     {
         if (!$this->canGetUserData()) {
             return [];
         }
 
         if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+            /** @var ?AdminSession $adminSession */
             $adminSession = $this->getObjectIfInitialized(AdminSession::class);
             if ($adminSession === null) {
                 return [];
@@ -147,6 +168,7 @@ class SentryInteraction
         }
 
         if ($this->appState->getAreaCode() === Area::AREA_FRONTEND) {
+            /** @var ?CustomerSession $customerSession */
             $customerSession = $this->getObjectIfInitialized(CustomerSession::class);
             if ($customerSession === null) {
                 return [];
@@ -180,7 +202,7 @@ class SentryInteraction
         try {
             $ip = $this->remoteAddress->getRemoteAddress();
             if ($ip) {
-                configureScope(function (Scope $scope) use ($ip) {
+                configureScope(function (Scope $scope) use ($ip): void {
                     $scope->setUser([
                         'ip_address' => $ip,
                     ]);
@@ -188,9 +210,9 @@ class SentryInteraction
             }
 
             if ($this->canGetUserContext()) {
-                $userId = $this->getUserContext()->getUserId();
+                $userId = $this->getUserContext()?->getUserId();
                 if ($userId) {
-                    $userType = $this->getUserContext()->getUserType();
+                    $userType = $this->getUserContext()?->getUserType(); // @phpstan-ignore nullsafe.neverNull (Later Magento versions have made this non-nullable)
                 }
             }
 
@@ -204,7 +226,7 @@ class SentryInteraction
                 return;
             }
 
-            configureScope(function (Scope $scope) use ($userType, $userId, $userData) {
+            configureScope(function (Scope $scope) use ($userType, $userId, $userData): void {
                 $scope->setUser([
                     'id' => $userId,
                     ...$userData,
@@ -217,7 +239,7 @@ class SentryInteraction
                     },
                 ]);
             });
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             // User context could not be found or added.
             \Magento\Framework\Profiler::stop('SENTRY::add_user_context');
 

@@ -15,10 +15,8 @@ class SampleRequest
      *
      * @param SentryPerformance $sentryPerformance
      */
-    public function __construct(
-        private SentryPerformance $sentryPerformance
-    ) {
-        $this->sentryPerformance = $sentryPerformance;
+    public function __construct(private SentryPerformance $sentryPerformance)
+    {
     }
 
     /**

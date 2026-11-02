@@ -19,10 +19,10 @@ class ExchangePlugin
      *
      * @return array
      */
-    public function beforeEnqueue(ExchangeInterface|BulkExchangeInterface $subject, $topic, $envelopes): array
+    public function beforeEnqueue(ExchangeInterface|BulkExchangeInterface $subject, ?string $topic, $envelopes): array // @phpstan-ignore missingType.iterableValue
     {
         $parentSpan = \Sentry\SentrySdk::getCurrentHub()->getSpan();
-        if ($parentSpan === null) {
+        if (!$parentSpan instanceof \Sentry\Tracing\Span) {
             return [$topic, $envelopes];
         }
 
@@ -31,20 +31,12 @@ class ExchangePlugin
             ->setOp('queue.publish')
             ->setDescription($topic);
 
-        $envelopes = array_map(function (EnvelopeInterface $envelope) use ($parentSpan, $context, $topic) {
+        $envelopes = array_map(function (EnvelopeInterface $envelope) use ($parentSpan, $context, $topic): \Magento\Framework\MessageQueue\EnvelopeInterface {
             $properties = $envelope->getProperties();
             $span = $parentSpan->startChild($context);
             \Sentry\SentrySdk::getCurrentHub()->setSpan($span);
 
-            $body = json_decode($envelope->getBody(), true);
-            $envelope = $this->setBody(
-                $envelope,
-                json_encode([
-                    ...$body,
-                    'sentry_trace'   => \Sentry\getTraceparent(),
-                    'sentry_baggage' => \Sentry\getBaggage(),
-                ])
-            );
+            $this->modifyEnvelope($envelope);
 
             $span
                 ->setData([
@@ -65,26 +57,43 @@ class ExchangePlugin
     }
 
     /**
-     * Attempt to set the body to the private body variable.
+     * Modify the envelope body to include Sentry trace and baggage information.
+     *
+     * @param EnvelopeInterface $envelope
+     *
+     * @return void
+     */
+    protected function modifyEnvelope(EnvelopeInterface $envelope): void
+    {
+        $body = (string) json_encode([
+            'envelope_body'       => $envelope->getBody(),
+            'envelope_properties' => $envelope->getProperties(),
+            'sentry_trace'        => \Sentry\getTraceparent(),
+            'sentry_baggage'      => \Sentry\getBaggage(),
+        ]);
+
+        $this->modifyBody($envelope, $body);
+    }
+
+    /**
+     * Use reflection to modify the body of the envelope.
      *
      * @param EnvelopeInterface $envelope
      * @param string            $body
      *
-     * @return EnvelopeInterface
+     * @return void
      */
-    protected function setBody(EnvelopeInterface $envelope, string $body): EnvelopeInterface
+    protected function modifyBody(EnvelopeInterface $envelope, string $body): void
     {
         $reflectedEnvelope = new \ReflectionObject($envelope);
+
         // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock.DetectedWhile
         while (!$reflectedEnvelope->hasProperty('body') && $reflectedEnvelope = $reflectedEnvelope->getParentClass()) {
         }
 
         if ($reflectedEnvelope && $reflectedEnvelope->hasProperty('body')) {
             $prop = $reflectedEnvelope->getProperty('body');
-            $prop->setAccessible(true);
             $prop->setValue($envelope, $body);
         }
-
-        return $envelope;
     }
 }

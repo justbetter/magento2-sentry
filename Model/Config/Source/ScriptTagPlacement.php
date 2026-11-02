@@ -9,7 +9,7 @@ class ScriptTagPlacement implements ArrayInterface
     /**
      * Mapping of script include positions to strings.
      *
-     * @return array
+     * @return array{array{value:string,label:string|\Magento\Framework\Phrase}}
      */
     public function toOptionArray()
     {

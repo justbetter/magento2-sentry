@@ -17,7 +17,7 @@ class QueuePlugin
     private array $transactions = [];
 
     /**
-     * Start transaction for job.
+     * Modifies the envelope body to include envelope properties to be used for transaction context.
      *
      * @param QueueInterface     $queue
      * @param ?EnvelopeInterface $envelope
@@ -26,11 +26,10 @@ class QueuePlugin
      */
     public function afterDequeue(QueueInterface $queue, ?EnvelopeInterface $envelope): ?EnvelopeInterface
     {
-        if ($envelope === null) {
+        if (!$envelope instanceof \Magento\Framework\MessageQueue\EnvelopeInterface) {
             return $envelope;
         }
 
-        $properties = $envelope->getProperties();
         $body = json_decode($envelope->getBody(), true);
         if (!isset($body['sentry_trace']) && !isset($body['sentry_baggage'])) {
             return $envelope;
@@ -38,28 +37,9 @@ class QueuePlugin
 
         $this->parentSpan ??= \Sentry\SentrySdk::getCurrentHub()->getSpan();
 
-        $context = \Sentry\continueTrace(
-            $body['sentry_trace'],
-            $body['sentry_baggage']
-        )
-            ->setOp('queue.process')
-            ->setName($properties['topic_name']);
+        $body['envelope_properties'] = $envelope->getProperties();
 
-        $this->transactions[$properties['message_id']] = \Sentry\startTransaction($context);
-        $this->transactions[$properties['message_id']]
-            ->setData([
-                'messaging.message.id'          => $properties['message_id'],
-                'messaging.destination.name'    => $properties['topic_name'],
-                'messaging.queue.name'          => $properties['queue_name'] ?? null,
-                'messaging.message.body.size'   => strlen($envelope->getBody()),
-                'messaging.message.retry.count' => $properties['retries'] ?? null,
-            ]);
-        \Sentry\SentrySdk::getCurrentHub()->setSpan($this->transactions[$properties['message_id']]);
-
-        unset($body['sentry_trace']);
-        unset($body['sentry_baggage']);
-
-        return $this->setBody($envelope, json_encode($body));
+        return $this->setBody($envelope, (string) json_encode($body));
     }
 
     /**
@@ -72,7 +52,7 @@ class QueuePlugin
      *
      * @return array
      */
-    public function beforeReject(QueueInterface $queue, EnvelopeInterface $envelope, $requeue = true, $rejectionMessage = null): array
+    public function beforeReject(QueueInterface $queue, EnvelopeInterface $envelope, $requeue = true, $rejectionMessage = null): array // @phpstan-ignore missingType.iterableValue
     {
         $properties = $envelope->getProperties();
         $transaction = $this->transactions[$properties['message_id']] ?? null;
@@ -84,7 +64,7 @@ class QueuePlugin
 
         $transaction->finish();
         unset($this->transactions[$properties['message_id']]);
-        if ($this->parentSpan) {
+        if ($this->parentSpan instanceof \Sentry\Tracing\Span) {
             \Sentry\SentrySdk::getCurrentHub()->setSpan($this->parentSpan);
         }
 
@@ -99,7 +79,7 @@ class QueuePlugin
      *
      * @return array
      */
-    public function beforeAcknowledge(QueueInterface $queue, EnvelopeInterface $envelope): array
+    public function beforeAcknowledge(QueueInterface $queue, EnvelopeInterface $envelope): array // @phpstan-ignore missingType.iterableValue
     {
         $properties = $envelope->getProperties();
         $transaction = $this->transactions[$properties['message_id']] ?? null;
@@ -111,7 +91,7 @@ class QueuePlugin
 
         $transaction->finish();
         unset($this->transactions[$properties['message_id']]);
-        if ($this->parentSpan) {
+        if ($this->parentSpan instanceof \Sentry\Tracing\Span) {
             \Sentry\SentrySdk::getCurrentHub()->setSpan($this->parentSpan);
         }
 
@@ -135,7 +115,6 @@ class QueuePlugin
 
         if ($reflectedEnvelope && $reflectedEnvelope->hasProperty('body')) {
             $prop = $reflectedEnvelope->getProperty('body');
-            $prop->setAccessible(true);
             $prop->setValue($envelope, $body);
         }
 

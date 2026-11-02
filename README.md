@@ -31,7 +31,7 @@ Depending on the log level configured in the backend of magento 2, notifications
 
 ## Installation
 - `composer require justbetter/magento2-sentry`
-- `bin/magento module:enable JustBetter_Sentry`
+- `bin/magento module:enable JustBetter_Core JustBetter_Sentry`
 - `bin/magento setup:upgrade`
 - `bin/magento setup:di:compile`
 - `bin/magento setup:static-content:deploy`
@@ -46,7 +46,7 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'dsn' => 'example.com',
     'logrocket_key' => 'example/example',
     'environment' => null,
-    'log_level' => \Monolog\Level::Warning,
+    'log_level' => \Monolog\Level::Warning->value,
     'error_types' => E_ALL,
     'ignore_exceptions' => [],
     'mage_mode_development' => false,

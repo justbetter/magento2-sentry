@@ -1,14 +1,11 @@
 includes:
-    - vendor/bitexpert/phpstan-magento/extension.neon
+    - ./vendor/justbetter/magento2-coding-standard/phpstan.neon
+
 parameters:
     paths:
         - .
     excludePaths:
         - vendor
-        - Test/*
         - Logger/Handler/Sentry.php
-    level: 6
-    ignoreErrors:
-        -
-            identifier: missingType.iterableValue
-    treatPhpDocTypesAsCertain: false
+    level: 8
+    reportUnmatchedIgnoredErrors: false

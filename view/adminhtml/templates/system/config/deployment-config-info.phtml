@@ -20,12 +20,12 @@
     'dsn' => 'example.com',
     'logrocket_key' => 'example/example',
     'environment' => null,
-    'log_level' => \Monolog\Level::Warning,
+    'log_level' => \Monolog\Level::Warning->value,
     'error_types' => E_ALL,
     'ignore_exceptions' => [],
     'mage_mode_development' => false,
 ]"); ?>
     </pre>
 
-    <p><?= $escaper->escapeHtml(__("Release ID: %1", $block->getVersion())); ?></p>
+    <p><?= $escaper->escapeHtml(__("Release ID: %1", (string) $block->getVersion())); ?></p>
 </td>
