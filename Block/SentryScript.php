@@ -9,7 +9,7 @@ use Magento\Framework\View\Element\Template;
 
 class SentryScript extends Template
 {
-    public const CURRENT_VERSION = '8.7.0';
+    public const CURRENT_VERSION = '10.75.3';
 
     /**
      * SentryScript constructor.
