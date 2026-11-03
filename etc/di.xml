@@ -23,11 +23,6 @@
         </arguments>
     </type>
 
-    <type name="Magento\Customer\CustomerData\Customer">
-        <plugin name="LogrocketCustomerInfo" type="JustBetter\Sentry\Plugin\LogrocketCustomerInfo"
-                sortOrder="10" disabled="false"/>
-    </type>
-
     <type name="JustBetter\Sentry\Model\SentryLog">
         <arguments>
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
