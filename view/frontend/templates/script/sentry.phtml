@@ -8,26 +8,7 @@ if (!$block->canUseScriptTag($block->getNameInLayout())) {
 ?>
 
 <?php if ($this->useScriptTag()): ?>
-    <?php
-        $bundleFile = 'bundle';
-
-    if ($block->isTracingEnabled()) {
-        $bundleFile .= '.tracing';
-    }
-
-    if ($block->useSessionReplay()) {
-        $bundleFile .= '.replay';
-    }
-
-        $bundleFile .= '.min.js';
-
-        $remoteFile = sprintf(
-            'https://browser.sentry-cdn.com/%s/%s',
-            $escaper->escapeHtmlAttr($block->getJsSdkVersion()),
-            $bundleFile
-        );
-    ?>
-    <?= /* @noEscape */ $secureRenderer->renderTag('script', ['src' => $remoteFile, 'crossorigin' => 'anonymous']) ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', ['src' => $block->getJsUrl(), 'crossorigin' => 'anonymous']) ?>
     <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $block->getLayout()->createBlock(\JustBetter\Sentry\Block\SentryScript::class)
         ->setTemplate('JustBetter_Sentry::script/sentry_init.phtml')
         ->toHtml(), false); ?>
