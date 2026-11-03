@@ -61,6 +61,13 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'profiles_sample_rate' => 0.5,
     'ignore_js_errors' => [],
     'enable_csp_report_url' => true,
+    // Resilient delivery
+    'async_sending_enabled' => true,
+    'circuit_breaker_failure_threshold' => 5,
+    'circuit_breaker_recovery_timeout' => 60,
+    'circuit_breaker_success_threshold' => 2,
+    'http_timeout' => 2,
+    'http_connect_timeout' => 1,
 ]
 ```
 
@@ -97,6 +104,33 @@ Next to that there are some configuration options under Stores > Configuration >
 | `spotlight` | `false` | Enable [Spotlight](https://spotlightjs.com/) on the page |
 | `spotlight_url` | - | Override the [Sidecar url](https://spotlightjs.com/sidecar/) |         
 | `enable_csp_report_url` | `false` | If set to true, the report-uri will be automatically added based on the DSN. |
+| `async_sending_enabled` | `false` | Send Sentry events asynchronously via Magento Message Queue (`justbetter.sentry.event.send`). |
+| `circuit_breaker_failure_threshold` | `5` | Consecutive HTTP failures before the circuit opens. |
+| `circuit_breaker_recovery_timeout` | `60` | Seconds to wait before allowing a probe request after the circuit opens. |
+| `circuit_breaker_success_threshold` | `2` | Successful probes in half-open state required before closing the circuit. |
+| `http_timeout` | `2` | Total HTTP timeout (seconds) for Sentry envelope delivery (sync + consumer). |
+| `http_connect_timeout` | `1` | HTTP connect timeout (seconds) for Sentry envelope delivery. |
+
+### Resilient delivery
+
+Event delivery can be configured as either synchronous or asynchronous:
+
+1. (Default) **Sync mode** (`async_sending_enabled = false`): Events are sent over HTTP immediately.
+2. **Async mode** (`async_sending_enabled = true`): Events are serialized immediately with exact capture timestamps and published to the `justbetter.sentry.event.send` message queue. A background consumer delivers them to Sentry via HTTP.
+
+Both modes share two safeguards, kept in the Magento cache so every process sees them:
+
+- **Circuit breaker** (Sentry is unreachable): when consecutive failures (5xx, network errors) reach `circuit_breaker_failure_threshold`, the circuit opens. All events are dropped without blocking Magento until `circuit_breaker_recovery_timeout` has passed.
+- **Rate limits** (Sentry refuses a data category, e.g. quota exhausted): Sentry's `X-Sentry-Rate-Limits` header is tracked per category (errors, transactions, cron check-ins, logs), until the time Sentry sends. A limit on one category does not block the others, so cron check-ins keep arriving when the transaction quota runs out. A `Retry-After` header without categories, or a bare HTTP 429, limits all categories; the bare 429 lasts `circuit_breaker_recovery_timeout`.
+- While either applies, async mode does not publish the affected events, and the consumer drops queued ones without calling Sentry.
+
+The consumer never retries a failed envelope. Failures are written to `var/log/sentry.log` and are never sent to Sentry themselves. Rate-limit responses are not logged: they are expected while the quota is exhausted, and delivery already backs off.
+
+To run the queue consumer manually:
+
+```bash
+bin/magento queue:consumers:start justbetter.sentry.event
+```
 
 ### Configuration for Adobe Cloud
 Since Adobe Cloud doesn't allow you to add manually add content to the `env.php` file, the configuration can be done
@@ -149,6 +183,7 @@ public function execute(\Magento\Framework\Event\Observer $observer)
 Example: https://github.com/justbetter/magento2-sentry-filter-events
 
 This same thing is the case for
+
 |                                |                                                                                     |
 |--------------------------------|-------------------------------------------------------------------------------------|
 | sentry_before_send             | https://docs.sentry.io/platforms/php/configuration/options/#before_send             |

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JustBetter\Sentry\Plugin\Profiling;
 
+use JustBetter\Sentry\Model\Queue\Publisher\SentryEventPublisher;
 use Magento\Framework\MessageQueue\MessageEncoder;
 
 class QueueMessageEncoderPlugin
@@ -20,6 +21,11 @@ class QueueMessageEncoderPlugin
      */
     public function beforeDecode(MessageEncoder $subject, string $topic, $message, $requestType = true): array
     {
+        // Our own delivery topic carries a raw Sentry envelope, not Magento business payload.
+        if ($topic === SentryEventPublisher::TOPIC_NAME) {
+            return [$topic, $message, $requestType];
+        }
+
         $body = json_decode($message, true);
 
         if (!isset($body['sentry_trace']) && !isset($body['sentry_baggage'])) {
