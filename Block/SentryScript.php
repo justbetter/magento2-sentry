@@ -107,6 +107,14 @@ class SentryScript extends Template
     }
 
     /**
+     * Whether to enable the user feedback button.
+     */
+    public function isFeedbackButtonEnabled(): bool
+    {
+        return $this->dataHelper->isFeedbackButtonEnabled();
+    }
+
+    /**
      * Get the session replay sample rate.
      */
     public function getReplaySessionSampleRate(): float

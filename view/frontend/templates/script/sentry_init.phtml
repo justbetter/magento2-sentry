@@ -14,7 +14,10 @@ if (typeof Sentry !== 'undefined') {
         Sentry.replayIntegration({
         blockAllMedia: <?= $escaper->escapeHtml($block->getReplayBlockMedia() ? 'true' : 'false') ?>,
         maskAllText: <?= $escaper->escapeHtml($block->getReplayMaskText() ? 'true' : 'false') ?>,
-        })
+        }),
+    <?php endif ?>
+    <?php if ($block->isFeedbackButtonEnabled()): ?>
+        Sentry.feedbackIntegration({}),
     <?php endif ?>
     ],
     <?php if ($block->isTracingEnabled()): ?>
