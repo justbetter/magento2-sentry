@@ -78,6 +78,9 @@
       "@phpcs"
     ]
   },
+  "suggest": {
+    "justbetter/magento2-sentry-logrocket": "Links Sentry sessions to your Logrocket replays"
+  },
   "require-dev": {
     "bitexpert/phpstan-magento": "^0.42.0",
     "magento/magento-coding-standard": ">=40",
