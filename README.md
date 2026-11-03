@@ -31,7 +31,7 @@ Depending on the log level configured in the backend of magento 2, notifications
 
 ## Installation
 - `composer require justbetter/magento2-sentry`
-- `bin/magento JustBetter_Core JustBetter_Sentry`
+- `bin/magento module:enable JustBetter_Core JustBetter_Sentry`
 - `bin/magento setup:upgrade`
 - `bin/magento setup:di:compile`
 - `bin/magento setup:static-content:deploy`
@@ -65,6 +65,13 @@ This module uses the [Magento Deployment Configuration](https://devdocs.magento.
     'profiles_sample_rate' => 0.5,
     'ignore_js_errors' => [],
     'enable_csp_report_url' => true,
+    // Resilient delivery
+    'async_sending_enabled' => true,
+    'circuit_breaker_failure_threshold' => 5,
+    'circuit_breaker_recovery_timeout' => 60,
+    'circuit_breaker_success_threshold' => 2,
+    'http_timeout' => 2,
+    'http_connect_timeout' => 1,
 ]
 ```
 
@@ -103,6 +110,66 @@ Next to that there are some configuration options under Stores > Configuration >
 | `spotlight` | `false` | Enable [Spotlight](https://spotlightjs.com/) on the page |
 | `spotlight_url` | - | Override the [Sidecar url](https://spotlightjs.com/sidecar/) |         
 | `enable_csp_report_url` | `false` | If set to true, the report-uri will be automatically added based on the DSN. |
+| `async_sending_enabled` | `false` | Send Sentry events asynchronously via Magento Message Queue (`justbetter.sentry.event.send`). |
+| `circuit_breaker_failure_threshold` | `5` | Consecutive HTTP failures before the circuit opens. |
+| `circuit_breaker_recovery_timeout` | `60` | Seconds to wait before allowing a probe request after the circuit opens. |
+| `circuit_breaker_success_threshold` | `2` | Successful probes in half-open state required before closing the circuit. |
+| `http_timeout` | `2` | Total HTTP timeout (seconds) for Sentry envelope delivery (sync + consumer). |
+| `http_connect_timeout` | `1` | HTTP connect timeout (seconds) for Sentry envelope delivery. |
+
+### Resilient delivery
+
+Event delivery can be configured as either synchronous or asynchronous:
+
+1. (Default) **Sync mode** (`async_sending_enabled = false`): Events are sent over HTTP immediately.
+2. **Async mode** (`async_sending_enabled = true`): Events are serialized immediately with exact capture timestamps and published to the `justbetter.sentry.event.send` message queue. A background consumer delivers them to Sentry via HTTP.
+
+Both modes share two safeguards, kept in the Magento cache so every process sees them:
+
+- **Circuit breaker** (Sentry is unreachable): when consecutive failures (5xx, network errors) reach `circuit_breaker_failure_threshold`, the circuit opens. All events are dropped without blocking Magento until `circuit_breaker_recovery_timeout` has passed.
+- **Rate limits** (Sentry refuses a data category, e.g. quota exhausted): Sentry's `X-Sentry-Rate-Limits` header is tracked per category (errors, transactions, cron check-ins, logs), until the time Sentry sends. A limit on one category does not block the others, so cron check-ins keep arriving when the transaction quota runs out. A `Retry-After` header without categories, or a bare HTTP 429, limits all categories; the bare 429 lasts `circuit_breaker_recovery_timeout`.
+- While either applies, async mode does not publish the affected events, and the consumer drops queued ones without calling Sentry.
+
+The consumer never retries a failed envelope. Failures are written to `var/log/sentry.log` and are never sent to Sentry themselves. Rate-limit responses are not logged: they are expected while the quota is exhausted, and delivery already backs off.
+
+To run the queue consumer manually:
+
+```bash
+bin/magento queue:consumers:start justbetter.sentry.event
+```
+
+### Javascript issue grouping
+These settings live in the Magento configuration under Stores > Configuration > JustBetter > Sentry > Sentry issue
+grouping (`sentry/issue_grouping/*`).
+
+| Name | Default | Description |
+|---|---|---|
+| `strip_static_content_version` | `false` | Strip `version1234567890/` from stacktrace filenames so a static content deploy does not create new issues. |
+| `strip_store_code` | `false` | Strip the store code from stacktrace filenames. Replaces the first occurrence only. |
+| `add_action_context` | `false` | Send the Magento controller action of the current page (for example `catalog_product_view`, the same value Magento adds to the body tag) to the browser. Every Javascript event gets the `magento.route`, `magento.controller`, `magento.action` and `magento.full_action` tags, `event.transaction` is set to the full action name, and the pageload transaction is named after the action instead of the URL path. |
+
+Errors thrown from inline scripts (`x-magento-init`, inline `require([...])`, inline event handlers) are reported by the
+browser with the page URL as their filename, so Sentry creates a separate issue for every product, category and CMS URL.
+Group these with Sentry's own project settings: a [Stack Trace Rule](https://docs.sentry.io/concepts/data-management/event-grouping/stack-trace-rules/)
+like `family:javascript stack.abs_path:"*.html" -group` removes document-URL frames from grouping entirely, and
+[Fingerprint Rules](https://docs.sentry.io/concepts/data-management/event-grouping/fingerprint-rules/) can use
+`{{ transaction }}`, which is the full action name once `add_action_context` is enabled, to group them per page type.
+
+#### Adding your own Javascript context
+`add_action_context` dispatches the `sentry_javascript_context` event with a `Magento\Framework\DataObject` before it
+is rendered, so you can add tags or change the transaction name:
+
+```PHP
+public function execute(\Magento\Framework\Event\Observer $observer)
+{
+    $context = $observer->getEvent()->getContext();
+    $context->setData('tags', array_merge($context->getData('tags'), ['magento.theme' => 'hyva']));
+}
+```
+
+The result is rendered inline into the (possibly full-page-cached) HTML and is readable as
+`window.sentryMagentoContext`, so anything you add must be derivable from the URL alone and must never contain
+customer data.
 
 ### Configuration for Adobe Cloud
 Since Adobe Cloud doesn't allow you to add manually add content to the `env.php` file, the configuration can be done
@@ -172,6 +239,7 @@ public function execute(\Magento\Framework\Event\Observer $observer)
 Example: https://github.com/justbetter/magento2-sentry-filter-events
 
 This same thing is the case for
+
 |                                |                                                                                     |
 |--------------------------------|-------------------------------------------------------------------------------------|
 | sentry_before_send             | https://docs.sentry.io/platforms/php/configuration/options/#before_send             |
@@ -179,6 +247,10 @@ This same thing is the case for
 | sentry_before_send_check_in    | https://docs.sentry.io/platforms/php/configuration/options/#before_send_check_in    |
 | sentry_before_breadcrumb       | https://docs.sentry.io/platforms/php/configuration/options/#before_breadcrumb       |
 | sentry_before_send_log         | https://docs.sentry.io/platforms/php/configuration/options/#before_send_log         |
+
+The `sentry_javascript_context` event is dispatched server-side when `sentry/issue_grouping/add_action_context` is
+enabled, before the request context is rendered into the page for the browser SDK. See
+[Adding your own Javascript context](#adding-your-own-javascript-context) above.
 
 ## Compatibility
 The module is tested on Magento version 2.4.x with sentry sdk version 4.x. feel free to fork this project or make a pull request.

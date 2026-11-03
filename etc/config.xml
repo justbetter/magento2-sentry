@@ -13,6 +13,7 @@
             <issue_grouping>
                 <strip_static_content_version/>
                 <strip_store_code/>
+                <add_action_context/>
             </issue_grouping>
             <environment>
                 <dsn/>
@@ -27,6 +28,12 @@
                 <tracing_enabled/>
                 <tracing_sample_data/>
                 <ignore_js_errors/>
+                <async_sending_enabled/>
+                <circuit_breaker_failure_threshold/>
+                <circuit_breaker_recovery_timeout/>
+                <circuit_breaker_success_threshold/>
+                <http_timeout/>
+                <http_connect_timeout/>
             </environment>
         </sentry>
     </default>

@@ -10,6 +10,7 @@ use Magento\Framework\App\DeploymentConfig;
 use Monolog\Handler\AbstractHandler;
 use Monolog\Logger;
 use Monolog\LogRecord;
+use Throwable;
 
 // TODO: Remove once V2 support is dropped.
 // phpcs:disable Generic.Classes.DuplicateClassName,PSR2.Classes.ClassDeclaration,PSR1.Classes.ClassDeclaration.MultipleClasses
@@ -36,7 +37,11 @@ if (Logger::API < 3) { // @phpstan-ignore-line
          */
         public function isHandling(array $record): bool // @phpstan-ignore-line
         {
-            return $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
+            try {
+                return $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
+            } catch (Throwable) {
+                return false;
+            }
         }
 
         /**
@@ -76,7 +81,11 @@ if (Logger::API < 3) { // @phpstan-ignore-line
          */
         public function isHandling(LogRecord $record): bool // @phpstan-ignore-line
         {
-            return $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
+            try {
+                return $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
+            } catch (Throwable) {
+                return false;
+            }
         }
 
         /**

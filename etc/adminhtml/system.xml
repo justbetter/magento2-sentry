@@ -154,6 +154,51 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="async_sending_enabled" translate="label comment" type="select" sortOrder="100" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Async Sending (Message Queue)</label>
+                    <comment><![CDATA[When enabled, Sentry envelopes are published to Magento MQ on the request path and delivered by the <code>justbetter.sentry.event</code> consumer. Envelope timestamps are frozen at publish time.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="circuit_breaker_failure_threshold" translate="label" type="text" sortOrder="130" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Circuit Breaker Failure Threshold</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="circuit_breaker_recovery_timeout" translate="label comment" type="text" sortOrder="140" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Circuit Breaker Recovery Timeout (seconds)</label>
+                    <comment><![CDATA[How long the circuit stays open before a probe request is allowed.]]></comment>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="circuit_breaker_success_threshold" translate="label" type="text" sortOrder="150" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Circuit Breaker Success Threshold</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="http_timeout" translate="label comment" type="text" sortOrder="160" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Sentry HTTP Timeout (seconds)</label>
+                    <comment><![CDATA[Total HTTP timeout for synchronous and consumer envelope delivery. Keep low on the storefront.]]></comment>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="http_connect_timeout" translate="label" type="text" sortOrder="170" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Sentry HTTP Connect Timeout (seconds)</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
             <group id="issue_grouping" translate="label" type="text" sortOrder="30" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
                 <label>Sentry issue grouping</label>
@@ -167,6 +212,11 @@
                     <comment><![CDATA[Caution: this will replace all occurrences of your storecode in the URL, which might cause issues when the store code is too generic.]]></comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <hide_in_single_store_mode>1</hide_in_single_store_mode>
+                </field>
+                <field id="add_action_context" translate="label" type="select" sortOrder="30" showInDefault="1" showInStore="0" showInWebsite="0" canRestore="1">
+                    <label>Add controller action to Javascript events</label>
+                    <comment><![CDATA[Sends the Magento controller action of the current page (for example <code>catalog_product_view</code>, the same value Magento adds to the body tag) to the browser. It is added to every Javascript event as the <code>magento.route</code>, <code>magento.controller</code>, <code>magento.action</code> and <code>magento.full_action</code> tags, and is used as the transaction name instead of the URL path.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
         </section>
