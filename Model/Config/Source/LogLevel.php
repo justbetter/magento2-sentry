@@ -17,9 +17,10 @@ class LogLevel implements ArrayInterface
         return [
             ['value' => Logger::NOTICE, 'label' => __('Notice')],
             ['value' => Logger::WARNING, 'label' => __('Warning')],
+            ['value' => Logger::ERROR, 'label' => __('Error')],
             ['value' => Logger::CRITICAL, 'label' => __('Critical')],
             ['value' => Logger::ALERT, 'label' => __('Alert')],
-            ['value' => Logger::ALERT, 'label' => __('Emergency')],
+            ['value' => Logger::EMERGENCY, 'label' => __('Emergency')],
         ];
     }
 }
