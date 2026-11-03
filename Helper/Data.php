@@ -637,6 +637,19 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Whether to add the Magento controller action to Javascript events.
+     *
+     * @return bool
+     */
+    public function addActionContext(): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            static::XML_PATH_SRS_ISSUE_GROUPING.'add_action_context',
+            ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
      * Get the ErrorException reporting level we will send at.
      *
      * @return int

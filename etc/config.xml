@@ -13,6 +13,7 @@
             <issue_grouping>
                 <strip_static_content_version/>
                 <strip_store_code/>
+                <add_action_context/>
             </issue_grouping>
             <environment>
                 <dsn/>
