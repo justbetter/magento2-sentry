@@ -121,7 +121,6 @@ class Data extends AbstractHelper
         protected DeploymentConfig $deploymentConfig
     ) {
         $this->scopeConfig = $context->getScopeConfig();
-        $this->collectModuleConfig();
 
         parent::__construct($context);
     }
