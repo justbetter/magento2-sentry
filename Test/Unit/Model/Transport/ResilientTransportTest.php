@@ -9,6 +9,7 @@ use JustBetter\Sentry\Model\CircuitBreaker;
 use JustBetter\Sentry\Model\Queue\Publisher\SentryEventPublisher;
 use JustBetter\Sentry\Model\RateLimitState;
 use JustBetter\Sentry\Model\Transport\ResilientTransport;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Sentry\Event;
@@ -52,7 +53,7 @@ class ResilientTransportTest extends TestCase
         $httpTransport = $this->createMock(TransportInterface::class);
         $httpTransport->expects($this->never())->method('send');
 
-        $circuitBreaker = $this->createMock(CircuitBreaker::class);
+        $circuitBreaker = $this->createStub(CircuitBreaker::class);
         $circuitBreaker->method('allowRequest')->willReturn(true);
 
         $result = $this->createTransport(
@@ -70,6 +71,7 @@ class ResilientTransportTest extends TestCase
     /**
      * @dataProvider httpResultStatusProvider
      */
+    #[DataProvider('httpResultStatusProvider')]
     public function testSyncReturnsHttpTransportResultWithoutTouchingCircuit(ResultStatus $status): void
     {
         $event = Event::createEvent();
@@ -150,6 +152,7 @@ class ResilientTransportTest extends TestCase
     /**
      * @dataProvider deliveryModeProvider
      */
+    #[DataProvider('deliveryModeProvider')]
     public function testOpenCircuitDropsEventWithoutDelivering(bool $async): void
     {
         $helper = $this->createStub(Data::class);
@@ -178,6 +181,7 @@ class ResilientTransportTest extends TestCase
     /**
      * @dataProvider deliveryModeProvider
      */
+    #[DataProvider('deliveryModeProvider')]
     public function testRateLimitedCategoryIsDroppedWithoutDelivering(bool $async): void
     {
         $event = Event::createCheckIn();
@@ -212,6 +216,7 @@ class ResilientTransportTest extends TestCase
     /**
      * @dataProvider deliveryModeProvider
      */
+    #[DataProvider('deliveryModeProvider')]
     public function testUnlimitedCategoryIsDelivered(bool $async): void
     {
         $event = Event::createTransaction();
@@ -372,6 +377,7 @@ class ResilientTransportTest extends TestCase
     /**
      * @dataProvider failingStepProvider
      */
+    #[DataProvider('failingStepProvider')]
     public function testSendAfterFailedSendIsNotSkipped(string $failingStep): void
     {
         $helper = $this->createStub(Data::class);

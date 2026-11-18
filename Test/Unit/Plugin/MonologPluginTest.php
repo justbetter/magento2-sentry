@@ -19,7 +19,7 @@ class MonologPluginTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sentryHandler = $this->createMock(Sentry::class);
+        $this->sentryHandler = $this->createStub(Sentry::class);
     }
 
     public function testAddsSentryHandlerWhenNotAlreadyPresent(): void
@@ -43,7 +43,7 @@ class MonologPluginTest extends TestCase
     public function testLeavesHandlersUntouchedForExcludedSentryDeliveryChannel(): void
     {
         $logger = new Logger(MonologPlugin::EXCLUDED_CHANNEL);
-        $streamHandler = $this->createMock(StreamHandler::class);
+        $streamHandler = $this->createStub(StreamHandler::class);
 
         $result = (new MonologPlugin($this->sentryHandler))->beforeSetHandlers($logger, [$streamHandler]);
 

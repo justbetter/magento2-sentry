@@ -9,6 +9,7 @@ use JustBetter\Sentry\Model\RateLimitParser;
 use JustBetter\Sentry\Model\RateLimitState;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\Serializer\Json;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Sentry\HttpClient\Response;
 
@@ -63,6 +64,7 @@ class RateLimitStateTest extends TestCase
     /**
      * @dataProvider itemTypeProvider
      */
+    #[DataProvider('itemTypeProvider')]
     public function testLimitAppliesOnlyToItsOwnCategory(string $limitedCategory, string $itemType): void
     {
         $state = $this->createState();
@@ -116,6 +118,7 @@ class RateLimitStateTest extends TestCase
     /**
      * @dataProvider unusableCacheProvider
      */
+    #[DataProvider('unusableCacheProvider')]
     public function testUnusableCacheMeansNoLimits(string|false $cached): void
     {
         if ($cached !== false) {
@@ -159,6 +162,7 @@ class RateLimitStateTest extends TestCase
      *
      * @param array<string, array<int, string>> $headers
      */
+    #[DataProvider('nothingToRecordProvider')]
     public function testNothingIsSavedWithoutActiveLimits(int $statusCode, array $headers): void
     {
         $cache = $this->createMock(CacheInterface::class);
