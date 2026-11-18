@@ -102,6 +102,7 @@ jobs:
           magento-version: ${{ matrix.magento }}
           php-version: ${{ matrix.php }}
           annotations: ${{ strategy.job-index == 0 }}
+          config: .github/magento-check/phpstan.neon
 
       - name: Upload results
         if: ${{ always() && steps.static.outputs.result-path != '' }}
