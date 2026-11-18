@@ -8,6 +8,7 @@ use JustBetter\Sentry\Helper\Data;
 use JustBetter\Sentry\Model\CircuitBreaker;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\Serializer\Json;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
@@ -153,6 +154,7 @@ class CircuitBreakerTest extends TestCase
     /**
      * @dataProvider stateLifetimeProvider
      */
+    #[DataProvider('stateLifetimeProvider')]
     public function testStateOutlivesRecoveryWindow(int $recoveryTimeout, int $expectedLifetime): void
     {
         $helper = $this->createStub(Data::class);

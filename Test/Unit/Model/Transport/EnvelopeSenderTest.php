@@ -6,6 +6,7 @@ namespace JustBetter\Sentry\Test\Unit\Model\Transport;
 
 use JustBetter\Sentry\Helper\Data;
 use JustBetter\Sentry\Model\Transport\EnvelopeSender;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Sentry\HttpClient\HttpClientInterface;
@@ -43,6 +44,7 @@ class EnvelopeSenderTest extends TestCase
     /**
      * @dataProvider missingDsnProvider
      */
+    #[DataProvider('missingDsnProvider')]
     public function testMissingDsnThrows(?string $dsn): void
     {
         $helper = $this->createStub(Data::class);
@@ -71,6 +73,7 @@ class EnvelopeSenderTest extends TestCase
     /**
      * @dataProvider silentStatusCodeProvider
      */
+    #[DataProvider('silentStatusCodeProvider')]
     public function testDoesNotThrow(int $statusCode): void
     {
         $this->createSender($statusCode)->send('envelope-bytes');
@@ -92,6 +95,7 @@ class EnvelopeSenderTest extends TestCase
     /**
      * @dataProvider failedStatusCodeProvider
      */
+    #[DataProvider('failedStatusCodeProvider')]
     public function testFailedDeliveryThrows(int $statusCode, string $expectedMessage): void
     {
         $this->expectException(RuntimeException::class);

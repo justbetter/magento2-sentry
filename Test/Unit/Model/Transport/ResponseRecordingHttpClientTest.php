@@ -7,6 +7,7 @@ namespace JustBetter\Sentry\Test\Unit\Model\Transport;
 use JustBetter\Sentry\Model\CircuitBreaker;
 use JustBetter\Sentry\Model\RateLimitState;
 use JustBetter\Sentry\Model\Transport\ResponseRecordingHttpClient;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Sentry\HttpClient\HttpClientInterface;
@@ -19,6 +20,7 @@ class ResponseRecordingHttpClientTest extends TestCase
     /**
      * @dataProvider statusCodeProvider
      */
+    #[DataProvider('statusCodeProvider')]
     public function testRecordsResponse(int $statusCode, ?string $expectedBreakerCall): void
     {
         $request = new Request();

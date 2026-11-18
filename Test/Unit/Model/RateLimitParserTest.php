@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JustBetter\Sentry\Test\Unit\Model;
 
 use JustBetter\Sentry\Model\RateLimitParser;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Sentry\HttpClient\Response;
 
@@ -16,6 +17,7 @@ class RateLimitParserTest extends TestCase
      * @param array<string, array<int, string>> $headers
      * @param array<string, int>                $expectedOffsets Seconds from now, keyed by category
      */
+    #[DataProvider('limitsProvider')]
     public function testParse(array $headers, array $expectedOffsets): void
     {
         $limits = (new RateLimitParser())->parse(new Response(429, $headers, ''));

@@ -12,6 +12,7 @@ use JustBetter\Sentry\Model\RateLimitState;
 use JustBetter\Sentry\Model\Transport\EnvelopeSender;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\Serializer\Json;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -87,6 +88,7 @@ class SentryEventConsumerTest extends TestCase
     /**
      * @dataProvider payloadItemTypeProvider
      */
+    #[DataProvider('payloadItemTypeProvider')]
     public function testSkipsRateLimitedItemType(string $payload, string $expectedItemType): void
     {
         $envelopeSender = $this->createMock(EnvelopeSender::class);
@@ -136,6 +138,7 @@ class SentryEventConsumerTest extends TestCase
     /**
      * @dataProvider failingDependencyProvider
      */
+    #[DataProvider('failingDependencyProvider')]
     public function testFailureIsLoggedAndNeverThrown(string $failingDependency): void
     {
         $exception = new RuntimeException('boom');
@@ -179,6 +182,7 @@ class SentryEventConsumerTest extends TestCase
      *
      * @dataProvider sentryCategoryProvider
      */
+    #[DataProvider('sentryCategoryProvider')]
     public function testRateLimitedCategoryHoldsBackOnlyMatchingSdkEnvelopes(string $sentryCategory, string $limitedType): void
     {
         $serializer = new PayloadSerializer(new Options(['dsn' => 'https://key@sentry.example/1']));
