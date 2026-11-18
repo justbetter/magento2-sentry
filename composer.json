@@ -68,7 +68,8 @@
       "php-http/discovery": true,
       "magento/composer-dependency-version-audit-plugin": true,
       "dealerdirect/phpcodesniffer-composer-installer": true,
-      "magento/magento-composer-installer": false
+      "magento/magento-composer-installer": false,
+      "phpstan/extension-installer": true
     }
   },
   "scripts": {
@@ -85,11 +86,13 @@
     "justbetter/magento2-sentry-logrocket": "Links Sentry sessions to your Logrocket replays"
   },
   "require-dev": {
-    "bitexpert/phpstan-magento": "^0.42.0",
-    "magento/magento-coding-standard": ">=40",
+    "bitexpert/phpstan-magento": "^0.44",
+    "magento/magento-coding-standard": "^41",
     "rector/rector": ">=1.2.5",
     "justbetter/magento2-coding-standard": "^1.0,>=1.0.2",
     "phpcompatibility/php-compatibility": "*",
-    "phpunit/phpunit": "*"
+    "phpunit/phpunit": "*",
+    "phpstan/phpstan": "^2.1",
+    "phpstan/extension-installer": "^1.4"
   }
 }
