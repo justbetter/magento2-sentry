@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
+use Composer\InstalledVersions;
 use Rector\Configuration\RectorConfigBuilder;
 use Rector\DeadCode\Rector\Property\RemoveUselessVarTagRector;
 use Rector\Php71\Rector\FuncCall\RemoveExtraParametersRector;
 
 /** @var RectorConfigBuilder $rectorConfig */
-$rectorConfig = require 'vendor/justbetter/magento2-coding-standard/rector.php'; // phpcs:ignore
+$rectorConfig = require InstalledVersions::getInstallPath('justbetter/magento2-coding-standard') . '/rector.php'; // phpcs:ignore
 
 $rectorConfig->withPaths([
     __DIR__.'/Adminhtml',

@@ -4,103 +4,53 @@
 
 namespace JustBetter\Sentry\Logger\Handler;
 
+use ArrayAccess;
 use JustBetter\Sentry\Helper\Data;
 use JustBetter\Sentry\Model\SentryLog;
 use Magento\Framework\App\DeploymentConfig;
 use Monolog\Handler\AbstractHandler;
-use Monolog\Logger;
-use Monolog\LogRecord;
 use Throwable;
 
-// TODO: Remove once V2 support is dropped.
-// phpcs:disable Generic.Classes.DuplicateClassName,PSR2.Classes.ClassDeclaration,PSR1.Classes.ClassDeclaration.MultipleClasses
-if (Logger::API < 3) { // @phpstan-ignore-line
-    class Sentry extends AbstractHandler
+class Sentry extends AbstractHandler
+{
+    /**
+     * Construct.
+     *
+     * @param Data             $sentryHelper
+     * @param SentryLog        $sentryLog
+     * @param DeploymentConfig $deploymentConfig
+     */
+    public function __construct(
+        protected Data $sentryHelper,
+        protected SentryLog $sentryLog,
+        protected DeploymentConfig $deploymentConfig,
+    ) {
+        parent::__construct();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isHandling(array|ArrayAccess $record): bool
     {
-        /**
-         * Construct.
-         *
-         * @param Data             $sentryHelper
-         * @param SentryLog        $sentryLog
-         * @param DeploymentConfig $deploymentConfig
-         */
-        public function __construct(
-            protected Data $sentryHelper,
-            protected SentryLog $sentryLog,
-            protected DeploymentConfig $deploymentConfig,
-        ) {
-            parent::__construct();
-        }
-
-        /**
-         * @inheritDoc
-         */
-        public function isHandling(array $record): bool // @phpstan-ignore-line
-        {
-            try {
-                return $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
-            } catch (Throwable) {
-                return false;
-            }
-        }
-
-        /**
-         * @inheritDoc
-         */
-        public function handle(array $record): bool // @phpstan-ignore-line
-        {
-            if (!$this->isHandling($record)) {
-                return false;
-            }
-
-            $this->sentryLog->send($record['message'], $record['level'], $record['context']);
-
+        try {
+            return $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
+        } catch (Throwable) {
             return false;
         }
     }
-} else { // @phpstan-ignore-line
-    class Sentry extends AbstractHandler
+
+    /**
+     * @inheritDoc
+     */
+    public function handle(array|ArrayAccess $record): bool
     {
-        /**
-         * Construct.
-         *
-         * @param Data             $sentryHelper
-         * @param SentryLog        $sentryLog
-         * @param DeploymentConfig $deploymentConfig
-         */
-        public function __construct(
-            protected Data $sentryHelper,
-            protected SentryLog $sentryLog,
-            protected DeploymentConfig $deploymentConfig,
-        ) {
-            parent::__construct();
-        }
-
-        /**
-         * @inheritDoc
-         */
-        public function isHandling(LogRecord $record): bool // @phpstan-ignore-line
-        {
-            try {
-                return $this->deploymentConfig->isAvailable() && $this->sentryHelper->isActive();
-            } catch (Throwable) {
-                return false;
-            }
-        }
-
-        /**
-         * @inheritDoc
-         */
-        public function handle(LogRecord $record): bool // @phpstan-ignore-line
-        {
-            if (!$this->isHandling($record)) {
-                return false;
-            }
-
-            $this->sentryLog->send($record['message'], $record['level'], $record['context']);
-
+        if (!$this->isHandling($record)) {
             return false;
         }
+
+        $this->sentryLog->send($record['message'], $record['level'], $record['context']);
+
+        return false;
     }
 }
-// phpcs:enable Generic.Classes.DuplicateClassName,PSR2.Classes.ClassDeclaration,PSR1.Classes.ClassDeclaration.MultipleClasses
