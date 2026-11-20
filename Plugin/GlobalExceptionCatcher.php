@@ -220,7 +220,8 @@ class GlobalExceptionCatcher
                     $this->sentryHelper->getTracingSampleRate()
             );
         } else {
-            $config->unsetTracesSampleRate(null);
+            $config->unsTracesSampleRate();
+            $config->unsProfilesSampleRate();
         }
 
         $config->setInAppExclude([
